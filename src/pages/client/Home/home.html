@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="vi">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>TOEIC Master - Luyện Thi TOEIC Online</title>
+        <!-- Bootstrap 5 CSS -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
+        <!-- Font Awesome -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+        <style>
+            .navbar {
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .navbar-brand {
+                font-weight: 700;
+                font-size: 1.5rem;
+            }
+
+            .hero-section {
+                background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+                color: white;
+                padding: 5rem 0;
+            }
+
+            .hero-text h1 {
+                font-size: 2.8rem;
+                font-weight: 700;
+            }
+
+            .btn-primary {
+                background-color: var(--primary-color);
+                border-color: var(--primary-color);
+            }
+
+            .btn-primary:hover {
+                background-color: var(--secondary-color);
+                border-color: var(--secondary-color);
+            }
+
+            .practice-section {
+                background-color: #f8fafc;
+            }
+
+            .test-card {
+                border: none;
+                border-radius: 10px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+                transition: all 0.3s ease;
+            }
+
+            .test-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            }
+
+            .testimonials {
+                background-color: var(--light-color);
+            }
+
+            .testimonial-card {
+                background-color: white;
+                border-radius: 10px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            }
+
+            .footer {
+                background-color: var(--dark-color);
+                color: white;
+            }
+
+            .footer a {
+                color: #ccc;
+                text-decoration: none;
+            }
+
+            .footer a:hover {
+                color: white;
+            }
+
+            .progress-toeic {
+                height: 8px;
+                border-radius: 4px;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+            <div class="container">
+                <a class="navbar-brand text-primary" href="./home.html">
+                    <i class="fas fa-graduation-cap me-2"></i>TOEIC Master
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="./home.html">Trang chủ</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Bài thi thử</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Từ vựng</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Ngữ pháp</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="./blog.html">Blog</a>
+                        </li>
+                    </ul>
+                    <div class="ms-3 d-flex">
+                        <a href="./login.html" class="btn btn-outline-primary me-2">Đăng nhập</a>
+                        <a href="./register.html" class="btn btn-primary">Đăng ký</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-6 hero-text">
+                        <h1 class="mb-4">Chinh phục TOEIC cùng chúng tôi</h1>
+                        <p class="lead mb-4">
+                            Nền tảng luyện thi TOEIC trực tuyến hàng đầu với hơn 10,000+ câu hỏi và đề thi thử mô phỏng
+                            sát thực tế.
+                        </p>
+                        <div class="d-flex flex-wrap">
+                            <a href="./test.html" class="btn btn-light btn-lg me-3 mb-3">Thi thử miễn phí</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 mt-5 mt-lg-0 text-center">
+                        <img
+                            src="/images/pexels-james-frid-81279-8482449.jpg"
+                            alt="TOEIC Test Preparation"
+                            class="img-fluid rounded shadow"
+                        />
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Features -->
+        <section class="py-5">
+            <div class="container">
+                <div class="text-center mb-5">
+                    <h2 class="fw-bold">Tại sao chọn TOEIC Master?</h2>
+                    <p class="text-muted">Chúng tôi cung cấp giải pháp học tập toàn diện giúp bạn đạt điểm cao</p>
+                </div>
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="feature-card p-4 h-100 bg-white">
+                            <div class="feature-icon">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <h5 class="fw-bold">Đề thi chuẩn format ETS</h5>
+                            <p class="text-muted mb-0">
+                                Đề thi được biên soạn theo cấu trúc mới nhất của ETS, giúp bạn làm quen với định dạng
+                                thực tế.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="feature-card p-4 h-100 bg-white">
+                            <div class="feature-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h5 class="fw-bold">Phân tích chi tiết</h5>
+                            <p class="text-muted mb-0">
+                                Thống kê và phân tích kết quả làm bài chi tiết, giúp bạn nhận biết điểm mạnh và điểm
+                                yếu.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="feature-card p-4 h-100 bg-white">
+                            <div class="feature-icon">
+                                <i class="fas fa-headphones"></i>
+                            </div>
+                            <h5 class="fw-bold">Luyện nghe chuyên sâu</h5>
+                            <p class="text-muted mb-0">
+                                Hệ thống audio chất lượng cao với nhiều giọng đọc khác nhau, tương tự như trong bài thi
+                                thật.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="feature-card p-4 h-100 bg-white">
+                            <div class="feature-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <h5 class="fw-bold">Hẹn giờ tự động</h5>
+                            <p class="text-muted mb-0">
+                                Hệ thống tính giờ chính xác, giúp bạn kiểm soát thời gian làm bài tối ưu nhất.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="feature-card p-4 h-100 bg-white">
+                            <div class="feature-icon">
+                                <i class="fas fa-mobile-alt"></i>
+                            </div>
+                            <h5 class="fw-bold">Học mọi lúc mọi nơi</h5>
+                            <p class="text-muted mb-0">
+                                Giao diện thân thiện trên mọi thiết bị, giúp bạn học tập mọi lúc mọi nơi.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="feature-card p-4 h-100 bg-white">
+                            <div class="feature-icon">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                            <h5 class="fw-bold">Cộng đồng học tập</h5>
+                            <p class="text-muted mb-0">
+                                Tham gia cộng đồng người học TOEIC lớn để chia sẻ kinh nghiệm và động viên nhau.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Practice Tests Section -->
+        <section class="practice-section py-5">
+            <div class="container">
+                <div class="text-center mb-5">
+                    <h2 class="fw-bold">Đề thi & Bài luyện tập</h2>
+                    <p class="text-muted">Đa dạng bài thi và bài luyện tập theo từng kỹ năng</p>
+                </div>
+                <div class="row g-4">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="test-card card h-100">
+                            <div class="card-body text-center">
+                                <div
+                                    class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
+                                    style="width: 80px; height: 80px"
+                                >
+                                    <i class="fas fa-file-alt fa-2x"></i>
+                                </div>
+                                <h5>Full Test</h5>
+                                <p class="text-muted">Đề thi đầy đủ 200 câu hỏi theo format mới nhất</p>
+                                <p><span class="fw-bold text-primary">24</span> đề thi</p>
+                                <a href="#" class="btn btn-outline-primary">Làm ngay</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="test-card card h-100">
+                            <div class="card-body text-center">
+                                <div
+                                    class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
+                                    style="width: 80px; height: 80px"
+                                >
+                                    <i class="fas fa-headphones fa-2x"></i>
+                                </div>
+                                <h5>Luyện nghe</h5>
+                                <p class="text-muted">Tập trung luyện tập phần Listening (Part 1-4)</p>
+                                <p><span class="fw-bold text-success">156</span> bài tập</p>
+                                <a href="#" class="btn btn-outline-success">Làm ngay</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="test-card card h-100">
+                            <div class="card-body text-center">
+                                <div
+                                    class="bg-danger text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
+                                    style="width: 80px; height: 80px"
+                                >
+                                    <i class="fas fa-book-open fa-2x"></i>
+                                </div>
+                                <h5>Luyện đọc</h5>
+                                <p class="text-muted">Tập trung luyện tập phần Reading (Part 5-7)</p>
+                                <p><span class="fw-bold text-danger">178</span> bài tập</p>
+                                <a href="#" class="btn btn-outline-danger">Làm ngay</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="test-card card h-100">
+                            <div class="card-body text-center">
+                                <div
+                                    class="bg-warning text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
+                                    style="width: 80px; height: 80px"
+                                >
+                                    <i class="fas fa-clock fa-2x"></i>
+                                </div>
+                                <h5>Mini Test</h5>
+                                <p class="text-muted">Bài kiểm tra ngắn để luyện tập trong thời gian hạn chế</p>
+                                <p><span class="fw-bold text-warning">95</span> bài kiểm tra</p>
+                                <a href="#" class="btn btn-outline-warning">Làm ngay</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Score Tracker -->
+        <!-- <section class="py-5 bg-white">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">Theo dõi tiến trình học tập</h2>
+                <p class="text-muted">Giám sát quá trình học và cải thiện điểm số qua thời gian</p>
+            </div>
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <img src="/api/placeholder/600/400" alt="Score tracking" class="img-fluid rounded shadow">
+                </div>
+                <div class="col-lg-6">
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="fw-bold">Listening</span>
+                            <span>370/495</span>
+                        </div>
+                        <div class="progress progress-toeic">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="fw-bold">Reading</span>
+                            <span>335/495</span>
+                        </div>
+                        <div class="progress progress-toeic">
+                            <div class="progress-bar bg-primary" role="progressbar" style="width: 68%" aria-valuenow="68" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="fw-bold">Total</span>
+                            <span>705/990</span>
+                        </div>
+                        <div class="progress progress-toeic">
+                            <div class="progress-bar bg-danger" role="progressbar" style="width: 71%" aria-valuenow="71" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                    <p class="text-muted">Theo dõi điểm số và xem phân tích chi tiết từng phần, từng kỹ năng để biết rõ điểm mạnh, điểm yếu và có kế hoạch cải thiện hiệu quả.</p>
+                    <a href="#" class="btn btn-primary">Xem báo cáo chi tiết</a>
+                </div>
+            </div>
+        </div>
+    </section> -->
+
+        <!-- Testimonials -->
+        <section class="testimonials py-5">
+            <div class="container">
+                <div class="text-center mb-5">
+                    <h2 class="fw-bold">Học viên nói gì về chúng tôi</h2>
+                    <p class="text-muted">Phản hồi từ những học viên đã thành công đạt điểm cao</p>
+                </div>
+                <div class="row g-4">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="testimonial-card p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="/api/placeholder/50/50" alt="User" class="rounded-circle me-3" />
+                                <div>
+                                    <h6 class="mb-0 fw-bold">Nguyễn Văn A</h6>
+                                    <div class="text-warning">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="mb-2">
+                                "Nhờ luyện tập trên TOEIC Master mà tôi đã tăng được 200 điểm chỉ sau 2 tháng. Đề thi
+                                thực sự rất sát với đề thi thật."
+                            </p>
+                            <div class="text-primary fw-bold">Điểm TOEIC: 850</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="testimonial-card p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="/api/placeholder/50/50" alt="User" class="rounded-circle me-3" />
+                                <div>
+                                    <h6 class="mb-0 fw-bold">Trần Thị B</h6>
+                                    <div class="text-warning">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star-half-alt"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="mb-2">
+                                "Phần phân tích chi tiết sau mỗi bài thi giúp tôi hiểu rõ điểm yếu của mình và tập trung
+                                cải thiện đúng trọng tâm."
+                            </p>
+                            <div class="text-primary fw-bold">Điểm TOEIC: 795</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="testimonial-card p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="/api/placeholder/50/50" alt="User" class="rounded-circle me-3" />
+                                <div>
+                                    <h6 class="mb-0 fw-bold">Lê Văn C</h6>
+                                    <div class="text-warning">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="mb-2">
+                                "Tôi thích cách website tổ chức các bài học và bài thi theo từng cấp độ, giúp tôi học từ
+                                cơ bản đến nâng cao rất hiệu quả."
+                            </p>
+                            <div class="text-primary fw-bold">Điểm TOEIC: 920</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Study Plans -->
+        <!-- <section class="py-5 bg-white">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">Lộ trình học tập</h2>
+                <p class="text-muted">Lựa chọn lộ trình phù hợp với mục tiêu của bạn</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-header bg-primary text-white text-center py-3">
+                            <h5 class="mb-0">Sơ cấp</h5>
+                            <p class="mb-0">Mục tiêu: 450-600 điểm</p>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    <span>Nắm vững từ vựng TOEIC cơ bản</span>
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    <span>Luyện tập 7 phần thi với độ khó dễ</span>
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    <span>Ôn tập ngữ pháp cơ bản</span>
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    <span>10 đề thi thử mức độ cơ bản</span>
+                                </li>
+                            </ul>
+                            <div class="text-center mt-4">
+                                <a href="#" class="btn btn-outline-primary">Bắt đầu ngay</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card h-100 border-0 shadow">
+                        <div class="card-header bg-success text-white text-center py-3">
+                            <h5 class="mb-0">Trung cấp</h5>
+                            <p class="mb-0">Mục tiêu: 650-800 điểm</p>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    <span>Mở rộng vốn từ vựng chuyên ngành</span>
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    <span>Nâng cao kỹ năng nghe hiểu</span>
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    <span>Luyện đọc hiểu với tốc độ cao hơn</span>
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    <span>15 đề thi thử mức độ trung bình</span>
+                                </li>
+                            </ul>
+                            <div class="text-center mt-4">
+                                <a href="#" class="btn btn-success">Bắt đầu ngay</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-header bg-danger text-white text-center py-3">
+                            <h5 class="mb-0">Cao cấp</h5>
+                            <p class="mb-0">Mục tiêu: 850-990 điểm</p>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    <span>Chinh phục từ vựng học thuật nâng cao</span>
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    <span>Kỹ thuật làm bài nâng cao</span>
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    <span>Bài tập với tốc độ và độ khó cao</span>
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    <span>20 đề thi thử mức độ khó</span>
+                                </li>
+                            </ul>
+                            <div class="text-center mt-4">
+                                <a href="#" class="btn btn-outline-danger">Bắt đầu ngay</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section> -->
+
+        <!-- CTA Section -->
+        <!-- <section class="py-5 bg-primary text-white">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8 mb-4 mb-lg-0">
+                    <h2 class="fw-bold">Sẵn sàng chinh phục TOEIC?</h2>
+                    <p class="lead mb-0">Đăng ký ngay hôm nay để tiếp cận hàng ngàn câu hỏi và đề thi thử TOEIC chất lượng.</p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    <a href="#" class="btn btn-light btn-lg">Đăng ký miễn phí</a>
+                </div>
+            </div>
+        </div>
+    </section> -->
+
+        <!-- Footer -->
+        <footer class="footer py-5">
+            <div class="container">
+                <div class="row g-4">
+                    <div class="col-lg-4 mb-4 mb-lg-0">
+                        <h5 class="fw-bold mb-3">TOEIC Master</h5>
+                        <p class="mb-3">
+                            Nền tảng luyện thi TOEIC trực tuyến hàng đầu với hơn 10,000+ câu hỏi và đề thi thử mô phỏng.
+                        </p>
+                        <div class="d-flex gap-3">
+                            <a href="#" class="text-white"><i class="fab fa-facebook fa-lg"></i></a>
+                            <a href="#" class="text-white"><i class="fab fa-youtube fa-lg"></i></a>
+                            <a href="#" class="text-white"><i class="fab fa-instagram fa-lg"></i></a>
+                            <a href="#" class="text-white"><i class="fab fa-tiktok fa-lg"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-6">
+                        <h6 class="fw-bold mb-3">Bài thi</h6>
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2"><a href="#">Full Test</a></li>
+                            <li class="mb-2"><a href="#">Mini Test</a></li>
+                            <li class="mb-2"><a href="#">Luyện nghe</a></li>
+                            <li class="mb-2"><a href="#">Luyện đọc</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-6">
+                        <h6 class="fw-bold mb-3">Học tập</h6>
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2"><a href="#">Từ vựng</a></li>
+                            <li class="mb-2"><a href="#">Ngữ pháp</a></li>
+                            <li class="mb-2"><a href="#">Lộ trình học</a></li>
+                            <li class="mb-2"><a href="#">Blog</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-6">
+                        <h6 class="fw-bold mb-3">Hỗ trợ</h6>
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2"><a href="#">Liên hệ</a></li>
+                            <li class="mb-2"><a href="#">FAQs</a></li>
+                            <li class="mb-2"><a href="#">Điều khoản</a></li>
+                            <li class="mb-2"><a href="#">Chính sách</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-6">
+                        <h6 class="fw-bold mb-3">Tài khoản</h6>
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2"><a href="#">Đăng nhập</a></li>
+                            <li class="mb-2"><a href="#">Đăng ký</a></li>
+                            <li class="mb-2"><a href="#">Tài khoản của tôi</a></li>
+                            <li class="mb-2"><a href="#">Quên mật khẩu</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <hr class="my-4 border-secondary" />
+                <div class="row">
+                    <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                        <p class="mb-0">&copy; 2025 TOEIC Master. Tất cả quyền được bảo lưu.</p>
+                    </div>
+                    <div class="col-md-6 text-center text-md-end">
+                        <p class="mb-0">Thiết kế bởi <a href="#" class="text-white">Your Company</a></p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Bootstrap 5 JS Bundle -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>
