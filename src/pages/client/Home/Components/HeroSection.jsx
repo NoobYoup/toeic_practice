@@ -20,7 +20,7 @@ function HeroSection() {
                     </div>
                     <div className="col-lg-6 mt-5 mt-lg-0 text-center">
                         <img
-                            src="/images/pexels-james-frid-81279-8482449.jpg"
+                            src="/public/images/background_desktop.jpg"
                             alt="TOEIC Test Preparation"
                             className="img-fluid rounded shadow"
                         />

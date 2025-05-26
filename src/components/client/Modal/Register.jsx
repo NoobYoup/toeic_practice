@@ -1,158 +1,167 @@
-import { useState } from 'react';
-import { register } from '@/services/authService.jsx';
+import { useEffect, useState, useRef } from 'react';
+import { register } from '@/services/authService';
+import { motion, AnimatePresence } from 'framer-motion';
 
-function Register() {
-    const [form1, setForm1] = useState({
-        ten_dang_nhap: '',
-        email: '',
-        mat_khau: '',
-    });
-
-    const [errors1, setErrors1] = useState({});
-
-    const [message, setMessage] = useState('');
-
+function Register({ isOpen, onSwitch, onClose }) {
+    const [form, setForm] = useState({ email: '', ten_dang_nhap: '', mat_khau: '' });
+    const [errors, setErrors] = useState({});
     const [loadingAPI, setLoadingAPI] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
-    const handleChange1 = (e) => {
-        setForm1({ ...form1, [e.target.name]: e.target.value });
-        setErrors1((prev) => ({ ...prev, [e.target.name]: '' }));
+    const modalRef = useRef(null);
+
+    const handleChange = (e) => {
+        setForm({ ...form, [e.target.name]: e.target.value });
+        setErrors((prev) => ({ ...prev, [e.target.name]: '' }));
     };
 
     const handleRegister = async (e) => {
         e.preventDefault();
-        setErrors1({});
-        setMessage('');
         setLoadingAPI(true);
         try {
-            const res = await register(form1);
-
-            setMessage(res.data.message || 'Đăng ký thành công!');
-            window.location.reload();
+            setErrors({});
+            await register(form);
+            onClose();
         } catch (err) {
             const apiErrors = err.response?.data?.errors;
-            const generalMsg = err.response?.data?.message;
-
             if (Array.isArray(apiErrors)) {
                 const newErrors = {};
-                apiErrors.forEach((error) => {
-                    if (error.path) {
-                        if (newErrors[error.path]) {
-                            newErrors[error.path] += `\n${error.msg}`;
-                        } else {
-                            newErrors[error.path] = error.msg;
-                        }
-                    }
+                apiErrors.forEach((err) => {
+                    if (err.path) newErrors[err.path] = (newErrors[err.path] || '') + err.msg + '\n';
                 });
-                setErrors1(newErrors);
-            } else if (generalMsg) {
-                setErrors1({ general: generalMsg });
+                setErrors(newErrors);
             } else {
-                setErrors1({ general: 'Đăng ký thất bại.' });
+                setErrors({ general: 'Đăng ký thất bại. Vui lòng thử lại.' });
             }
         }
         setLoadingAPI(false);
     };
 
-    const handleMessageErrors = (field) => {
-        return errors1[field]
-            ? errors1[field].split('\n').map((msg, idx) => (
-                  <div key={idx} className="text-danger small">
-                      *{msg}
-                  </div>
-              ))
-            : null;
-    };
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (modalRef.current && !modalRef.current.contains(e.target)) {
+                onClose();
+            }
+        };
+        if (isOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isOpen, onClose]);
 
     return (
-        <div
-            className="modal fade"
-            id="registerModal"
-            tabIndex="-1"
-            role="dialog"
-            aria-labelledby="registerModalLabel"
-            aria-hidden="true"
-        >
-            <div className="modal-dialog login-container" role="document">
-                <div className="modal-content border-0">
-                    <button
-                        type="button"
-                        className="btn-close ms-auto"
-                        data-bs-dismiss="modal"
-                        aria-label="Đóng"
-                    ></button>
-                    <h2 className="text-center mb-4">Đăng Ký</h2>
+        <AnimatePresence>
+            {isOpen && (
+                <motion.div
+                    className="modal d-block"
+                    key="register-modal"
+                    style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                >
+                    <motion.div
+                        className="modal-dialog login-container"
+                        role="document"
+                        initial={{ y: '-30px', opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: '-30px', opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                    >
+                        <div className="modal-content border-0" ref={modalRef}>
+                            <div className="modal-header border-0">
+                                <h2 className="modal-title">Đăng Ký</h2>
+                                <button type="button" className="btn-close" onClick={onClose}></button>
+                            </div>
 
-                    <form onSubmit={handleRegister}>
-                        {errors1.general && <div className="alert alert-danger">{errors1.general}</div>}
-                        {message && <div className="alert alert-info mt-3">{message}</div>}
-                        <div className="mb-3">
-                            <label htmlFor="username" className="form-label">
-                                Tên người dùng
-                            </label>
-                            <input
-                                type="text"
-                                className={`form-control ${errors1.ten_dang_nhap ? 'is-invalid' : ''}`}
-                                id="username"
-                                placeholder="Nhập tên người dùng của bạn"
-                                name="ten_dang_nhap"
-                                onChange={handleChange1}
-                            />
-                            {handleMessageErrors && handleMessageErrors('ten_dang_nhap')}
-                        </div>
+                            <div className="modal-body">
+                                {errors.general && <div className="alert alert-danger">{errors.general}</div>}
+                                <form onSubmit={handleRegister}>
+                                    <div className="mb-3">
+                                        <label className="form-label">Email</label>
+                                        <input
+                                            type="email"
+                                            name="email"
+                                            className={`form-control ${errors.email ? 'is-invalid' : ''}`}
+                                            placeholder="Nhập email của bạn"
+                                            value={form.email}
+                                            onChange={handleChange}
+                                        />
+                                        {errors.email &&
+                                            errors.email.split('\n').map((e, i) => (
+                                                <div className="text-danger small" key={i}>
+                                                    * {e}
+                                                </div>
+                                            ))}
+                                    </div>
 
-                        <div className="mb-3">
-                            <label htmlFor="email" className="form-label">
-                                Email
-                            </label>
-                            <input
-                                type="text"
-                                className={`form-control ${errors1.email ? 'is-invalid' : ''}`}
-                                id="email"
-                                placeholder="Nhập email của bạn"
-                                name="email"
-                                onChange={handleChange1}
-                            />
-                            {handleMessageErrors && handleMessageErrors('email')}
-                        </div>
+                                    <div className="mb-3">
+                                        <label className="form-label">Tên đăng nhập</label>
+                                        <input
+                                            type="text"
+                                            name="ten_dang_nhap"
+                                            className={`form-control ${errors.ten_dang_nhap ? 'is-invalid' : ''}`}
+                                            placeholder="Nhập tên đăng nhập của bạn"
+                                            value={form.ten_dang_nhap}
+                                            onChange={handleChange}
+                                        />
+                                        {errors.ten_dang_nhap &&
+                                            errors.ten_dang_nhap.split('\n').map((e, i) => (
+                                                <div className="text-danger small" key={i}>
+                                                    * {e}
+                                                </div>
+                                            ))}
+                                    </div>
 
-                        <div className="mb-3">
-                            <label htmlFor="password" className="form-label">
-                                Mật Khẩu
-                            </label>
-                            <input
-                                type="password"
-                                className={`form-control ${errors1.mat_khau ? 'is-invalid' : ''}`}
-                                id="password"
-                                placeholder="Nhập mật khẩu"
-                                name="mat_khau"
-                                onChange={handleChange1}
-                            />
-                            {handleMessageErrors && handleMessageErrors('mat_khau')}
-                        </div>
+                                    <div className="mb-3">
+                                        <label className="form-label">Mật khẩu</label>
+                                        <div className="input-password">
+                                            <input
+                                                type={showPassword === true ? 'text' : 'password'}
+                                                name="mat_khau"
+                                                className={`form-control ${errors.mat_khau ? 'is-invalid' : ''}`}
+                                                placeholder="Nhập mật khẩu của bạn"
+                                                value={form.mat_khau}
+                                                onChange={handleChange}
+                                            />
+                                            <i
+                                                className={
+                                                    showPassword === true ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash'
+                                                }
+                                                onClick={() => setShowPassword(!showPassword)}
+                                            ></i>
+                                        </div>
+                                        {errors.mat_khau &&
+                                            errors.mat_khau.split('\n').map((e, i) => (
+                                                <div className="text-danger small" key={i}>
+                                                    * {e}
+                                                </div>
+                                            ))}
+                                    </div>
 
-                        <div className="d-grid mb-3">
-                            <button type="submit" className="btn btn-primary">
-                                {loadingAPI && <i className="fas fa-spinner fa-spin me-2"></i>}
-                                Đăng Ký
-                            </button>
+                                    <div className="d-grid">
+                                        <button type="submit" className="btn btn-primary" disabled={loadingAPI}>
+                                            {loadingAPI && <i className="fas fa-spinner fa-spin me-2"></i>}
+                                            Đăng Ký
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div className="text-center mt-3">
+                                Bạn đã có tài khoản?
+                                <a href="#" className="text-primary" onClick={() => onSwitch('login')}>
+                                    Đăng nhập
+                                </a>
+                            </div>
                         </div>
-                        <p>{message}</p>
-                    </form>
-                    <div className="text-center mt-3">
-                        <a
-                            href="#"
-                            className="text-primary"
-                            data-bs-toggle="modal"
-                            data-bs-target="#loginModal"
-                            data-bs-dismiss="modal"
-                        >
-                            <i className="fa-solid fa-arrow-left me-2"></i>Quay lại
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
+                    </motion.div>
+                </motion.div>
+            )}
+        </AnimatePresence>
     );
 }
 

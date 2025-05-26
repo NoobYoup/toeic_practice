@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import './Header.scss';
+import { AnimatePresence } from 'framer-motion';
 
 import Login from '../Modal/Login.jsx';
 import Register from '../Modal/Register.jsx';
@@ -8,25 +9,45 @@ import ForgotPassword from '../Modal/ForgotPassword.jsx';
 import VerifyOTP from '../Modal/VerifyOTP.jsx';
 import ResetPassword from '../Modal/ResetPassword.jsx';
 
+import { getProfile } from '@/services/userService.jsx';
+
 function Header() {
     const [isLogin, setIsLogin] = useState(false);
     const [email, setEmail] = useState('');
-    // const [user, setUser] = useState(null);
+    const [currentModal, setCurrentModal] = useState(null);
+    const [profile, setProfile] = useState(null);
+
+    const closeModal = () => setCurrentModal(null);
+
+    const token = localStorage.getItem('user_token');
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            const res = await getProfile(token);
+
+            setProfile(res.data.data);
+        };
+
+        fetchUser();
+    }, [token]);
 
     const handleLogout = () => {
         localStorage.removeItem('user_token');
         setIsLogin(false);
+        window.location.reload();
     };
 
-    // useEffect(() => {
-    //     const token = localStorage.getItem('user_token');
-    //     const storedUser = localStorage.getItem('user');
-
-    //     if (token && storedUser) {
-    //         setIsLogin(true);
-    //         setUser(JSON.parse(storedUser)); // 👈 Gán user vào state
-    //     }
-    // }, []);
+    // Manage body overflow when any modal is open
+    useEffect(() => {
+        if (currentModal) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [currentModal]);
 
     return (
         <>
@@ -51,18 +72,14 @@ function Header() {
                                     Trang chủ
                                 </Link>
                             </li>
+
                             <li className="nav-item">
-                                <Link className="nav-link" to="/">
-                                    Bài thi thử
-                                </Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link className="nav-link" to="/">
+                                <Link className="nav-link" to="/dictionary">
                                     Từ vựng
                                 </Link>
                             </li>
                             <li className="nav-item">
-                                <Link className="nav-link" to="/">
+                                <Link className="nav-link" to="/grammar">
                                     Ngữ pháp
                                 </Link>
                             </li>
@@ -78,59 +95,51 @@ function Header() {
                                 <button
                                     type="button"
                                     className="btn btn-primary me-2"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#loginModal"
+                                    onClick={() => setCurrentModal('login')}
                                 >
                                     Đăng nhập
                                 </button>
                             </div>
                         ) : (
-                            <div className="ms-3 dropdown">
+                            <div className="dropdown">
                                 <div
-                                    className="user-info d-flex align-items-center"
+                                    className="user-info d-flex align-items-center p-0"
                                     id="userDropdown"
                                     role="button"
                                     data-bs-toggle="dropdown"
                                     aria-expanded="false"
                                 >
                                     <div className="user-avatar">
-                                        <img src="/public/images/logo_black.png" alt="Avatar" />
+                                        <img src={profile && profile.url_hinh_dai_dien} alt="Avatar" />
                                     </div>
-                                    <span className="user-name d-none d-md-block">Trần Minh Trung</span>
+                                    <span className="user-name">{profile && profile.ho_ten}</span>
                                 </div>
 
                                 <ul className="dropdown-menu dropdown-menu-end mt-2" aria-labelledby="userDropdown">
-                                    <li className="dropdown-header">
-                                        <div>Trần Minh Trung</div>
-                                        <div className="user-status">Premium Member</div>
-                                    </li>
                                     <li>
-                                        <hr className="dropdown-divider" />
-                                    </li>
-                                    <li>
-                                        <a className="dropdown-item" href="#">
+                                        <Link className="dropdown-item" to="/my-account">
                                             <i className="fas fa-user"></i> Thông tin cá nhân
-                                        </a>
+                                        </Link>
                                     </li>
                                     <li>
-                                        <a className="dropdown-item" href="#">
+                                        <Link className="dropdown-item" to="/course">
                                             <i className="fas fa-book"></i> Khóa học của tôi
-                                        </a>
+                                        </Link>
                                     </li>
                                     <li>
-                                        <a className="dropdown-item" href="#">
+                                        <Link className="dropdown-item" to="/history">
                                             <i className="fas fa-history"></i> Lịch sử bài thi
-                                        </a>
+                                        </Link>
                                     </li>
                                     <li>
-                                        <a className="dropdown-item" href="#">
+                                        <Link className="dropdown-item" to="/archive">
                                             <i className="fas fa-star"></i> Bài thi đã lưu
-                                        </a>
+                                        </Link>
                                     </li>
                                     <li>
-                                        <a className="dropdown-item" href="#">
+                                        <Link className="dropdown-item" to="/setting">
                                             <i className="fas fa-cog"></i> Cài đặt
-                                        </a>
+                                        </Link>
                                     </li>
                                     <li>
                                         <hr className="dropdown-divider" />
@@ -147,11 +156,43 @@ function Header() {
                 </div>
             </nav>
 
-            <Login setIsLogin={setIsLogin} />
-            <Register />
-            <ForgotPassword email={email} setEmail={setEmail} />
-            <VerifyOTP email={email} />
-            <ResetPassword email={email} />
+            <AnimatePresence>
+                <Login
+                    key="login"
+                    isOpen={currentModal === 'login'}
+                    onSwitch={setCurrentModal}
+                    onClose={closeModal}
+                    setIsLogin={setIsLogin}
+                />
+                <Register
+                    key="register"
+                    isOpen={currentModal === 'register'}
+                    onSwitch={setCurrentModal}
+                    onClose={closeModal}
+                />
+                <ForgotPassword
+                    key="forgot"
+                    isOpen={currentModal === 'forgot'}
+                    onSwitch={setCurrentModal}
+                    onClose={closeModal}
+                    email={email}
+                    setEmail={setEmail}
+                />
+                <VerifyOTP
+                    key="otp"
+                    isOpen={currentModal === 'otp'}
+                    onSwitch={setCurrentModal}
+                    onClose={closeModal}
+                    email={email}
+                />
+                <ResetPassword
+                    key="reset"
+                    isOpen={currentModal === 'reset'}
+                    onSwitch={setCurrentModal}
+                    onClose={closeModal}
+                    email={email}
+                />
+            </AnimatePresence>
         </>
     );
 }

@@ -6,7 +6,10 @@ function AdminLayout() {
         <>
             <div className="container-fluid">
                 <div className="row">
-                    <Sidebar />
+                    <div className="col-md-2 p-0 sidebar">
+                        <Sidebar />
+                    </div>
+
                     <div className="col-md-10 content-wrapper p-4">
                         <Outlet />
                     </div>

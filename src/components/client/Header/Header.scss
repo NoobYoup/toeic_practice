@@ -170,3 +170,7 @@
         right: -10px;
     }
 }
+
+.modal.no-animate {
+    transition: none !important;
+}

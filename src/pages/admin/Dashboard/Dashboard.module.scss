@@ -1,0 +1,101 @@
+.content-wrapper {
+    min-height: 100vh;
+    background-color: #f5f5f5;
+}
+.card {
+    margin-bottom: 20px;
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+.card-stat {
+    border-left: 4px solid;
+    transition: transform 0.3s;
+}
+.card-stat:hover {
+    transform: translateY(-5px);
+}
+.card-stat-primary {
+    border-left-color: #4e73df;
+}
+.card-stat-success {
+    border-left-color: #1cc88a;
+}
+.card-stat-info {
+    border-left-color: #36b9cc;
+}
+.card-stat-warning {
+    border-left-color: #f6c23e;
+}
+.card-stat-danger {
+    border-left-color: #e74a3b;
+}
+.card-stat-icon {
+    opacity: 0.4;
+    font-size: 2rem;
+}
+.progress-sm {
+    height: 8px;
+}
+.chart-container {
+    height: 300px;
+}
+.recent-activity-item {
+    border-left: 2px solid #e0e0e0;
+    padding-left: 20px;
+    position: relative;
+    padding-bottom: 20px;
+}
+.recent-activity-item:before {
+    content: '';
+    position: absolute;
+    left: -8px;
+    top: 0;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background-color: #fff;
+    border: 2px solid #007bff;
+}
+.recent-activity-item:last-child {
+    padding-bottom: 0;
+}
+.recent-activity-time {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+.task-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    border-bottom: 1px solid #e9ecef;
+}
+.task-item:last-child {
+    border-bottom: none;
+}
+.task-checkbox {
+    margin-right: 15px;
+}
+.task-priority {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 10px;
+}
+.priority-high {
+    background-color: #e74a3b;
+}
+.priority-medium {
+    background-color: #f6c23e;
+}
+.priority-low {
+    background-color: #1cc88a;
+}
+.question-type-listening {
+    background-color: #cce5ff;
+    color: #004085;
+}
+.question-type-reading {
+    background-color: #fff3cd;
+    color: #856404;
+}

@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { forgotPassword } from '@/services/authService.jsx';
+import { motion, AnimatePresence } from 'framer-motion';
 
-function ForgotPassword({ email, setEmail }) {
+function ForgotPassword({ isOpen, onSwitch, onClose, email, setEmail }) {
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
     const [loadingAPI, setLoadingAPI] = useState(false);
+    const modalRef = useRef(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -15,6 +17,7 @@ function ForgotPassword({ email, setEmail }) {
         try {
             const res = await forgotPassword({ email });
             setMessage(res.message || 'Mã OTP đã được gửi đến email của bạn');
+            onSwitch('otp'); // Switch to OTP modal on success
         } catch (err) {
             const msg = err.response?.data?.message || 'Không thể gửi mã OTP. Vui lòng thử lại.';
             setError(msg);
@@ -22,68 +25,77 @@ function ForgotPassword({ email, setEmail }) {
         setLoadingAPI(false);
     };
 
-    return (
-        <div
-            className="modal fade"
-            id="forgotPasswordModal"
-            tabIndex="-1"
-            role="dialog"
-            aria-labelledby="registerModalLabel"
-            aria-hidden="true"
-        >
-            <div className="modal-dialog login-container" role="document">
-                <div className="modal-content border-0">
-                    <button
-                        type="button"
-                        className="btn-close ms-auto"
-                        data-bs-dismiss="modal"
-                        aria-label="Đóng"
-                    ></button>
-                    <h2 className="text-center mb-4">Quên mật khẩu</h2>
-                    {message && <div className="alert alert-success text-center">{message}</div>}
-                    {error && <div className="alert alert-danger text-center">{error}</div>}
-                    <form onSubmit={handleSubmit}>
-                        <div className="mb-3">
-                            <label htmlFor="email" className="form-label">
-                                Email
-                            </label>
-                            <input
-                                type="email"
-                                className="form-control"
-                                id="email"
-                                placeholder="Nhập email của bạn"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                            />
-                        </div>
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (modalRef.current && !modalRef.current.contains(e.target)) {
+                onClose();
+            }
+        };
+        if (isOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isOpen, onClose]);
 
-                        <div className="d-grid mb-3">
-                            <button
-                                type="submit"
-                                data-bs-toggle="modal"
-                                data-bs-target="#otpModal"
-                                data-bs-dismiss="modal"
-                                className="btn btn-primary"
-                            >
-                                {loadingAPI && <i className="fas fa-spinner fa-spin me-2"></i>}
-                                Gửi
-                            </button>
+    return (
+        <AnimatePresence>
+            {isOpen && (
+                <motion.div
+                    className="modal d-block"
+                    key="forgot-modal"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+                >
+                    <motion.div
+                        className="modal-dialog login-container"
+                        role="document"
+                        initial={{ y: '-30px', opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: '-30px', opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                    >
+                        <div className="modal-content border-0" ref={modalRef}>
+                            <button type="button" className="btn-close ms-auto" onClick={onClose}></button>
+                            <h2 className="text-center mb-4">Quên mật khẩu</h2>
+                            {message && <div className="alert alert-success text-center">{message}</div>}
+                            {error && <div className="alert alert-danger text-center">{error}</div>}
+                            <form onSubmit={handleSubmit}>
+                                <div className="mb-3">
+                                    <label htmlFor="email" className="form-label">
+                                        Email
+                                    </label>
+                                    <input
+                                        type="email"
+                                        className="form-control"
+                                        id="email"
+                                        placeholder="Nhập email của bạn"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="d-grid mb-3">
+                                    <button type="submit" className="btn btn-primary" disabled={loadingAPI}>
+                                        {loadingAPI && <i className="fas fa-spinner fa-spin me-2"></i>}
+                                        Gửi
+                                    </button>
+                                </div>
+                            </form>
+                            <div className="text-center mt-3">
+                                <a href="#" className="text-primary" onClick={() => onSwitch('login')}>
+                                    <i className="fa-solid fa-arrow-left me-2"></i>Quay lại
+                                </a>
+                            </div>
                         </div>
-                    </form>
-                    <div className="text-center mt-3">
-                        <a
-                            href="#"
-                            className="text-primary"
-                            data-bs-toggle="modal"
-                            data-bs-target="#loginModal"
-                            data-bs-dismiss="modal"
-                        >
-                            <i className="fa-solid fa-arrow-left me-2"></i>Quay lại
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
+                    </motion.div>
+                </motion.div>
+            )}
+        </AnimatePresence>
     );
 }
 

@@ -1,0 +1,100 @@
+.content-wrapper {
+    min-height: 100vh;
+    background-color: #f5f5f5;
+}
+.card {
+    margin-bottom: 20px;
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+.user-status-active {
+    background-color: #d4edda;
+    color: #155724;
+}
+.user-status-inactive {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+.user-status-pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+.role-admin {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+.role-teacher {
+    background-color: #e2e3e5;
+    color: #383d41;
+}
+.role-student {
+    background-color: #cce5ff;
+    color: #004085;
+}
+.stats-card {
+    border-left: 4px solid;
+}
+.stats-card.total {
+    border-left-color: #007bff;
+}
+.stats-card.active-users {
+    border-left-color: #28a745;
+}
+.stats-card.new-users {
+    border-left-color: #ffc107;
+}
+.stats-card.inactive-users {
+    border-left-color: #dc3545;
+}
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+}
+.bulk-actions {
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 20px;
+    display: none;
+}
+.bulk-actions.show {
+    display: block;
+}
+tr.selected-row {
+    background-color: rgba(0, 123, 255, 0.1);
+}
+.activity-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+.activity-online {
+    background-color: #28a745;
+}
+.activity-offline {
+    background-color: #6c757d;
+}
+.password-strength {
+    height: 5px;
+    border-radius: 3px;
+    margin-top: 5px;
+}
+.strength-weak {
+    background-color: #dc3545;
+}
+.strength-medium {
+    background-color: #ffc107;
+}
+.strength-strong {
+    background-color: #28a745;
+}

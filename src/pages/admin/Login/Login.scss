@@ -5,3 +5,13 @@
     min-height: 100vh; /* 确保占满屏幕高度 */
     margin: 0;
 }
+
+.input-password {
+    position: relative;
+    i {
+        position: absolute;
+        top: 12px;
+        right: 10px;
+        cursor: pointer;
+    }
+}
