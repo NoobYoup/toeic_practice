@@ -18,6 +18,7 @@ function Account() {
     useEffect(() => {
         const fetchUser = async () => {
             const res = await getProfile(token);
+            console.log(res.data.data);
 
             setProfile(res.data.data);
         };
@@ -26,37 +27,29 @@ function Account() {
     }, [token]);
     return (
         <>
-            {profile ? (
+            {profile && profile.ho_so ? (
                 <section className={cx('profile-header')}>
                     <div className="container">
                         <div className="row align-items-center">
                             <div className="col-lg-8">
                                 <div className="d-flex align-items-center">
                                     <img
-                                        src={profile && profile.url_hinh_dai_dien}
+                                        src={profile.ho_so.url_hinh_dai_dien || '/images/logo_black.png'}
                                         alt="Profile Picture"
                                         className={`${cx('profile-avatar')} me-4`}
                                     />
                                     <div>
-                                        <h1 className="mb-2">{profile && profile.ho_ten}</h1>
+                                        <h1 className="mb-2">{profile.ho_so.ho_ten}</h1>
                                         <p className="mb-2">
                                             <i className="fas fa-envelope me-2"></i>
-                                            {profile && profile.NguoiDung.email}
+                                            {profile.email}
                                         </p>
                                         <div className="d-flex align-items-center mb-2">
                                             <i className="fas fa-calendar-alt me-2"></i>
                                             <span>
-                                                {format(
-                                                    new Date(profile && profile.thoi_gian_tao),
-                                                    'dd/MM/yyyy HH:mm',
-                                                    {
-                                                        locale: vi,
-                                                    },
-                                                )}
-                                            </span>
-
-                                            <span className={`${cx('level-badge', 'level-intermediate')} ms-3`}>
-                                                Trung cấp
+                                                {format(new Date(profile.ho_so?.thoi_gian_tao), 'dd/MM/yyyy HH:mm', {
+                                                    locale: vi,
+                                                })}
                                             </span>
                                         </div>
                                         <div className="d-flex align-items-center">
@@ -76,7 +69,32 @@ function Account() {
                         </div>
                     </div>
                 </section>
-            ) : null}
+            ) : (
+                <section className={cx('profile-header')}>
+                    <div className="container">
+                        <div className="row align-items-center">
+                            <div className="col-lg-8">
+                                <div className="d-flex align-items-center">
+                                    <img
+                                        src="/images/logo_black.png"
+                                        alt="Profile Picture"
+                                        className={`${cx('profile-avatar')} me-4`}
+                                    />
+
+                                    <div>
+                                        <h5 className="mb-2">Hãy cập nhật hồ sơ của bạn ngay !!</h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                                <Link className="btn btn-lg btn-outline-light" to="/my-account/edit">
+                                    <i className="fas fa-edit me-2"></i>Chỉnh sửa thông tin
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            )}
 
             <Dashboard />
         </>

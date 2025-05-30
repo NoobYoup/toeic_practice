@@ -1,8 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
-import { getProfile, updateProfile } from '@/services/userService.jsx';
-import { toast } from 'react-toastify';
-
+import { getProfile, editUser } from '@/services/userService.jsx';
 import classNames from 'classnames/bind';
 import styles from './EditAccount.module.scss';
 
@@ -11,6 +9,7 @@ const cx = classNames.bind(styles);
 function Information() {
     const navigate = useNavigate();
     const fileInputRef = useRef(null);
+    const token = localStorage.getItem('user_token');
     const [profile, setProfile] = useState(null);
     const [formData, setFormData] = useState({
         ten_dang_nhap: '',
@@ -26,14 +25,13 @@ function Information() {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
 
-    const token = localStorage.getItem('user_token');
-
     useEffect(() => {
         const fetchProfile = async () => {
             setLoading(true);
             try {
                 const res = await getProfile(token);
                 const userData = res.data.data;
+
                 setProfile(userData);
                 setFormData({
                     ten_dang_nhap: userData.ten_dang_nhap || '',
@@ -69,7 +67,7 @@ function Information() {
 
     const handleInputChange = (e) => {
         const { id, value } = e.target;
-        setFormData((prevData) => ({ prevData, ...prevData, [id]: value }));
+        setFormData((prev) => ({ ...prev, [id]: value }));
     };
 
     const handleFileChange = (e) => {
@@ -98,9 +96,21 @@ function Information() {
         setSuccess(null);
         setLoading(true);
 
-        let res;
+        // Validate required fields
+        if (formData.ten_dang_nhap.length < 3 || formData.ten_dang_nhap.length > 20) {
+            setError('Tên đăng nhập phải từ 3-20 ký tự');
+            setLoading(false);
+            return;
+        }
+        if (!formData.ho_ten) {
+            setError('Họ và tên là bắt buộc');
+            setLoading(false);
+            return;
+        }
+
         try {
-            res = await updateProfile(formData, selectedFile, token);
+            // Assume profile.id is the user ID
+            const res = await editUser(profile.id, formData, selectedFile);
             console.log('API Response:', res.data);
 
             setSuccess('Cập nhật hồ sơ thành công!');
@@ -125,17 +135,16 @@ function Information() {
             setTimeout(() => navigate('/my-account'), 2000);
         } catch (err) {
             console.error('Error updating profile:', err);
-            // toast.error(res.data.message);
-            // let errorMessage = 'Không thể cập nhật hồ sơ';
-            // if (err.response) {
-            //     if (err.response.status === 401) {
-            //         errorMessage = 'Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.';
-            //         setTimeout(() => navigate('/admin'), 2000);
-            //     } else if (err.response.data?.message) {
-            //         errorMessage = err.response.data.message;
-            //     }
-            // }
-            // setError(errorMessage);
+            let errorMessage = 'Không thể cập nhật hồ sơ';
+            if (err.response) {
+                if (err.response.status === 401) {
+                    errorMessage = 'Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.';
+                    setTimeout(() => navigate('/admin'), 2000);
+                } else if (err.response.data?.message) {
+                    errorMessage = err.response.data.message;
+                }
+            }
+            setError(errorMessage);
         }
         setLoading(false);
     };
@@ -257,6 +266,7 @@ function Information() {
                                     id="ho_ten"
                                     value={formData.ho_ten}
                                     onChange={handleInputChange}
+                                    required
                                 />
                                 <label htmlFor="ho_ten">Họ và tên *</label>
                             </div>

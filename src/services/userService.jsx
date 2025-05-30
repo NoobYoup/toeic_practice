@@ -42,7 +42,13 @@ const editUser = (id, userData, file) => {
 
     // Append file if provided
     if (file) {
-        formData.append('avatar', file);
+        formData.append('url_hinh_dai_dien', file); // Changed from 'url_hinh_dai_dien' to 'avatar'
+        console.log('File appended:', file.name, file.type, file.size); // Debug file info
+    }
+
+    // Log formData contents for debugging
+    for (let [key, value] of formData.entries()) {
+        console.log(`FormData: ${key} =`, value);
     }
 
     return axios.put(`${API}/users/edit/${id}`, formData, {
@@ -56,4 +62,34 @@ const getProfile = (token) => {
     });
 };
 
-export { getAllUser, getDetailUser, deleteUser, editUser, getProfile };
+const updateProfile = (userData, file, token) => {
+    const formData = new FormData();
+    Object.keys(userData).forEach((key) => {
+        formData.append(key, userData[key]);
+    });
+    if (file) {
+        formData.append('url_hinh_dai_dien', file);
+        console.log('File appended:', file.name, file.type, file.size);
+    }
+    for (let [key, value] of formData.entries()) {
+        console.log(`FormData: ${key} =`, value);
+    }
+    return axios.put(`${API}/users/update-profile`, formData, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data',
+        },
+    });
+};
+
+const changeUserStatus = (id, status) => {
+    const token = localStorage.getItem('admin_token');
+
+    return axios.put(`${API}/users/change-status/${id}`, status, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+export { getAllUser, getDetailUser, deleteUser, editUser, getProfile, updateProfile, changeUserStatus };

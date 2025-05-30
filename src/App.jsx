@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 
 import MainLayout from './layouts/MainLayout.jsx';
 
@@ -64,25 +65,34 @@ function App() {
                     <Route path="/admin" element={<AdminPrivateRoute />}>
                         <Route element={<AdminLayout />}>
                             <Route path="/admin/dashboard" element={<Dashboard />} />
-                            <Route path="/admin/exam" element={<Exam />} />
                             <Route path="/admin/question-bank" element={<QuestionBank />} />
                             <Route path="/admin/user" element={<User />} />
-                            <Route path="/admin/permission" element={<Permission />} />
                             <Route path="/admin/setting" element={<Setting />} />
-
-                            <Route path="/admin/user/edit-user/:id" element={<EditUser />} />
-                            <Route path="/admin/user/detail-user/:id" element={<DetailUser />} />
-
+                            <Route path="/admin/permission" element={<Permission />} />
                             <Route path="/admin/question-bank/edit-question" element={<EditQuestionBank />} />
                             <Route path="/admin/question-bank/create-question" element={<CreateQuestionBank />} />
                             <Route path="/admin/question-bank/detail-question" element={<DetailQuestionBank />} />
 
+                            <Route path="/admin/exam" element={<Exam />} />
                             <Route path="/admin/exam/create-exam" element={<CreateExam />} />
                             <Route path="/admin/exam/edit-exam" element={<EditExam />} />
+
+                            <Route path="/admin/user/edit-user/:id" element={<EditUser />} />
+                            <Route path="/admin/user/detail-user/:id" element={<DetailUser />} />
                         </Route>
                     </Route>
                 </Routes>
             </BrowserRouter>
+
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick
+                pauseOnHover
+                draggable
+            />
         </>
     );
 }

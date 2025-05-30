@@ -62,30 +62,21 @@ function QuestionBank() {
 
                 <div className="card mb-4">
                     <div className="card-body">
-                        <h5 className="card-title mb-3">Tìm kiếm và lọc câu hỏi</h5>
                         <div className="row g-3">
-                            <div className="col-md-6">
-                                <div className="input-group">
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        placeholder="Nhập từ khóa tìm kiếm..."
-                                    />
-                                    <button className="btn btn-outline-secondary" type="button">
-                                        <i className="fas fa-search"></i>
-                                    </button>
-                                </div>
-                            </div>
                             <div className="col-md-3">
-                                <select className="form-select" id="questionType">
-                                    <option value="">Tất cả loại câu hỏi</option>
+                                <select className="form-select" id="questionType" defaultValue="">
+                                    <option value="" disabled>
+                                        Tất cả loại câu hỏi
+                                    </option>
                                     <option value="listening">Listening</option>
                                     <option value="reading">Reading</option>
                                 </select>
                             </div>
                             <div className="col-md-3">
-                                <select className="form-select" id="questionPart">
-                                    <option value="">Tất cả các phần</option>
+                                <select className="form-select" id="questionPart" defaultValue="">
+                                    <option value="" disabled>
+                                        Tất cả các phần
+                                    </option>
                                     <option value="part1">Part 1</option>
                                     <option value="part2">Part 2</option>
                                     <option value="part3">Part 3</option>
@@ -93,6 +84,26 @@ function QuestionBank() {
                                     <option value="part5">Part 5</option>
                                     <option value="part6">Part 6</option>
                                     <option value="part7">Part 7</option>
+                                </select>
+                            </div>
+                            <div className="col-md-3">
+                                <select className="form-select" id="questionLevel" defaultValue="">
+                                    <option value="" disabled>
+                                        Mức độ khó
+                                    </option>
+                                    <option value="de">Dễ</option>
+                                    <option value="trung-binh">Trung bình</option>
+                                    <option value="kho">Khó</option>
+                                </select>
+                            </div>
+                            <div className="col-md-3">
+                                <select className="form-select" id="questionStatus" defaultValue="">
+                                    <option value="" disabled>
+                                        Trạng thái
+                                    </option>
+                                    <option value="hoat_dong">Hoạt động</option>
+                                    <option value="ban_nhap">Bản nháp</option>
+                                    <option value="luu_tru">Lưu trữ</option>
                                 </select>
                             </div>
                         </div>

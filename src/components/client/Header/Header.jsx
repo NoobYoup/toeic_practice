@@ -11,6 +11,8 @@ import ResetPassword from '../Modal/ResetPassword.jsx';
 
 import { getProfile } from '@/services/userService.jsx';
 
+const DEFAULT_AVATAR = '/images/logo_black.png';
+
 function Header() {
     const [isLogin, setIsLogin] = useState(false);
     const [email, setEmail] = useState('');
@@ -23,9 +25,17 @@ function Header() {
 
     useEffect(() => {
         const fetchUser = async () => {
-            const res = await getProfile(token);
+            if (!token) return;
 
-            setProfile(res.data.data);
+            try {
+                const res = await getProfile(token);
+                setProfile(res.data.data);
+                setIsLogin(true);
+            } catch (err) {
+                console.log(err);
+                setIsLogin(false);
+                localStorage.removeItem('user_token');
+            }
         };
 
         fetchUser();
@@ -34,6 +44,7 @@ function Header() {
     const handleLogout = () => {
         localStorage.removeItem('user_token');
         setIsLogin(false);
+        setProfile(null);
         window.location.reload();
     };
 
@@ -74,6 +85,11 @@ function Header() {
                             </li>
 
                             <li className="nav-item">
+                                <Link className="nav-link" to="/test">
+                                    Bài thi thử
+                                </Link>
+                            </li>
+                            <li className="nav-item">
                                 <Link className="nav-link" to="/dictionary">
                                     Từ vựng
                                 </Link>
@@ -110,9 +126,9 @@ function Header() {
                                     aria-expanded="false"
                                 >
                                     <div className="user-avatar">
-                                        <img src={profile && profile.url_hinh_dai_dien} alt="Avatar" />
+                                        <img src={profile?.ho_so?.url_hinh_dai_dien || DEFAULT_AVATAR} alt="Avatar" />
                                     </div>
-                                    <span className="user-name">{profile && profile.ho_ten}</span>
+                                    <span className="user-name">{profile?.ho_so?.ho_ten}</span>
                                 </div>
 
                                 <ul className="dropdown-menu dropdown-menu-end mt-2" aria-labelledby="userDropdown">

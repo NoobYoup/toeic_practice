@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { getDetailUser, editUser } from '@/services/userService.jsx';
+import { toast } from 'react-toastify';
 
 import classNames from 'classnames/bind';
 import styles from './EditUser.module.scss';
@@ -10,11 +11,12 @@ const cx = classNames.bind(styles);
 function EditUser() {
     const { id } = useParams(); // lấy ID từ URL
     const navigate = useNavigate();
+    const fileInputRef = useRef(null); // Ref for file input
     const [user, setUser] = useState(null);
     const [formData, setFormData] = useState({
         ten_dang_nhap: '',
         email: '',
-        trang_thai: '',
+        trang_thai: 'hoat_dong',
         ho_ten: '',
         dia_chi: '',
         ngay_sinh: '',
@@ -37,9 +39,9 @@ function EditUser() {
                 setUser(userData);
 
                 setFormData({
-                    ten_dang_nhap: userData.NguoiDung.ten_dang_nhap || '',
-                    email: userData.NguoiDung.email || '',
-                    trang_thai: userData.trang_thai || '',
+                    ten_dang_nhap: userData.nguoi_dung.ten_dang_nhap || '',
+                    email: userData.nguoi_dung.email || '',
+                    trang_thai: userData.trang_thai || 'hoat_dong',
                     ho_ten: userData.ho_ten || '',
                     dia_chi: userData.dia_chi || '',
                     ngay_sinh: userData.ngay_sinh || '',
@@ -64,6 +66,15 @@ function EditUser() {
         fetchUser();
     }, [id]);
 
+    useEffect(() => {
+        // Cleanup preview URL to prevent memory leaks
+        return () => {
+            if (previewUrl && selectedFile) {
+                URL.revokeObjectURL(previewUrl);
+            }
+        };
+    }, [previewUrl, selectedFile]);
+
     const handleInputChange = (e) => {
         const { id, value } = e.target;
         setFormData((prev) => ({ ...prev, [id]: value }));
@@ -77,9 +88,10 @@ function EditUser() {
 
         try {
             const res = await editUser(id, formData, selectedFile);
-            console.log('check res: ', res);
+            console.log('API Response:', res.data);
+            toast.success(res.data.message);
 
-            setSuccess('Cập nhật thông tin người dùng thành công!');
+            // setSuccess('Cập nhật thông tin người dùng thành công!');
             //Update user state with new image URL if returned
             if (res.data.data?.url_hinh_dai_dien) {
                 setUser((prev) => ({
@@ -89,17 +101,13 @@ function EditUser() {
                 setPreviewUrl(res.data.data.url_hinh_dai_dien);
             }
             setSelectedFile(null); // Clear file input
-            // Đợi 2 giây trước khi chuyển hướng để người dùng thấy thông báo
-            setTimeout(() => {
-                navigate(`/admin/user/detail-user/${id}`);
-            }, 2000);
+            if (fileInputRef.current) {
+                fileInputRef.current.value = ''; // Clear file input
+            }
+
+            navigate(`/admin/user/detail-user/${id}`);
         } catch (err) {
             console.error('Error updating user:', err);
-            if (err.response?.status === 401) {
-                setError('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
-            } else {
-                setError('Không thể cập nhật thông tin người dùng');
-            }
         }
         setLoading(false);
     };
@@ -152,9 +160,9 @@ function EditUser() {
                             <div className="col-md-3 text-center">
                                 <img src={previewUrl} alt="Avatar" className={cx('profile-avatar')} />
                             </div>
-                            <div class="col-md-9">
+                            <div className="col-md-9">
                                 <h6>Thay đổi ảnh đại diện</h6>
-                                <p class="text-muted mb-3">
+                                <p className="text-muted mb-3">
                                     Chọn ảnh có kích thước tối thiểu 200x200px. Định dạng: JPG, PNG, GIF.
                                 </p>
                                 <input
@@ -162,10 +170,11 @@ function EditUser() {
                                     accept="image/*"
                                     id="avatar-upload"
                                     className="d-none"
+                                    ref={fileInputRef}
                                     onChange={handleFileChange}
                                 />
-                                <label htmlFor="avatar-upload" class="btn btn-outline-primary me-2">
-                                    <i class="fas fa-upload me-2"></i>Tải ảnh lên
+                                <label htmlFor="avatar-upload" className="btn btn-outline-primary me-2">
+                                    <i className="fas fa-upload me-2"></i>Tải ảnh lên
                                 </label>
                             </div>
                         </div>
@@ -220,7 +229,7 @@ function EditUser() {
                                             type="email"
                                             className={`${cx('form-control')} form-control`}
                                             id="email"
-                                            value={user.NguoiDung.email}
+                                            value={user.nguoi_dung.email}
                                             readOnly
                                             disabled
                                         />
@@ -239,9 +248,9 @@ function EditUser() {
                                         className={`${cx('form-control')} form-control`}
                                         id="vai_tro"
                                         value={
-                                            user.NguoiDung.vai_tro === 'nguoi_dung'
+                                            user.nguoi_dung.vai_tro === 'nguoi_dung'
                                                 ? 'Người dùng'
-                                                : user.NguoiDung.vai_tro === 'admin'
+                                                : user.nguoi_dung.vai_tro === 'admin'
                                                 ? 'Quản trị viên'
                                                 : ''
                                         }
@@ -385,19 +394,15 @@ function EditUser() {
                                         value={formData.trang_thai}
                                         onChange={handleInputChange}
                                     >
-                                        {user.NguoiDung.trang_thai === 'hoat_dong' ? (
+                                        {user.nguoi_dung.trang_thai === 'hoat_dong' ? (
                                             <>
-                                                <option value="hoat_dong" selected>
-                                                    Hoạt động
-                                                </option>
+                                                <option value="hoat_dong">Hoạt động</option>
                                                 <option value="khong_hoat_dong">Không hoạt động</option>
                                             </>
                                         ) : (
                                             <>
                                                 <option value="khong_hoat_dong">Không hoạt động</option>
-                                                <option value="hoat_dong" selected>
-                                                    Hoạt động
-                                                </option>
+                                                <option value="hoat_dong">Hoạt động</option>
                                             </>
                                         )}
                                     </select>

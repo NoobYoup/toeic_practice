@@ -21,7 +21,6 @@ function DetailUser() {
             setLoading(true);
             try {
                 const res = await getDetailUser(id);
-
                 setUser(res.data.data.user);
             } catch (err) {
                 console.error(err);
@@ -72,7 +71,7 @@ function DetailUser() {
                 <div className={`${cx('profile-header')} shadow-sm`}>
                     <div className={cx('status-badge')}>
                         <span className={`${cx('status-active')} badge px-3 py-2`}>
-                            {user.NguoiDung.trang_thai === 'hoat_dong' ? 'Hoạt động' : ''}
+                            {user.nguoi_dung.trang_thai === 'hoat_dong' ? 'Hoạt động' : ''}
                         </span>
                     </div>
                     <div className="row align-items-center">
@@ -90,10 +89,10 @@ function DetailUser() {
                             </p>
                             <p className="mb-2">
                                 <i className="fas fa-at me-2"></i>
-                                {user.NguoiDung.email}
+                                {user.nguoi_dung.email}
                             </p>
                             <p className="mb-2">
-                                <i className="fas fa-id-badge me-2"></i>Tên đăng nhập: {user.NguoiDung.ten_dang_nhap}
+                                <i className="fas fa-id-badge me-2"></i>Tên đăng nhập: {user.nguoi_dung.ten_dang_nhap}
                             </p>
                             <p className="mb-2">
                                 <i className="fa-solid fa-phone me-2"></i>Số điện thoại: {user.so_dien_thoai}

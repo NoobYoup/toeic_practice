@@ -1,8 +1,13 @@
 import { Link } from 'react-router-dom';
-import './User.scss';
+import { toast } from 'react-toastify';
 import { useEffect, useState } from 'react';
 import { debounce } from 'lodash';
-import { getAllUser, deleteUser } from '@/services/userService.jsx';
+import { getAllUser, deleteUser, changeUserStatus } from '@/services/userService.jsx';
+
+import classNames from 'classnames/bind';
+import styles from './User.module.scss';
+
+const cx = classNames.bind(styles);
 
 function User() {
     const [users, setUsers] = useState([]);
@@ -18,6 +23,8 @@ function User() {
             setLoading(true);
             try {
                 const res = await getAllUser(searchTerm, currentPage);
+                console.log(res.data);
+
                 setUsers(res.data.data);
                 setTotalPages(res.data.totalPages);
             } catch (error) {
@@ -75,6 +82,16 @@ function User() {
         setIdSortOrder(idSortOrder === 'asc' ? 'desc' : 'asc');
     };
 
+    const handleChangeStatus = async (users) => {
+        const newStatus = users.trang_thai === 'hoat_dong' ? 'khong_hoat_dong' : 'hoat_dong';
+
+        const res = await changeUserStatus(users.id_nguoi_dung, newStatus);
+        setUsers((prev) =>
+            prev.map((u) => (u.id_nguoi_dung === users.id_nguoi_dung ? { ...u, trang_thai: newStatus } : u)),
+        );
+        toast.success(res.data.message);
+    };
+
     return (
         <>
             <div className="d-flex justify-content-between align-items-center mb-4">
@@ -130,15 +147,37 @@ function User() {
                                                 </td>
                                                 <td>
                                                     <div>
-                                                        <div className="fw-bold">{user.HoSoNguoiDung.ho_ten}</div>
+                                                        <div className="fw-bold">{user.ho_so.ho_ten}</div>
                                                     </div>
                                                 </td>
                                                 <td>{user.email}</td>
                                                 <td>
-                                                    <span className="">{user.vai_tro}</span>
+                                                    <span
+                                                        className={`${cx('role-student')} badge rounded-pill px-3 py-2`}
+                                                    >
+                                                        {user.vai_tro === 'nguoi_dung'
+                                                            ? 'Người dùng'
+                                                            : user.vai_tro === 'admin'
+                                                            ? 'Quản trị viên'
+                                                            : ''}
+                                                    </span>
                                                 </td>
                                                 <td>
-                                                    <span className="">{user.trang_thai}</span>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleChangeStatus(user)}
+                                                        className={`${cx(
+                                                            user.trang_thai === 'hoat_dong'
+                                                                ? 'user-status-active'
+                                                                : 'user-status-inactive',
+                                                        )} badge rounded-pill px-3 py-2 border-0`}
+                                                    >
+                                                        {user.trang_thai === 'hoat_dong'
+                                                            ? 'Hoạt động'
+                                                            : user.trang_thai === 'khong_hoat_dong'
+                                                            ? 'Không hoạt động'
+                                                            : ''}
+                                                    </button>
                                                 </td>
 
                                                 <td>

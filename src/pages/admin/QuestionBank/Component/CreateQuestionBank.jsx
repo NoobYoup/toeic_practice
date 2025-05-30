@@ -3,8 +3,83 @@ import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { Link } from 'react-router-dom';
 
+import classNames from 'classnames/bind';
+import styles from './CreateQuestionBank.module.scss';
+
+const cx = classNames.bind(styles);
+
 function CreateQuestionBank() {
     const [content, setContent] = useState('');
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [selectedAudio, setSelectedAudio] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
+    const [audioPreview, setAudioPreview] = useState(null);
+    const [formData, setFormData] = useState({
+        id_phan: 1, // Mặc định là Part 1
+        noi_dung: '',
+        dap_an_dung: '',
+        giai_thich: '',
+        muc_do_kho: 'de',
+        trang_thai: 'da_xuat_ban',
+        nguon_goc: 'thu_cong',
+        lua_chon: [
+            { ky_tu_lua_chon: 'A', noi_dung: '' },
+            { ky_tu_lua_chon: 'B', noi_dung: '' },
+            { ky_tu_lua_chon: 'C', noi_dung: '' },
+            { ky_tu_lua_chon: 'D', noi_dung: '' },
+        ],
+    });
+
+    // Xử lý upload ảnh
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setSelectedImage(file);
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                setImagePreview(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    // Xử lý upload audio
+    const handleAudioChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setSelectedAudio(file);
+            const url = URL.createObjectURL(file);
+            setAudioPreview(url);
+        }
+    };
+
+    // Xóa ảnh
+    const removeImage = () => {
+        setSelectedImage(null);
+        setImagePreview(null);
+        const input = document.getElementById('questionImage');
+        if (input) input.value = '';
+    };
+
+    // Xóa audio
+    const removeAudio = () => {
+        setSelectedAudio(null);
+        if (audioPreview) {
+            URL.revokeObjectURL(audioPreview);
+        }
+        setAudioPreview(null);
+        const input = document.getElementById('questionAudio');
+        if (input) input.value = '';
+    };
+
+    // Format file size
+    const formatFileSize = (bytes) => {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -19,24 +94,12 @@ function CreateQuestionBank() {
                 <div className="card-body">
                     <form onSubmit={handleSubmit} className="question-form">
                         <div className="row mb-3">
-                            <div className="col-md-6">
-                                <label htmlFor="questionType" className="form-label">
-                                    Loại câu hỏi
-                                </label>
-                                <select className="form-select" id="addQuestionType" required>
-                                    <option value="" selected disabled>
-                                        Chọn loại câu hỏi
-                                    </option>
-                                    <option value="listening">Listening</option>
-                                    <option value="reading">Reading</option>
-                                </select>
-                            </div>
-                            <div className="col-md-6">
+                            <div className="col-md-4">
                                 <label htmlFor="questionPart" className="form-label">
                                     Phần
                                 </label>
-                                <select className="form-select" id="addQuestionPart" required>
-                                    <option value="" selected disabled>
+                                <select className="form-select" id="addQuestionPart" required defaultValue="">
+                                    <option value="" disabled>
                                         Chọn phần
                                     </option>
                                     <option value="part1">Part 1</option>
@@ -47,6 +110,37 @@ function CreateQuestionBank() {
                                     <option value="part6">Part 6</option>
                                     <option value="part7">Part 7</option>
                                 </select>
+                            </div>
+
+                            <div className="col-md-4">
+                                <div className="mb-3">
+                                    <label htmlFor="questionDifficulty" className="form-label">
+                                        Độ khó
+                                    </label>
+                                    <select className="form-select" id="questionDifficulty" required defaultValue="">
+                                        <option value="" disabled>
+                                            Chọn độ khó
+                                        </option>
+                                        <option value="easy">Dễ</option>
+                                        <option value="medium">Trung bình</option>
+                                        <option value="hard">Khó</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div className="col-md-4">
+                                <div className="mb-3">
+                                    <label htmlFor="questionStatus" className="form-label">
+                                        Trạng thái
+                                    </label>
+                                    <select className="form-select" id="questionStatus" required defaultValue="">
+                                        <option value="" disabled>
+                                            Chọn trạng thái
+                                        </option>
+                                        <option value="da_xuat_ban">Đã xuất bản</option>
+                                        <option value="luu_tru">Lưu trữ</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
@@ -71,100 +165,176 @@ function CreateQuestionBank() {
                             <label htmlFor="questionImage" className="form-label">
                                 Hình ảnh (nếu có)
                             </label>
-                            <input className="form-control" type="file" id="questionImage" accept="image/*" />
+                            <input
+                                className="form-control"
+                                type="file"
+                                id="questionImage"
+                                accept="image/*"
+                                onChange={handleImageChange}
+                            />
                         </div>
+
+                        {imagePreview && (
+                            <div className="mb-3 p-3 border rounded bg-light">
+                                <div className="d-flex justify-content-between align-items-start">
+                                    <div className="flex-grow-1">
+                                        <div className="d-flex align-items-center mb-2">
+                                            <div
+                                                className="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3"
+                                                style={{ width: '32px', height: '32px' }}
+                                            >
+                                                <i className="fas fa-image text-primary"></i>
+                                            </div>
+                                            <div>
+                                                <p className="mb-0 fw-medium">{selectedImage.name}</p>
+                                                <small className="text-muted">
+                                                    {formatFileSize(selectedImage.size)}
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div className="mt-2">
+                                            <img
+                                                src={imagePreview}
+                                                alt="Preview"
+                                                className="img-thumbnail"
+                                                style={{
+                                                    maxWidth: '200px',
+                                                    maxHeight: '200px',
+                                                    objectFit: 'contain',
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        className="btn btn-sm btn-outline-danger ms-3"
+                                        onClick={removeImage}
+                                    >
+                                        <i className="fas fa-trash-alt me-1"></i>Xóa
+                                    </button>
+                                </div>
+                            </div>
+                        )}
 
                         <div className="mb-3" id="audioSection">
                             <label htmlFor="questionAudio" className="form-label">
                                 File âm thanh (cho câu hỏi Listening)
                             </label>
-                            <input className="form-control" type="file" id="questionAudio" accept="audio/*" />
+                            <input
+                                className="form-control"
+                                type="file"
+                                id="questionAudio"
+                                accept="audio/*"
+                                onChange={handleAudioChange}
+                            />
                         </div>
+
+                        {audioPreview && (
+                            <div className="mb-3 p-3 border rounded bg-light">
+                                <div className="d-flex justify-content-between align-items-center">
+                                    <div className="d-flex align-items-center">
+                                        <div
+                                            className="bg-success bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3"
+                                            style={{ width: '32px', height: '32px' }}
+                                        >
+                                            <i className="fas fa-music text-success"></i>
+                                        </div>
+                                        <div>
+                                            <p className="mb-0 fw-medium">{selectedAudio.name}</p>
+                                            <small className="text-muted">{formatFileSize(selectedAudio.size)}</small>
+                                        </div>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        className="btn btn-sm btn-outline-danger"
+                                        onClick={removeAudio}
+                                    >
+                                        <i className="fas fa-trash-alt me-1"></i>Xóa
+                                    </button>
+                                </div>
+                                <div className="mt-3">
+                                    <audio controls className="w-100" style={{ maxWidth: '400px' }}>
+                                        <source src={audioPreview} />
+                                        Trình duyệt của bạn không hỗ trợ phát audio.
+                                    </audio>
+                                </div>
+                            </div>
+                        )}
 
                         <hr className="my-4" />
                         <h5 className="mb-3">Các lựa chọn đáp án</h5>
 
-                        <div className="row">
-                            <div className="col-md-6">
-                                <div className="mb-3">
-                                    <label htmlFor="optionA" className="form-label">
-                                        Lựa chọn A
-                                    </label>
-                                    <input type="text" className="form-control" id="optionA" required />
-                                </div>
+                        <div className="mb-3">
+                            <input type="radio" className="form-check-input me-2" id="optionA" name="answerOption" />
+                            <label htmlFor="optionA" className="form-label">
+                                Lựa chọn A
+                            </label>
 
-                                <div className="mb-3">
-                                    <label htmlFor="optionB" className="form-label">
-                                        Lựa chọn B
-                                    </label>
-                                    <input type="text" className="form-control" id="optionB" required />
-                                </div>
-                            </div>
-                            <div className="col-md-6">
-                                <div className="mb-3">
-                                    <label htmlFor="optionC" className="form-label">
-                                        Lựa chọn C
-                                    </label>
-                                    <input type="text" className="form-control" id="optionC" required />
-                                </div>
-
-                                <div className="mb-3">
-                                    <label htmlFor="optionD" className="form-label">
-                                        Lựa chọn D
-                                    </label>
-                                    <input type="text" className="form-control" id="optionD" required />
-                                </div>
-                            </div>
+                            <CKEditor
+                                editor={ClassicEditor}
+                                data={content}
+                                onChange={(event, editor) => {
+                                    const data = editor.getData();
+                                    setContent(data);
+                                }}
+                                config={{
+                                    placeholder: 'Nhập nội dung tại đây...',
+                                }}
+                            />
                         </div>
 
-                        <div className="mb-4">
-                            <label className="form-label">Đáp án đúng</label>
-                            <div className="btn-group w-100" role="group" aria-label="Correct answer options">
-                                <input
-                                    type="radio"
-                                    className="btn-check"
-                                    name="correctAnswer"
-                                    id="correctA"
-                                    value="A"
-                                    required
-                                />
-                                <label className="btn btn-outline-primary" htmlFor="correctA">
-                                    A
-                                </label>
+                        <div className="mb-3">
+                            <input type="radio" className="form-check-input me-2" id="optionB" name="answerOption" />
+                            <label htmlFor="optionB" className="form-label">
+                                Lựa chọn B
+                            </label>
+                            <CKEditor
+                                editor={ClassicEditor}
+                                data={content}
+                                onChange={(event, editor) => {
+                                    const data = editor.getData();
+                                    setContent(data);
+                                }}
+                                config={{
+                                    placeholder: 'Nhập nội dung tại đây...',
+                                }}
+                            />
+                        </div>
 
-                                <input
-                                    type="radio"
-                                    className="btn-check"
-                                    name="correctAnswer"
-                                    id="correctB"
-                                    value="B"
-                                />
-                                <label className="btn btn-outline-primary" htmlFor="correctB">
-                                    B
-                                </label>
+                        <div className="mb-3">
+                            <input type="radio" className="form-check-input me-2" id="optionC" name="answerOption" />
+                            <label htmlFor="optionC" className="form-label">
+                                Lựa chọn C
+                            </label>
+                            <CKEditor
+                                editor={ClassicEditor}
+                                data={content}
+                                onChange={(event, editor) => {
+                                    const data = editor.getData();
+                                    setContent(data);
+                                }}
+                                config={{
+                                    placeholder: 'Nhập nội dung tại đây...',
+                                }}
+                            />
+                        </div>
 
-                                <input
-                                    type="radio"
-                                    className="btn-check"
-                                    name="correctAnswer"
-                                    id="correctC"
-                                    value="C"
-                                />
-                                <label className="btn btn-outline-primary" htmlFor="correctC">
-                                    C
-                                </label>
-
-                                <input
-                                    type="radio"
-                                    className="btn-check"
-                                    name="correctAnswer"
-                                    id="correctD"
-                                    value="D"
-                                />
-                                <label className="btn btn-outline-primary" htmlFor="correctD">
-                                    D
-                                </label>
-                            </div>
+                        <div className="mb-3">
+                            <input type="radio" className="form-check-input me-2" id="optionD" name="answerOption" />
+                            <label htmlFor="optionD" className="form-label">
+                                Lựa chọn D
+                            </label>
+                            <CKEditor
+                                editor={ClassicEditor}
+                                data={content}
+                                onChange={(event, editor) => {
+                                    const data = editor.getData();
+                                    setContent(data);
+                                }}
+                                config={{
+                                    placeholder: 'Nhập nội dung tại đây...',
+                                }}
+                            />
                         </div>
 
                         <div className="mb-3">
@@ -184,40 +354,6 @@ function CreateQuestionBank() {
                             />
                         </div>
 
-                        <div className="row">
-                            <div className="col-md-6">
-                                <div className="mb-3">
-                                    <label className="form-label">Tags/Chủ đề</label>
-                                    <select className="form-select" id="questionTags" multiple>
-                                        <option value="business">Business</option>
-                                        <option value="office">Office</option>
-                                        <option value="travel">Travel</option>
-                                        <option value="technology">Technology</option>
-                                        <option value="management">Management</option>
-                                        <option value="recruitment">Recruitment</option>
-                                        <option value="marketing">Marketing</option>
-                                        <option value="finance">Finance</option>
-                                    </select>
-                                    <div className="form-text">Giữ phím Ctrl để chọn nhiều tags</div>
-                                </div>
-                            </div>
-
-                            <div className="col-md-6">
-                                <div className="mb-3">
-                                    <label htmlFor="questionDifficulty" className="form-label">
-                                        Độ khó
-                                    </label>
-                                    <select className="form-select" id="questionDifficulty" required>
-                                        <option value="" selected disabled>
-                                            Chọn độ khó
-                                        </option>
-                                        <option value="easy">Dễ</option>
-                                        <option value="medium">Trung bình</option>
-                                        <option value="hard">Khó</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
                         <div className="text-end">
                             <Link to="/admin/question-bank" type="button" className="btn btn-secondary me-2">
                                 Hủy

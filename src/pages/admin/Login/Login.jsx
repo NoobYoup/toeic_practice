@@ -19,11 +19,11 @@ function Login() {
     const handleLogin = async (e) => {
         e.preventDefault();
         setLoadingAPI(true);
+        setErrors({});
 
         try {
-            setErrors({});
             const res = await login(form);
-            console.log('check res: ', res);
+            console.log(res);
 
             if (res.data.vai_tro === 'quan_tri_vien') {
                 localStorage.setItem('admin_token', res.data.token);
