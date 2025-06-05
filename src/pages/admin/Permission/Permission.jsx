@@ -9,7 +9,7 @@ function Permission() {
         <div className="col-12">
             <h1>Phân quyền</h1>
             <div className={`${cx('card')} card shadow bg-white`}>
-                <div className="row">
+                <div className="row" style={{ padding: '0 12px' }}>
                     <div className="card-header d-flex mb-3">
                         <div className="col-md-4"></div>
 

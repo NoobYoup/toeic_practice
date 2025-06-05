@@ -41,6 +41,12 @@ function Sidebar() {
                         </NavLink>
                     </li>
                     <li className="nav-item">
+                        <NavLink to="/admin/paragraph" className="nav-link">
+                            {' '}
+                            <i className="fa-solid fa-paragraph"></i> Quản lý Đoạn Văn{' '}
+                        </NavLink>
+                    </li>
+                    <li className="nav-item">
                         <NavLink to="/admin/permission" className="nav-link">
                             {' '}
                             <i className="fas fa-shield-alt"></i> Phân quyền{' '}

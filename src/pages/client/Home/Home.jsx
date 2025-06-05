@@ -1,7 +1,7 @@
 import FeatureCard from './Components/FeatureCard';
 import HeroSection from './Components/HeroSection';
 import PracticeSection from './Components/PracticeSection';
-import TestimonialSection from './Components/TestimonialSection';
+import FeedbackSection from './Components/FeedbackSection';
 
 function Home() {
     return (
@@ -12,7 +12,7 @@ function Home() {
 
             <PracticeSection />
 
-            <TestimonialSection />
+            <FeedbackSection />
         </>
     );
 }

@@ -1,4 +1,6 @@
-function TestimonialSection() {
+import { DEFAULT_AVATAR } from '@/constants/default';
+
+function FeedbackSection() {
     return (
         <section className="testimonials py-5">
             <div className="container">
@@ -10,7 +12,12 @@ function TestimonialSection() {
                     <div className="col-lg-4 col-md-6">
                         <div className="testimonial-card p-4">
                             <div className="d-flex align-items-center mb-3">
-                                <img src="/api/placeholder/50/50" alt="User" className="rounded-circle me-3" />
+                                <img
+                                    src={DEFAULT_AVATAR}
+                                    alt="User"
+                                    className="rounded-circle me-3"
+                                    style={{ width: '40px' }}
+                                />
                                 <div>
                                     <h6 className="mb-0 fw-bold">Nguyễn Văn A</h6>
                                     <div className="text-warning">
@@ -32,7 +39,12 @@ function TestimonialSection() {
                     <div className="col-lg-4 col-md-6">
                         <div className="testimonial-card p-4">
                             <div className="d-flex align-items-center mb-3">
-                                <img src="/api/placeholder/50/50" alt="User" className="rounded-circle me-3" />
+                                <img
+                                    src={DEFAULT_AVATAR}
+                                    alt="User"
+                                    className="rounded-circle me-3"
+                                    style={{ width: '40px' }}
+                                />
                                 <div>
                                     <h6 className="mb-0 fw-bold">Trần Thị B</h6>
                                     <div className="text-warning">
@@ -54,7 +66,12 @@ function TestimonialSection() {
                     <div className="col-lg-4 col-md-6">
                         <div className="testimonial-card p-4">
                             <div className="d-flex align-items-center mb-3">
-                                <img src="/api/placeholder/50/50" alt="User" className="rounded-circle me-3" />
+                                <img
+                                    src={DEFAULT_AVATAR}
+                                    alt="User"
+                                    className="rounded-circle me-3"
+                                    style={{ width: '40px' }}
+                                />
                                 <div>
                                     <h6 className="mb-0 fw-bold">Lê Văn C</h6>
                                     <div className="text-warning">
@@ -79,4 +96,4 @@ function TestimonialSection() {
     );
 }
 
-export default TestimonialSection;
+export default FeedbackSection;

@@ -32,6 +32,10 @@ import EditUser from './pages/admin/User/Component/EditUser.jsx';
 import DetailUser from './pages/admin/User/Component/DetailUser.jsx';
 import Dashboard from './pages/admin/Dashboard/Dashboard.jsx';
 import Permission from './pages/admin/Permission/Permission.jsx';
+import Paragraph from './pages/admin/Paragraph/Paragraph.jsx';
+import CreateParagraph from './pages/admin/Paragraph/Component/CreateParagraph.jsx';
+import EditParagraph from './pages/admin/Paragraph/Component/EditParagraph.jsx';
+import DetailParagraph from './pages/admin/Paragraph/Component/DetailParagraph.jsx';
 
 function App() {
     return (
@@ -65,18 +69,24 @@ function App() {
                     <Route path="/admin" element={<AdminPrivateRoute />}>
                         <Route element={<AdminLayout />}>
                             <Route path="/admin/dashboard" element={<Dashboard />} />
-                            <Route path="/admin/question-bank" element={<QuestionBank />} />
-                            <Route path="/admin/user" element={<User />} />
                             <Route path="/admin/setting" element={<Setting />} />
                             <Route path="/admin/permission" element={<Permission />} />
+
+                            <Route path="/admin/paragraph" element={<Paragraph />} />
+                            <Route path="/admin/paragraph/create-paragraph" element={<CreateParagraph />} />
+                            <Route path="/admin/paragraph/edit-paragraph" element={<EditParagraph />} />
+                            <Route path="/admin/paragraph/detail-paragraph" element={<DetailParagraph />} />
+
+                            <Route path="/admin/question-bank" element={<QuestionBank />} />
                             <Route path="/admin/question-bank/edit-question" element={<EditQuestionBank />} />
                             <Route path="/admin/question-bank/create-question" element={<CreateQuestionBank />} />
-                            <Route path="/admin/question-bank/detail-question" element={<DetailQuestionBank />} />
+                            <Route path="/admin/question-bank/detail-question/:id" element={<DetailQuestionBank />} />
 
                             <Route path="/admin/exam" element={<Exam />} />
                             <Route path="/admin/exam/create-exam" element={<CreateExam />} />
                             <Route path="/admin/exam/edit-exam" element={<EditExam />} />
 
+                            <Route path="/admin/user" element={<User />} />
                             <Route path="/admin/user/edit-user/:id" element={<EditUser />} />
                             <Route path="/admin/user/detail-user/:id" element={<DetailUser />} />
                         </Route>
