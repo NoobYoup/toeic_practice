@@ -80,14 +80,11 @@ function DetailQuesionBank() {
             {/* Header */}
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <div className="d-flex align-items-center">
-                    <Link to="/admin/question-bank" className="btn btn-outline-secondary me-3">
-                        <i className="fas fa-arrow-left me-2"></i>Quay lại
-                    </Link>
                     <h2 className="mb-0">Chi tiết câu hỏi #{questionData.id_cau_hoi}</h2>
                 </div>
 
                 <div>
-                    <Link to="/admin/question-bank/edit-question" className="btn btn-primary me-2">
+                    <Link to="/admin/test/question/edit-question" className="btn btn-primary me-2">
                         <i className="fas fa-edit me-2"></i>Chỉnh sửa
                     </Link>
                     <button className="btn btn-danger">

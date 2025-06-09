@@ -8,7 +8,7 @@ import classNames from 'classnames/bind';
 
 const cx = classNames.bind(styles);
 
-function QuestionBank() {
+function Question() {
     const [questions, setQuestions] = useState([]);
     const [loading, setLoading] = useState(false);
     const [pagination, setPagination] = useState({ page: 1, limit: 3, total: 0 });
@@ -76,7 +76,7 @@ function QuestionBank() {
                     <button className="btn btn-success me-2">
                         <i className="fas fa-file-excel me-2"></i>Import Excel
                     </button>
-                    <Link to="/admin/question-bank/create-question" className="btn btn-primary">
+                    <Link to="create-question" className="btn btn-primary">
                         <i className="fas fa-plus-circle me-2"></i>Thêm Câu Hỏi
                     </Link>
                 </div>
@@ -244,13 +244,13 @@ function QuestionBank() {
                                                     </td>
                                                     <td>
                                                         <Link
-                                                            to={`/admin/question-bank/detail-question/${question.id_cau_hoi}`}
+                                                            to={`detail-question/${question.id_cau_hoi}`}
                                                             className="btn btn-sm btn-outline-info me-1"
                                                         >
                                                             <i className="fas fa-eye"></i>
                                                         </Link>
                                                         <Link
-                                                            to="/admin/question-bank/edit-question"
+                                                            to="edit-question"
                                                             className="btn btn-sm btn-outline-primary me-1"
                                                         >
                                                             <i className="fas fa-edit"></i>
@@ -298,4 +298,4 @@ function QuestionBank() {
     );
 }
 
-export default QuestionBank;
+export default Question;

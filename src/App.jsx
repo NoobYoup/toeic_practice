@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 
 import MainLayout from './layouts/MainLayout.jsx';
@@ -19,13 +19,13 @@ import SettingUser from './pages/client/History';
 import Login from './pages/admin/Login';
 import AdminPrivateRoute from '@/middlewares/AdminPrivateRoute.jsx';
 import AdminLayout from './layouts/AdminLayout.jsx';
-import QuestionBank from './pages/admin/QuestionBank';
-import EditQuestionBank from './pages/admin/QuestionBank/Component/EditQuestionBank.jsx';
-import CreateQuestionBank from './pages/admin/QuestionBank/Component/CreateQuestionBank.jsx';
-import DetailQuestionBank from './pages/admin/QuestionBank/Component/DetailQuestionBank.jsx';
-import Exam from './pages/admin/Exam';
-import CreateExam from './pages/admin/Exam/Component/CreateExam.jsx';
-import EditExam from './pages/admin/Exam/Component/EditExam.jsx';
+// import QuestionBank from './pages/admin/QuestionBank';
+// import EditQuestionBank from './pages/admin/QuestionBank/Component/EditQuestionBank.jsx';
+// import CreateQuestionBank from './pages/admin/QuestionBank/Component/CreateQuestionBank.jsx';
+// import DetailQuestionBank from './pages/admin/QuestionBank/Component/DetailQuestionBank.jsx';
+// import Exam from './pages/admin/Exam';
+// import CreateExam from './pages/admin/Exam/Component/CreateExam.jsx';
+// import EditExam from './pages/admin/Exam/Component/EditExam.jsx';
 import Setting from './pages/admin/Setting';
 import User from './pages/admin/User';
 import EditUser from './pages/admin/User/Component/EditUser.jsx';
@@ -36,6 +36,14 @@ import Paragraph from './pages/admin/Paragraph/Paragraph.jsx';
 import CreateParagraph from './pages/admin/Paragraph/Component/CreateParagraph.jsx';
 import EditParagraph from './pages/admin/Paragraph/Component/EditParagraph.jsx';
 import DetailParagraph from './pages/admin/Paragraph/Component/DetailParagraph.jsx';
+import TestAdmin from './pages/admin/Test/Test.jsx';
+import Exam from './pages/admin/Test/Exam/Exam.jsx';
+import CreateExam from './pages/admin/Test/Exam/Component/CreateExam.jsx';
+import EditExam from './pages/admin/Test/Exam/Component/EditExam.jsx';
+import Question from './pages/admin/Test/Question/Question.jsx';
+import CreateQuestionBank from './pages/admin/Test/Question/Component/CreateQuestionBank.jsx';
+import EditQuestionBank from './pages/admin/Test/Question/Component/EditQuestionBank.jsx';
+import DetailQuestionBank from './pages/admin/Test/Question/Component/DetailQuestionBank.jsx';
 
 function App() {
     return (
@@ -72,19 +80,30 @@ function App() {
                             <Route path="/admin/setting" element={<Setting />} />
                             <Route path="/admin/permission" element={<Permission />} />
 
-                            <Route path="/admin/paragraph" element={<Paragraph />} />
+                            {/* <Route path="/admin/paragraph" element={<Paragraph />} />
                             <Route path="/admin/paragraph/create-paragraph" element={<CreateParagraph />} />
                             <Route path="/admin/paragraph/edit-paragraph" element={<EditParagraph />} />
-                            <Route path="/admin/paragraph/detail-paragraph" element={<DetailParagraph />} />
+                            <Route path="/admin/paragraph/detail-paragraph" element={<DetailParagraph />} /> */}
 
-                            <Route path="/admin/question-bank" element={<QuestionBank />} />
+                            {/* <Route path="/admin/question-bank" element={<QuestionBank />} />
                             <Route path="/admin/question-bank/edit-question" element={<EditQuestionBank />} />
                             <Route path="/admin/question-bank/create-question" element={<CreateQuestionBank />} />
-                            <Route path="/admin/question-bank/detail-question/:id" element={<DetailQuestionBank />} />
+                            <Route path="/admin/question-bank/detail-question/:id" element={<DetailQuestionBank />} /> */}
 
-                            <Route path="/admin/exam" element={<Exam />} />
-                            <Route path="/admin/exam/create-exam" element={<CreateExam />} />
-                            <Route path="/admin/exam/edit-exam" element={<EditExam />} />
+                            <Route path="/admin/test" element={<TestAdmin />}>
+                                <Route path="exam" element={<Exam />} />
+                                <Route path="exam/create-exam" element={<CreateExam />} />
+                                <Route path="exam/edit-exam" element={<EditExam />} />
+
+                                <Route path="question" element={<Question />} />
+                                <Route path="question/create-question" element={<CreateQuestionBank />} />
+                                <Route path="question/edit-question" element={<EditQuestionBank />} />
+                                <Route path="question/detail-question/:id" element={<DetailQuestionBank />} />
+
+                                <Route index element={<Navigate to="exam" replace />} />
+                            </Route>
+                            {/* <Route path="/admin/exam/create-exam" element={<CreateExam />} />
+                            <Route path="/admin/exam/edit-exam" element={<EditExam />} /> */}
 
                             <Route path="/admin/user" element={<User />} />
                             <Route path="/admin/user/edit-user/:id" element={<EditUser />} />

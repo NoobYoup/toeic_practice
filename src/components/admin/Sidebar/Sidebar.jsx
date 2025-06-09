@@ -24,7 +24,7 @@ function Sidebar() {
                         </NavLink>
                     </li>
                     <li className="nav-item">
-                        <NavLink to="/admin/exam" className="nav-link">
+                        <NavLink to="/admin/test" className="nav-link">
                             {' '}
                             <i className="fas fa-file-alt"></i> Quản lý Đề Thi{' '}
                         </NavLink>

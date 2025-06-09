@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useEffect, useState } from 'react';
 import { debounce } from 'lodash';
+import ReactPaginate from 'react-paginate';
 import { getAllUser, deleteUser, changeUserStatus } from '@/services/userService.jsx';
 
 import classNames from 'classnames/bind';
@@ -14,9 +15,9 @@ function User() {
     const [loading, setLoading] = useState(false);
     const [search, setSearch] = useState('');
     const [page, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
     const [sortOrder, setSortOrder] = useState('asc');
     const [idSortOrder, setIdSortOrder] = useState('asc');
+    const [pagination, setPagination] = useState({ page: 1, limit: 3, total: 0 });
 
     useEffect(() => {
         const debouncedFetch = debounce(async (searchTerm, currentPage) => {
@@ -26,7 +27,7 @@ function User() {
                 console.log(res.data);
 
                 setUsers(res.data.data);
-                setTotalPages(res.data.totalPages);
+                setPagination((prev) => ({ ...prev, total: res.data.pagination.total }));
             } catch (error) {
                 console.log('Lỗi gọi API', error);
             }
@@ -90,6 +91,10 @@ function User() {
             prev.map((u) => (u.id_nguoi_dung === users.id_nguoi_dung ? { ...u, trang_thai: newStatus } : u)),
         );
         toast.success(res.data.message);
+    };
+
+    const handlePageClick = (e) => {
+        setPagination((prev) => ({ ...prev, page: e.selected + 1 }));
     };
 
     return (
@@ -216,7 +221,27 @@ function User() {
                         </div>
                     )}
 
-                    <nav aria-label="Page navigation">
+                    <div className="d-flex justify-content-center">
+                        <ReactPaginate
+                            breakLabel="..."
+                            nextLabel="Sau"
+                            onPageChange={handlePageClick}
+                            pageRangeDisplayed={3}
+                            pageCount={Math.ceil(pagination.total / pagination.limit)}
+                            previousLabel="Trước"
+                            renderOnZeroPageCount={null}
+                            containerClassName="pagination justify-content-center"
+                            pageClassName="page-item"
+                            pageLinkClassName="page-link"
+                            activeClassName="active"
+                            previousClassName="page-item"
+                            nextClassName="page-item"
+                            previousLinkClassName="page-link"
+                            nextLinkClassName="page-link"
+                        />
+                    </div>
+
+                    {/* <nav aria-label="Page navigation">
                         <ul className="pagination justify-content-center">
                             <li className={`page-item ${page === 1 ? 'disabled' : ''}`}>
                                 <button className="page-link" onClick={() => setPage(page - 1)}>
@@ -237,7 +262,7 @@ function User() {
                                 </button>
                             </li>
                         </ul>
-                    </nav>
+                    </nav> */}
                 </div>
             </div>
         </>
