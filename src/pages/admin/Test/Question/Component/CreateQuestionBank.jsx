@@ -211,28 +211,28 @@ function CreateQuestionBank() {
             await createQuestion({ hinh_anh: selectedImage, am_thanh: selectedAudio, data: formData });
             toast.success('Câu hỏi đã được tạo thành công!');
             // Reset form
-            // setFormData({
-            //     id_phan: 1,
-            //     noi_dung: '',
-            //     dap_an_dung: '',
-            //     giai_thich: '',
-            //     passage: '',
-            //     muc_do_kho: 'de',
-            //     trang_thai: 'da_xuat_ban',
-            //     nguon_goc: 'thu_cong',
-            //     lua_chon: [
-            //         { ky_tu_lua_chon: 'A', noi_dung: '' },
-            //         { ky_tu_lua_chon: 'B', noi_dung: '' },
-            //         { ky_tu_lua_chon: 'C', noi_dung: '' },
-            //         { ky_tu_lua_chon: 'D', noi_dung: '' },
-            //     ],
-            //     image: null,
-            //     audio: null,
-            // });
-            // setSelectedImage(null);
-            // setSelectedAudio(null);
-            // setImagePreview(null);
-            // setAudioPreview(null);
+            setFormData({
+                id_phan: 1,
+                noi_dung: '',
+                dap_an_dung: '',
+                giai_thich: '',
+                passage: '',
+                muc_do_kho: 'de',
+                trang_thai: 'da_xuat_ban',
+                nguon_goc: 'thu_cong',
+                lua_chon: [
+                    { ky_tu_lua_chon: 'A', noi_dung: '' },
+                    { ky_tu_lua_chon: 'B', noi_dung: '' },
+                    { ky_tu_lua_chon: 'C', noi_dung: '' },
+                    { ky_tu_lua_chon: 'D', noi_dung: '' },
+                ],
+                image: null,
+                audio: null,
+            });
+            setSelectedImage(null);
+            setSelectedAudio(null);
+            setImagePreview(null);
+            setAudioPreview(null);
         } catch (error) {
             console.error('Lỗi khi tạo câu hỏi:', error);
             toast.error(error.response.data.message);

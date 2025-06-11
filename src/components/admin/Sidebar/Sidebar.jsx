@@ -29,7 +29,7 @@ function Sidebar() {
                             <i className="fas fa-file-alt"></i> Quản lý Đề Thi{' '}
                         </NavLink>
                     </li>
-                    <li className="nav-item">
+                    <li className="nav-item d-none">
                         <NavLink to="/admin/question-bank" className="nav-link">
                             <i className="fas fa-question-circle"></i> Ngân Hàng Câu Hỏi
                         </NavLink>
@@ -40,7 +40,7 @@ function Sidebar() {
                             <i className="fas fa-users"></i> Quản lý Người Dùng{' '}
                         </NavLink>
                     </li>
-                    <li className="nav-item">
+                    <li className="nav-item d-none">
                         <NavLink to="/admin/paragraph" className="nav-link">
                             {' '}
                             <i className="fa-solid fa-paragraph"></i> Quản lý Đoạn Văn{' '}

@@ -1,48 +1,28 @@
-import { Link, NavLink, Outlet } from 'react-router-dom';
-import styles from './Exam.module.scss';
+import { Link } from 'react-router-dom';
+
+import styles from './Paragraph.module.scss';
 import classNames from 'classnames/bind';
 
 const cx = classNames.bind(styles);
 
-function Exam() {
+function Paragraph() {
     return (
         <>
-            <div className="container mt-4">
-                <ul className="nav nav-tabs mb-4">
-                    <li className="nav-item">
-                        <NavLink to="exam" className="nav-link">
-                            <i className="fas fa-file-alt me-2"></i>Đề thi
-                        </NavLink>
-                    </li>
-                    <li className="nav-item">
-                        <NavLink to="question" className="nav-link">
-                            <i className="fas fa-question-circle me-2"></i>Câu hỏi
-                        </NavLink>
-                    </li>
-                    <li className="nav-item">
-                        <NavLink to="paragraph" className="nav-link">
-                            <i className="fas fa-question-circle me-2"></i>Đoạn văn
-                        </NavLink>
-                    </li>
-                </ul>
-
-                <Outlet />
-            </div>
-
-            {/* <div className="d-flex justify-content-between align-items-center mb-4">
-                <h2>Quản lý đề thi</h2>
+            <div className="d-flex justify-content-between align-items-center mb-4">
+                <h2>Quản lý đoạn văn</h2>
                 <div>
-                    <Link to="/admin/exam/create-exam" className="btn btn-primary">
-                        <i className="fas fa-plus-circle me-2"></i>Thêm đề thi
+                    <Link to="create-paragraph" className="btn btn-primary">
+                        <i className="fas fa-plus-circle me-2"></i>Thêm đoạn văn
                     </Link>
                 </div>
             </div>
+
             <div class="card">
                 <div class="card-body">
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Tìm kiếm đề thi..." />
+                                <input type="text" class="form-control" placeholder="Tìm kiếm đoạn văn..." />
                                 <button class="btn btn-outline-secondary" type="button">
                                     <i class="fas fa-search"></i>
                                 </button>
@@ -86,58 +66,63 @@ function Exam() {
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th>#</th>
-                                    <th>Tên đề thi</th>
-                                    <th>Mô tả</th>
-                                    <th>Điểm tối đa</th>
-                                    <th>Thời gian (phút)</th>
-                                    <th>Trạng thái</th>
+                                    <th>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="selectAll" />
+                                        </div>
+                                    </th>
+                                    <th>ID</th>
+                                    <th>Tiêu đề</th>
+                                    <th>Nội dung</th>
+                                    <th>Độ dài</th>
+                                    <th>Câu hỏi liên quan</th>
                                     <th>Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>1</td>
-                                    <td>TOEIC Practice Test 1</td>
-                                    <td>Bài thi TOEIC đầy đủ để luyện tập</td>
-                                    <td>990</td>
-                                    <td>120</td>
                                     <td>
-                                        <span class={`${cx('exam-status-active')} badge rounded-pill px-3 py-2`}>
-                                            Hoạt động
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <Link to="/admin/exam/edit-exam" class="btn btn-sm btn-outline-primary">
-                                                <i class="fas fa-edit"></i>
-                                            </Link>
-                                            <button type="button" class="btn btn-sm btn-outline-danger">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </button>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" />
                                         </div>
                                     </td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>Mini TOEIC Test</td>
-                                    <td>Bài thi TOEIC rút gọn cho người mới</td>
-                                    <td>495</td>
-                                    <td>60</td>
+                                    <td>P002</td>
                                     <td>
-                                        <span class={`${cx('exam-status-draft')} badge rounded-pill px-3 py-2`}>
-                                            Bản nháp
-                                        </span>
+                                        <strong>Meeting Schedule Change</strong>
                                     </td>
                                     <td>
-                                        <div class="btn-group">
-                                            <Link to="/admin/exam/edit-exam" class="btn btn-sm btn-outline-primary">
-                                                <i class="fas fa-edit"></i>
-                                            </Link>
-                                            <button type="button" class="btn btn-sm btn-outline-danger">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </button>
+                                        <div class="passage-excerpt">
+                                            From: Sarah Johnson To: All Staff Subject: Important Meeting Rescheduled...
                                         </div>
+                                    </td>
+                                    <td>
+                                        <span class="word-count">420 từ</span>
+                                        <br />
+                                        <small class="text-muted">Dài</small>
+                                    </td>
+                                    <td>
+                                        <div class="related-questions">
+                                            <span class="badge bg-info">7 câu hỏi</span>
+                                            <br />
+                                            <small class="text-muted">Q120-Q126</small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <Link
+                                            to="/admin/paragraph/detail-paragraph"
+                                            class="btn btn-sm btn-outline-info me-1"
+                                        >
+                                            <i class="fas fa-eye"></i>
+                                        </Link>
+                                        <Link
+                                            to="/admin/paragraph/edit-paragraph"
+                                            class="btn btn-sm btn-outline-primary me-1"
+                                        >
+                                            <i class="fas fa-edit"></i>
+                                        </Link>
+                                        <button class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -174,9 +159,9 @@ function Exam() {
                         </ul>
                     </nav>
                 </div>
-            </div> */}
+            </div>
         </>
     );
 }
 
-export default Exam;
+export default Paragraph;
