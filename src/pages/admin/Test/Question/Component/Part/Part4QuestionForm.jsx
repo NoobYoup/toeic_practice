@@ -7,13 +7,15 @@ import styles from '../CreateQuestionBank.module.scss';
 const cx = classNames.bind(styles);
 
 function Part4QuestionForm({
-    formData,
-    setFormData,
-
-    handleAudioChange,
+    questions,
+    onChangeQuestion,
     audioPreview,
+    handleAudioChange,
     removeAudio,
+    formatFileSize,
 }) {
+    if (!Array.isArray(questions)) return null;
+
     return (
         <>
             <div className={cx('requirement-info')}>
@@ -22,12 +24,13 @@ function Part4QuestionForm({
                 </h6>
                 <ul className={cx('requirement-list')}>
                     <li>Bắt buộc có file âm thanh (đoạn hội thoại ngắn)</li>
-                    <li>Không có hình ảnh</li>
                 </ul>
             </div>
+
+            {/* Upload audio chung */}
             <div className="mb-3" id="audioSection">
                 <label htmlFor="questionAudio" className="form-label">
-                    File âm thanh (cho câu hỏi Listening)
+                    File âm thanh (cho Part 4)
                 </label>
                 <input
                     className="form-control"
@@ -49,184 +52,74 @@ function Part4QuestionForm({
                                 <i className="fas fa-music text-success"></i>
                             </div>
                             <div>
-                                <p className="mb-0 fw-medium">{formData.audio?.name}</p>
-                                <small className="text-muted">{formatFileSize(formData.audio?.size)}</small>
+                                <p className="mb-0 fw-medium">{questions[0].audio?.name}</p>
+                                <small className="text-muted">{formatFileSize(questions[0].audio?.size)}</small>
                             </div>
                         </div>
                         <button type="button" className="btn btn-sm btn-outline-danger" onClick={removeAudio}>
                             <i className="fas fa-trash-alt me-1"></i>Xóa
                         </button>
                     </div>
-                    <div className="mt-3">
-                        <audio controls className="w-100" style={{ maxWidth: '400px' }}>
-                            <source src={audioPreview} />
-                            Trình duyệt của bạn không hỗ trợ phát audio.
-                        </audio>
-                    </div>
+                    <audio controls className="w-100 mt-3">
+                        <source src={audioPreview} />
+                    </audio>
                 </div>
             )}
 
-            <hr className="my-4" />
+            {/* Render 3 câu hỏi */}
+            {questions.map((q, idx) => (
+                <div key={idx} className="border rounded p-3 mb-4">
+                    <h6>Câu {idx + 1}</h6>
 
-            <div className="mb-3">
-                <label htmlFor="questionContent" className="form-label">
-                    Nội dung câu hỏi 1
-                </label>
-                <CKEditor
-                    editor={ClassicEditor}
-                    data={formData.noi_dung}
-                    onChange={(event, editor) => setFormData({ ...formData, noi_dung: editor.getData() })}
-                    config={{ placeholder: 'Nhập nội dung tại đây...' }}
-                />
-            </div>
+                    <div className="mb-3">
+                        <label className="form-label">Nội dung</label>
+                        <CKEditor
+                            editor={ClassicEditor}
+                            data={q.noi_dung}
+                            onChange={(_, ed) => onChangeQuestion(idx, 'noi_dung', ed.getData())}
+                        />
+                    </div>
 
-            {['A', 'B', 'C', 'D'].map((option, index) => (
-                <div className="mb-3" key={option}>
-                    <input
-                        type="radio"
-                        className="form-check-input me-2"
-                        id={`option${option}`}
-                        name="answerOption"
-                        value={option}
-                        onChange={(e) => setFormData({ ...formData, dap_an_dung: e.target.value })}
-                    />
-                    <label htmlFor={`option${option}`} className="form-label">
-                        Lựa chọn {option}
-                    </label>
+                    {/* Lựa chọn và chọn đáp án */}
+                    {['A', 'B', 'C', 'D'].map((option, index) => (
+                        <div className="mb-3" key={option}>
+                            <input
+                                type="radio"
+                                className="form-check-input me-2"
+                                id={`q${idx}-option${option}`}
+                                name={`answerOption${idx}`}
+                                value={option}
+                                checked={q.dap_an_dung === option}
+                                onChange={(e) => onChangeQuestion(idx, 'dap_an_dung', e.target.value)}
+                            />
+                            <label htmlFor={`q${idx}-option${option}`} className="form-label">
+                                Lựa chọn {option}
+                            </label>
 
-                    <input
-                        type="text"
-                        className="form-control"
-                        id={`option${option}`}
-                        value={formData.lua_chon[index].noi_dung}
-                        onChange={(e) => {
-                            const updatedOptions = [...formData.lua_chon];
-                            updatedOptions[index].noi_dung = e.target.value;
-                            setFormData({ ...formData, lua_chon: updatedOptions });
-                        }}
-                    />
+                            <input
+                                type="text"
+                                className="form-control"
+                                id={`q${idx}-option${option}-input`}
+                                value={q.lua_chon[index].noi_dung}
+                                onChange={(e) => {
+                                    const updatedOptions = [...q.lua_chon];
+                                    updatedOptions[index].noi_dung = e.target.value;
+                                    onChangeQuestion(idx, 'lua_chon', updatedOptions);
+                                }}
+                            />
+                        </div>
+                    ))}
+
+                    <div className="mb-3">
+                        <label className="form-label">Giải thích</label>
+                        <CKEditor
+                            editor={ClassicEditor}
+                            data={q.giai_thich}
+                            onChange={(_, ed) => onChangeQuestion(idx, 'giai_thich', ed.getData())}
+                        />
+                    </div>
                 </div>
             ))}
-
-            <div className="mb-3">
-                <label htmlFor="questionExplanation" className="form-label">
-                    Giải thích (nếu có)
-                </label>
-                <CKEditor
-                    editor={ClassicEditor}
-                    data={formData.giai_thich}
-                    onChange={(event, editor) => setFormData({ ...formData, giai_thich: editor.getData() })}
-                    config={{ placeholder: 'Nhập nội dung tại đây...' }}
-                />
-            </div>
-
-            <hr className="my-4" />
-
-            <div className="mb-3">
-                <label htmlFor="questionContent" className="form-label">
-                    Nội dung câu hỏi 2
-                </label>
-                <CKEditor
-                    editor={ClassicEditor}
-                    data={formData.noi_dung}
-                    onChange={(event, editor) => setFormData({ ...formData, noi_dung: editor.getData() })}
-                    config={{ placeholder: 'Nhập nội dung tại đây...' }}
-                />
-            </div>
-
-            {['A', 'B', 'C', 'D'].map((option, index) => (
-                <div className="mb-3" key={option}>
-                    <input
-                        type="radio"
-                        className="form-check-input me-2"
-                        id={`option${option}`}
-                        name="answerOption"
-                        value={option}
-                        onChange={(e) => setFormData({ ...formData, dap_an_dung: e.target.value })}
-                    />
-                    <label htmlFor={`option${option}`} className="form-label">
-                        Lựa chọn {option}
-                    </label>
-
-                    <input
-                        type="text"
-                        className="form-control"
-                        id={`option${option}`}
-                        value={formData.lua_chon[index].noi_dung}
-                        onChange={(e) => {
-                            const updatedOptions = [...formData.lua_chon];
-                            updatedOptions[index].noi_dung = e.target.value;
-                            setFormData({ ...formData, lua_chon: updatedOptions });
-                        }}
-                    />
-                </div>
-            ))}
-
-            <div className="mb-3">
-                <label htmlFor="questionExplanation" className="form-label">
-                    Giải thích (nếu có)
-                </label>
-                <CKEditor
-                    editor={ClassicEditor}
-                    data={formData.giai_thich}
-                    onChange={(event, editor) => setFormData({ ...formData, giai_thich: editor.getData() })}
-                    config={{ placeholder: 'Nhập nội dung tại đây...' }}
-                />
-            </div>
-
-            <hr className="my-4" />
-
-            <div className="mb-3">
-                <label htmlFor="questionContent" className="form-label">
-                    Nội dung câu hỏi 3
-                </label>
-                <CKEditor
-                    editor={ClassicEditor}
-                    data={formData.noi_dung}
-                    onChange={(event, editor) => setFormData({ ...formData, noi_dung: editor.getData() })}
-                    config={{ placeholder: 'Nhập nội dung tại đây...' }}
-                />
-            </div>
-
-            {['A', 'B', 'C', 'D'].map((option, index) => (
-                <div className="mb-3" key={option}>
-                    <input
-                        type="radio"
-                        className="form-check-input me-2"
-                        id={`option${option}`}
-                        name="answerOption"
-                        value={option}
-                        onChange={(e) => setFormData({ ...formData, dap_an_dung: e.target.value })}
-                    />
-                    <label htmlFor={`option${option}`} className="form-label">
-                        Lựa chọn {option}
-                    </label>
-
-                    <input
-                        type="text"
-                        className="form-control"
-                        id={`option${option}`}
-                        value={formData.lua_chon[index].noi_dung}
-                        onChange={(e) => {
-                            const updatedOptions = [...formData.lua_chon];
-                            updatedOptions[index].noi_dung = e.target.value;
-                            setFormData({ ...formData, lua_chon: updatedOptions });
-                        }}
-                    />
-                </div>
-            ))}
-
-            <div className="mb-3">
-                <label htmlFor="questionExplanation" className="form-label">
-                    Giải thích (nếu có)
-                </label>
-                <CKEditor
-                    editor={ClassicEditor}
-                    data={formData.giai_thich}
-                    onChange={(event, editor) => setFormData({ ...formData, giai_thich: editor.getData() })}
-                    config={{ placeholder: 'Nhập nội dung tại đây...' }}
-                />
-            </div>
         </>
     );
 }

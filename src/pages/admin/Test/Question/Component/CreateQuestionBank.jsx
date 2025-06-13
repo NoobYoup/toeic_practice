@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
-import { createQuestion } from '@/services/questionService';
+import { createQuestion, getAllQuestion } from '@/services/questionService';
 import Part1QuestionForm from './Part/Part1QuestionForm';
 import Part2QuestionForm from './Part/Part2QuestionForm';
 import Part3QuestionForm from './Part/Part3QuestionForm';
@@ -19,58 +19,217 @@ import styles from './CreateQuestionBank.module.scss';
 const cx = classNames.bind(styles);
 
 function CreateQuestionBank() {
+    const navigate = useNavigate();
+
     const [loading, setLoading] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
     const [selectedAudio, setSelectedAudio] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
     const [audioPreview, setAudioPreview] = useState(null);
-    const [formData, setFormData] = useState({
-        id_phan: 1,
-        noi_dung: '',
-        dap_an_dung: '',
-        giai_thich: '',
-        passage: '', // Thêm trường cho đoạn văn (Part 6, 7)
-        muc_do_kho: 'de',
-        trang_thai: 'da_xuat_ban',
-        nguon_goc: 'thu_cong',
-        lua_chon: [
-            { ky_tu_lua_chon: 'A', noi_dung: '' },
-            { ky_tu_lua_chon: 'B', noi_dung: '' },
-            { ky_tu_lua_chon: 'C', noi_dung: '' },
-            { ky_tu_lua_chon: 'D', noi_dung: '' },
-        ],
-    });
 
-    const partOptions = [
-        { value: 1, label: 'Part 1 - Mô tả hình ảnh' },
-        { value: 2, label: 'Part 2 - Hỏi đáp ngắn' },
-        { value: 3, label: 'Part 3' },
-        { value: 4, label: 'Part 4' },
-        { value: 5, label: 'Part 5' },
-        { value: 6, label: 'Part 6 - Đoạn văn' },
-        { value: 7, label: 'Part 7 - Đoạn văn' },
-    ];
+    // Danh sách động lấy từ API
+    const [dsPhan, setDsPhan] = useState([]);
+    const [dsMucDoKho, setDsMucDoKho] = useState([]);
+    const [dsTrangThai, setDsTrangThai] = useState([]);
+
+    useEffect(() => {
+        // Lấy danh sách các giá trị động từ API (dựa trên getAllQuestion)
+        async function fetchOptions() {
+            try {
+                const res = await getAllQuestion(1, {});
+                setDsPhan(res.data.dsPhan || []);
+                setDsMucDoKho(res.data.dsMucDoKho || []);
+                setDsTrangThai(res.data.dsTrangThai || []);
+            } catch (err) {
+                // fallback nếu lỗi
+                setDsPhan([]);
+                setDsMucDoKho([]);
+                setDsTrangThai([]);
+            }
+        }
+        fetchOptions();
+    }, []);
+
+    // khởi tạo dữ liệu từ part 1 -> 7
+    const initialAllPartsData = {
+        1: {
+            noi_dung: '',
+            dap_an_dung: '',
+            giai_thich: '',
+            image: null,
+            audio: null,
+            passage: '',
+            muc_do_kho: 'de',
+            trang_thai: 'da_xuat_ban',
+            nguon_goc: 'thu_cong',
+            lua_chon: [
+                { ky_tu_lua_chon: 'A', noi_dung: '' },
+                { ky_tu_lua_chon: 'B', noi_dung: '' },
+                { ky_tu_lua_chon: 'C', noi_dung: '' },
+                { ky_tu_lua_chon: 'D', noi_dung: '' },
+            ],
+        },
+        2: {
+            noi_dung: '',
+            dap_an_dung: '',
+            giai_thich: '',
+            audio: null,
+            muc_do_kho: 'de',
+            trang_thai: 'da_xuat_ban',
+            nguon_goc: 'thu_cong',
+            lua_chon: [
+                { ky_tu_lua_chon: 'A', noi_dung: '' },
+                { ky_tu_lua_chon: 'B', noi_dung: '' },
+                { ky_tu_lua_chon: 'C', noi_dung: '' },
+            ],
+        },
+        3: [
+            {
+                noi_dung: '',
+                dap_an_dung: '',
+                giai_thich: '',
+                audio: null,
+                audioPreview: null,
+                lua_chon: [
+                    { ky_tu_lua_chon: 'A', noi_dung: '' },
+                    { ky_tu_lua_chon: 'B', noi_dung: '' },
+                    { ky_tu_lua_chon: 'C', noi_dung: '' },
+                    { ky_tu_lua_chon: 'D', noi_dung: '' },
+                ],
+            },
+            {
+                noi_dung: '',
+                dap_an_dung: '',
+                giai_thich: '',
+                audio: null,
+                audioPreview: null,
+                lua_chon: [
+                    { ky_tu_lua_chon: 'A', noi_dung: '' },
+                    { ky_tu_lua_chon: 'B', noi_dung: '' },
+                    { ky_tu_lua_chon: 'C', noi_dung: '' },
+                    { ky_tu_lua_chon: 'D', noi_dung: '' },
+                ],
+            },
+            {
+                noi_dung: '',
+                dap_an_dung: '',
+                giai_thich: '',
+                audio: null,
+                audioPreview: null,
+                lua_chon: [
+                    { ky_tu_lua_chon: 'A', noi_dung: '' },
+                    { ky_tu_lua_chon: 'B', noi_dung: '' },
+                    { ky_tu_lua_chon: 'C', noi_dung: '' },
+                    { ky_tu_lua_chon: 'D', noi_dung: '' },
+                ],
+            },
+        ],
+        4: [
+            {
+                noi_dung: '',
+                dap_an_dung: '',
+                giai_thich: '',
+                audio: null,
+                audioPreview: null,
+                lua_chon: [
+                    { ky_tu_lua_chon: 'A', noi_dung: '' },
+                    { ky_tu_lua_chon: 'B', noi_dung: '' },
+                    { ky_tu_lua_chon: 'C', noi_dung: '' },
+                    { ky_tu_lua_chon: 'D', noi_dung: '' },
+                ],
+            },
+            {
+                noi_dung: '',
+                dap_an_dung: '',
+                giai_thich: '',
+                audio: null,
+                audioPreview: null,
+                lua_chon: [
+                    { ky_tu_lua_chon: 'A', noi_dung: '' },
+                    { ky_tu_lua_chon: 'B', noi_dung: '' },
+                    { ky_tu_lua_chon: 'C', noi_dung: '' },
+                    { ky_tu_lua_chon: 'D', noi_dung: '' },
+                ],
+            },
+            {
+                noi_dung: '',
+                dap_an_dung: '',
+                giai_thich: '',
+                audio: null,
+                audioPreview: null,
+                lua_chon: [
+                    { ky_tu_lua_chon: 'A', noi_dung: '' },
+                    { ky_tu_lua_chon: 'B', noi_dung: '' },
+                    { ky_tu_lua_chon: 'C', noi_dung: '' },
+                    { ky_tu_lua_chon: 'D', noi_dung: '' },
+                ],
+            },
+        ],
+        5: [
+            {
+                noi_dung: '',
+                dap_an_dung: '',
+                giai_thich: '',
+                lua_chon: [
+                    { ky_tu_lua_chon: 'A', noi_dung: '' },
+                    { ky_tu_lua_chon: 'B', noi_dung: '' },
+                    { ky_tu_lua_chon: 'C', noi_dung: '' },
+                    { ky_tu_lua_chon: 'D', noi_dung: '' },
+                ],
+            },
+        ],
+        6: { passage: '', questions: [{ noi_dung: '', dap_an: '' }] },
+        7: { passage: '', questions: [{ noi_dung: '', dap_an: '' }] },
+    };
+
+    const [allPartsData, setAllPartsData] = useState(initialAllPartsData);
+    const [currentPart, setCurrentPart] = useState(1);
+
+    const formData = allPartsData[currentPart];
+    const setFormData = (newData) => setAllPartsData((prev) => ({ ...prev, [currentPart]: newData }));
+
+    // Tạo option cho react-select từ dsPhan
+    const partOptions = dsPhan.map((item) => ({ value: item.id_phan, label: item.ten_phan }));
 
     // Xử lý upload ảnh
     const handleImageChange = (e) => {
         const file = e.target.files[0];
-        if (file) {
-            setSelectedImage(file);
+        if (!file) return;
+
+        setSelectedImage(file);
+
+        if (currentPart === 3) {
+            // store only on first question
+            setAllPartsData((prev) => ({
+                ...prev,
+                3: prev[3].map((q, idx) => (idx === 0 ? { ...q, image: file } : q)),
+            }));
+        } else {
             setFormData({ ...formData, image: file });
-            const reader = new FileReader();
-            reader.onload = (e) => setImagePreview(e.target.result);
-            reader.readAsDataURL(file);
         }
+
+        const reader = new FileReader();
+        reader.onload = (e) => setImagePreview(e.target.result);
+        reader.readAsDataURL(file);
     };
 
     // Xử lý upload audio
     const handleAudioChange = (e) => {
         const file = e.target.files[0];
-        if (file) {
-            setSelectedAudio(file);
+        if (!file) return;
+
+        setSelectedAudio(file);
+
+        const url = URL.createObjectURL(file);
+        setAudioPreview(url);
+
+        if (currentPart === 3 || currentPart === 4) {
+            setAllPartsData((prev) => ({
+                ...prev,
+                [currentPart]: prev[currentPart].map((q, idx) => (idx === 0 ? { ...q, audio: file } : q)),
+            }));
+        } else {
             setFormData({ ...formData, audio: file });
-            const url = URL.createObjectURL(file);
-            setAudioPreview(url);
         }
     };
 
@@ -78,7 +237,16 @@ function CreateQuestionBank() {
     const removeImage = () => {
         setSelectedImage(null);
         setImagePreview(null);
-        setFormData({ ...formData, image: null });
+
+        if (currentPart === 3) {
+            setAllPartsData((prev) => ({
+                ...prev,
+                3: prev[3].map((q, idx) => (idx === 0 ? { ...q, image: null } : q)),
+            }));
+        } else {
+            setFormData({ ...formData, image: null });
+        }
+
         const input = document.getElementById('questionImage');
         if (input) input.value = '';
     };
@@ -88,7 +256,16 @@ function CreateQuestionBank() {
         setSelectedAudio(null);
         if (audioPreview) URL.revokeObjectURL(audioPreview);
         setAudioPreview(null);
-        setFormData({ ...formData, audio: null });
+
+        if (currentPart === 3 || currentPart === 4) {
+            setAllPartsData((prev) => ({
+                ...prev,
+                [currentPart]: prev[currentPart].map((q, idx) => (idx === 0 ? { ...q, audio: null } : q)),
+            }));
+        } else {
+            setFormData({ ...formData, audio: null });
+        }
+
         const input = document.getElementById('questionAudio');
         if (input) input.value = '';
     };
@@ -104,7 +281,7 @@ function CreateQuestionBank() {
 
     // Render form theo part
     const renderQuestionForm = () => {
-        switch (formData.id_phan) {
+        switch (currentPart) {
             case 1:
                 return (
                     <Part1QuestionForm
@@ -135,6 +312,8 @@ function CreateQuestionBank() {
                     <Part3QuestionForm
                         formData={formData}
                         setFormData={setFormData}
+                        questions={allPartsData[3]}
+                        onChangeQuestion={handlePart3Change}
                         handleImageChange={handleImageChange}
                         imagePreview={imagePreview}
                         removeImage={removeImage}
@@ -147,15 +326,16 @@ function CreateQuestionBank() {
             case 4:
                 return (
                     <Part4QuestionForm
-                        formData={formData}
-                        setFormData={setFormData}
+                        questions={allPartsData[4]}
+                        onChangeQuestion={handlePart4Change}
                         handleAudioChange={handleAudioChange}
                         audioPreview={audioPreview}
                         removeAudio={removeAudio}
+                        formatFileSize={formatFileSize}
                     />
                 );
             case 5:
-                return <Part5QuestionForm formData={formData} setFormData={setFormData} />;
+                return <Part5QuestionForm questions={allPartsData[5]} onChangeQuestion={handlePart5Change} />;
             case 6:
             case 7:
                 return <Part6QuestionForm formData={formData} setFormData={setFormData} />;
@@ -165,70 +345,96 @@ function CreateQuestionBank() {
         }
     };
 
+    // Part 3 specific change handlers
+    const handlePart3Change = (index, field, value) => {
+        setAllPartsData((prev) => ({
+            ...prev,
+            3: prev[3].map((q, i) => (i === index ? { ...q, [field]: value } : q)),
+        }));
+    };
+
+    const handlePart4Change = (index, field, value) => {
+        setAllPartsData((prev) => ({
+            ...prev,
+            4: prev[4].map((q, i) => (i === index ? { ...q, [field]: value } : q)),
+        }));
+    };
+
+    const handlePart5Change = (index, field, value) => {
+        setAllPartsData((prev) => ({
+            ...prev,
+            5: prev[5].map((q, i) => (i === index ? { ...q, [field]: value } : q)),
+        }));
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
 
-        // // Validate theo part
-        // let isValid = true;
-        // if (!formData.noi_dung || !formData.dap_an_dung || formData.lua_chon.some((option) => !option.noi_dung)) {
-        //     isValid = false;
-        // }
-        // if (formData.id_phan === 1 && !formData.image) {
-        //     isValid = false;
-        //     alert('Vui lòng upload hình ảnh cho Part 1.');
-        // }
-        // if (formData.id_phan === 2 && !formData.audio) {
-        //     isValid = false;
-        //     alert('Vui lòng upload file âm thanh cho Part 2.');
-        // }
-        // if ((formData.id_phan === 6 || formData.id_phan === 7) && !formData.passage) {
-        //     isValid = false;
-        //     alert('Vui lòng nhập đoạn văn cho Part 6 hoặc 7.');
-        // }
-
-        // if (!isValid) {
-        //     alert('Vui lòng điền đầy đủ các trường bắt buộc.');
-        //     setLoading(false);
-        //     return;
-        // }
-
-        // // Tạo FormData
-        // const data = new FormData();
-        // data.append('id_phan', formData.id_phan);
-        // data.append('noi_dung', formData.noi_dung);
-        // data.append('dap_an_dung', formData.dap_an_dung);
-        // data.append('giai_thich', formData.giai_thich);
-        // data.append('muc_do_kho', formData.muc_do_kho);
-        // data.append('trang_thai', formData.trang_thai);
-        // data.append('nguon_goc', formData.nguon_goc);
-        // data.append('lua_chon', JSON.stringify(formData.lua_chon));
-        // if (formData.image) data.append('image', formData.image);
-        // if (formData.audio) data.append('audio', formData.audio);
-        // if (formData.passage) data.append('passage', formData.passage);
-
         try {
-            await createQuestion({ hinh_anh: selectedImage, am_thanh: selectedAudio, data: formData });
+            let dataToSend = { id_phan: currentPart };
+            let hinh_anh = selectedImage;
+            let am_thanh = selectedAudio;
+            if (currentPart === 3) {
+                const arr = allPartsData[3];
+
+                if (Array.isArray(arr) && arr.length > 0) {
+                    if (arr[0].image) hinh_anh = arr[0].image;
+                    if (arr[0].audio) am_thanh = arr[0].audio;
+                }
+
+                const noi_dung = arr.map((q) => q.noi_dung);
+                const dap_an_dung = arr.map((q) => q.dap_an_dung);
+                const giai_thich = arr.map((q) => q.giai_thich);
+                const lua_chon = arr.map((q) => q.lua_chon);
+
+                dataToSend = {
+                    id_phan: 3,
+                    noi_dung,
+                    dap_an_dung,
+                    giai_thich,
+                    muc_do_kho: 'trung_binh',
+                    trang_thai: 'da_xuat_ban',
+                    lua_chon,
+                };
+            } else if (currentPart === 4) {
+                const arr = allPartsData[4];
+                if (arr[0].audio) am_thanh = arr[0].audio;
+                const noi_dung = arr.map((q) => q.noi_dung);
+                const dap_an_dung = arr.map((q) => q.dap_an_dung);
+                const giai_thich = arr.map((q) => q.giai_thich);
+                const lua_chon = arr.map((q) => q.lua_chon);
+
+                dataToSend = {
+                    id_phan: 4,
+                    noi_dung,
+                    dap_an_dung,
+                    giai_thich,
+                    muc_do_kho: 'trung_binh',
+                    trang_thai: 'da_xuat_ban',
+                    lua_chon,
+                };
+            } else if (currentPart === 5) {
+                const q = allPartsData[5][0]; // Lấy câu đầu tiên (giống Part 1)
+                const { noi_dung, dap_an_dung, giai_thich, lua_chon } = q;
+                dataToSend = {
+                    id_phan: 5,
+                    noi_dung,
+                    dap_an_dung,
+                    giai_thich,
+                    muc_do_kho: 'trung_binh',
+                    trang_thai: 'da_xuat_ban',
+                    lua_chon,
+                };
+            } else {
+                dataToSend = { id_phan: currentPart, ...formData };
+            }
+            await createQuestion({ hinh_anh, am_thanh, data: dataToSend });
+            // navigate('/admin/test/question');
             toast.success('Câu hỏi đã được tạo thành công!');
             // Reset form
-            setFormData({
-                id_phan: 1,
-                noi_dung: '',
-                dap_an_dung: '',
-                giai_thich: '',
-                passage: '',
-                muc_do_kho: 'de',
-                trang_thai: 'da_xuat_ban',
-                nguon_goc: 'thu_cong',
-                lua_chon: [
-                    { ky_tu_lua_chon: 'A', noi_dung: '' },
-                    { ky_tu_lua_chon: 'B', noi_dung: '' },
-                    { ky_tu_lua_chon: 'C', noi_dung: '' },
-                    { ky_tu_lua_chon: 'D', noi_dung: '' },
-                ],
-                image: null,
-                audio: null,
-            });
+            setAllPartsData(initialAllPartsData);
+            setCurrentPart(1);
             setSelectedImage(null);
             setSelectedAudio(null);
             setImagePreview(null);
@@ -253,9 +459,8 @@ function CreateQuestionBank() {
                                 </label>
                                 <Select
                                     options={partOptions}
-                                    value={partOptions.find((option) => option.value === formData.id_phan)}
-                                    onChange={(selected) => setFormData({ ...formData, id_phan: selected.value })}
-                                    placeholder="Chọn phần"
+                                    value={partOptions.find((option) => option.value === currentPart)}
+                                    onChange={(selected) => setCurrentPart(selected.value)}
                                 />
                             </div>
                             <div className="col-md-4">
@@ -268,10 +473,19 @@ function CreateQuestionBank() {
                                     value={formData.muc_do_kho}
                                     onChange={(e) => setFormData({ ...formData, muc_do_kho: e.target.value })}
                                     required
+                                    disabled={!dsMucDoKho.length}
                                 >
-                                    <option value="de">Dễ</option>
-                                    <option value="trung_binh">Trung bình</option>
-                                    <option value="kho">Khó</option>
+                                    {dsMucDoKho.map((item) => (
+                                        <option key={item} value={item}>
+                                            {item === 'de'
+                                                ? 'Dễ'
+                                                : item === 'trung_binh'
+                                                ? 'Trung bình'
+                                                : item === 'kho'
+                                                ? 'Khó'
+                                                : item}
+                                        </option>
+                                    ))}
                                 </select>
                             </div>
                             <div className="col-md-4">
@@ -284,9 +498,17 @@ function CreateQuestionBank() {
                                     value={formData.trang_thai}
                                     onChange={(e) => setFormData({ ...formData, trang_thai: e.target.value })}
                                     required
+                                    disabled={!dsTrangThai.length}
                                 >
-                                    <option value="da_xuat_ban">Đã xuất bản</option>
-                                    <option value="luu_tru">Lưu trữ</option>
+                                    {dsTrangThai.map((item) => (
+                                        <option key={item} value={item}>
+                                            {item === 'da_xuat_ban'
+                                                ? 'Đã xuất bản'
+                                                : item === 'luu_tru'
+                                                ? 'Lưu trữ'
+                                                : item}
+                                        </option>
+                                    ))}
                                 </select>
                             </div>
                         </div>
@@ -294,7 +516,7 @@ function CreateQuestionBank() {
                         {renderQuestionForm()}
 
                         <div className="text-end">
-                            <Link to="/admin/question-bank" type="button" className="btn btn-secondary me-2">
+                            <Link to="/admin/test/question" type="button" className="btn btn-secondary me-2">
                                 Hủy
                             </Link>
                             <button type="submit" className="btn btn-success" disabled={loading}>

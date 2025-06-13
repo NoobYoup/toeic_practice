@@ -64,7 +64,7 @@ function Part1QuestionForm({
 
             <div className="mb-3" id="audioSection">
                 <label htmlFor="questionAudio" className="form-label">
-                    File âm thanh (cho câu hỏi Listening)
+                    Âm thanh (Bắt buộc cho part 1)
                 </label>
                 <input
                     className="form-control"

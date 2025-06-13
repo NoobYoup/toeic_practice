@@ -21,7 +21,7 @@ function Part2QuestionForm({ formData, setFormData, handleAudioChange, audioPrev
 
             <div className="mb-3">
                 <label htmlFor="questionAudio" className="form-label">
-                    File âm thanh (bắt buộc cho Part 2)
+                    Âm thanh (bắt buộc cho Part 2)
                 </label>
                 <input
                     className="form-control"
@@ -43,7 +43,7 @@ function Part2QuestionForm({ formData, setFormData, handleAudioChange, audioPrev
                         </div>
                         <audio controls className="w-100 mt-3" style={{ maxWidth: '400px' }}>
                             <source src={audioPreview} />
-                            truss trình duyệt không hỗ trợ audio.
+                            Trình duyệt không hỗ trợ audio.
                         </audio>
                     </div>
                 )}
