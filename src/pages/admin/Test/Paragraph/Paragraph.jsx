@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import ReactPaginate from 'react-paginate';
-import { getAllPassage } from '@/services/passageService';
+import { getAllPassage, deletePassage } from '@/services/passageService';
 import styles from './Paragraph.module.scss';
 import classNames from 'classnames/bind';
+import { toast } from 'react-toastify';
 
 const cx = classNames.bind(styles);
 
@@ -14,19 +15,20 @@ function Paragraph() {
     const [pagination, setPagination] = useState({ page: 1, limit: 7, total: 0 });
     const [currentPage, setCurrentPage] = useState(1);
 
-    useEffect(() => {
-        async function fetchPassages() {
-            setLoading(true);
-            setError(null);
-            try {
-                const res = await getAllPassage(currentPage);
-                setPassages(res.data.data || []);
-                setPagination(res.data.pagination || { page: 1, limit: 7, total: 0 });
-            } catch (err) {
-                setError('Không thể tải danh sách đoạn văn');
-            }
-            setLoading(false);
+    async function fetchPassages() {
+        setLoading(true);
+        setError(null);
+        try {
+            const res = await getAllPassage(currentPage);
+            setPassages(res.data.data || []);
+            setPagination(res.data.pagination || { page: 1, limit: 7, total: 0 });
+        } catch (err) {
+            setError('Không thể tải danh sách đoạn văn');
         }
+        setLoading(false);
+    }
+
+    useEffect(() => {
         fetchPassages();
     }, [currentPage]);
 
@@ -34,12 +36,25 @@ function Paragraph() {
         setCurrentPage(event.selected + 1);
     };
 
+    const handleDelete = async (id) => {
+        setLoading(true);
+        try {
+            await deletePassage(id);
+            fetchPassages();
+            toast.success('Xóa đoạn văn thành công!');
+            // setCurrentPage(1);
+        } catch (error) {
+            toast.error(error?.response?.data?.message || 'Có lỗi xảy ra!');
+        }
+        setLoading(false);
+    };
+
     return (
         <>
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h2>Quản lý đoạn văn</h2>
                 <div>
-                    <Link to="create-paragraph" className="btn btn-primary">
+                    <Link to="create" className="btn btn-primary">
                         <i className="fas fa-plus-circle me-2"></i>Thêm đoạn văn
                     </Link>
                 </div>
@@ -109,7 +124,6 @@ function Paragraph() {
                                         <th>ID</th>
                                         <th>Tiêu đề</th>
                                         <th>Nội dung</th>
-                                        <th>Độ dài</th>
                                         <th>Phần</th>
                                         <th>Thao tác</th>
                                     </tr>
@@ -140,26 +154,25 @@ function Paragraph() {
                                                             : passage.noi_dung}
                                                     </div>
                                                 </td>
-                                                <td>
-                                                    <span className="word-count">
-                                                        {passage.noi_dung.split(' ').length} từ
-                                                    </span>
-                                                </td>
+
                                                 <td>{passage.id_phan}</td>
                                                 <td>
-                                                    <Link
-                                                        to={`/admin/paragraph/detail-paragraph/${passage.id_doan_van}`}
+                                                    {/* <Link
+                                                        to={`/admin/paragraph/detail/${passage.id_doan_van}`}
                                                         className="btn btn-sm btn-outline-info me-1"
                                                     >
                                                         <i className="fas fa-eye"></i>
-                                                    </Link>
+                                                    </Link> */}
                                                     <Link
-                                                        to={`/admin/paragraph/edit-paragraph/${passage.id_doan_van}`}
+                                                        to={`/admin/test/paragraph/edit/${passage.id_doan_van}`}
                                                         className="btn btn-sm btn-outline-primary me-1"
                                                     >
                                                         <i className="fas fa-edit"></i>
                                                     </Link>
-                                                    <button className="btn btn-sm btn-outline-danger">
+                                                    <button
+                                                        onClick={() => handleDelete(passage.id_doan_van)}
+                                                        className="btn btn-sm btn-outline-danger"
+                                                    >
                                                         <i className="fas fa-trash-alt"></i>
                                                     </button>
                                                 </td>

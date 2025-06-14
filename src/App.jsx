@@ -85,9 +85,9 @@ function App() {
                                 <Route path="question/detail-question/:id" element={<DetailQuestionBank />} />
 
                                 <Route path="paragraph" element={<Paragraph />} />
-                                <Route path="paragraph/create-paragraph" element={<CreateParagraph />} />
-                                <Route path="paragraph/edit-paragraph" element={<EditParagraph />} />
-                                <Route path="paragraph/detail-paragraph/:id" element={<DetailParagraph />} />
+                                <Route path="paragraph/create" element={<CreateParagraph />} />
+                                <Route path="paragraph/edit/:id" element={<EditParagraph />} />
+                                <Route path="paragraph/detail/:id" element={<DetailParagraph />} />
 
                                 <Route index element={<Navigate to="exam" replace />} />
                             </Route>
