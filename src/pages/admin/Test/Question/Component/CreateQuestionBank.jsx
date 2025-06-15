@@ -38,8 +38,19 @@ function CreateQuestionBank() {
             try {
                 const res = await getAllQuestion(1, {});
                 setDsPhan(res.data.dsPhan || []);
-                setDsMucDoKho(res.data.dsMucDoKho || []);
-                setDsTrangThai(res.data.dsTrangThai || []);
+                setDsMucDoKho(
+                    (res.data.dsMucDoKho || []).map((item) => ({
+                        value: item,
+                        label:
+                            item === 'de' ? 'Dễ' : item === 'trung_binh' ? 'Trung bình' : item === 'kho' ? 'Khó' : item,
+                    })),
+                );
+                setDsTrangThai(
+                    (res.data.dsTrangThai || []).map((item) => ({
+                        value: item,
+                        label: item === 'da_xuat_ban' ? 'Đã xuất bản' : item === 'luu_tru' ? 'Lưu trữ' : item,
+                    })),
+                );
             } catch (err) {
                 // fallback nếu lỗi
                 setDsPhan([]);
@@ -51,7 +62,22 @@ function CreateQuestionBank() {
     }, []);
 
     // khởi tạo dữ liệu từ part 1 -> 7
-    const initialAllPartsData = {
+    const defaultPart6Questions = Array(4)
+        .fill(0)
+        .map(() => ({
+            noi_dung: '',
+            dap_an_dung: '',
+            giai_thich: '',
+            lua_chon: [
+                { ky_tu_lua_chon: 'A', noi_dung: '' },
+                { ky_tu_lua_chon: 'B', noi_dung: '' },
+                { ky_tu_lua_chon: 'C', noi_dung: '' },
+                { ky_tu_lua_chon: 'D', noi_dung: '' },
+            ],
+        }));
+    
+
+const initialAllPartsData = {
         1: {
             noi_dung: '',
             dap_an_dung: '',
@@ -178,11 +204,72 @@ function CreateQuestionBank() {
                 ],
             },
         ],
-        6: { passage: '', questions: [{ noi_dung: '', dap_an: '' }] },
-        7: { passage: '', questions: [{ noi_dung: '', dap_an: '' }] },
+        6: [
+            {
+                passage: '',
+                dap_an_dung: '',
+                giai_thich: '',
+                lua_chon: [
+                    { ky_tu_lua_chon: 'A', noi_dung: '' },
+                    { ky_tu_lua_chon: 'B', noi_dung: '' },
+                    { ky_tu_lua_chon: 'C', noi_dung: '' },
+                    { ky_tu_lua_chon: 'D', noi_dung: '' },
+                ],
+            },
+            {
+                passage: '',
+                dap_an_dung: '',
+                giai_thich: '',
+                lua_chon: [
+                    { ky_tu_lua_chon: 'A', noi_dung: '' },
+                    { ky_tu_lua_chon: 'B', noi_dung: '' },
+                    { ky_tu_lua_chon: 'C', noi_dung: '' },
+                    { ky_tu_lua_chon: 'D', noi_dung: '' },
+                ],
+            },
+            {
+                passage: '',
+                dap_an_dung: '',
+                giai_thich: '',
+                lua_chon: [
+                    { ky_tu_lua_chon: 'A', noi_dung: '' },
+                    { ky_tu_lua_chon: 'B', noi_dung: '' },
+                    { ky_tu_lua_chon: 'C', noi_dung: '' },
+                    { ky_tu_lua_chon: 'D', noi_dung: '' },
+                ],
+            },
+            {
+                passage: '',
+                dap_an_dung: '',
+                giai_thich: '',
+                lua_chon: [
+                    { ky_tu_lua_chon: 'A', noi_dung: '' },
+                    { ky_tu_lua_chon: 'B', noi_dung: '' },
+                    { ky_tu_lua_chon: 'C', noi_dung: '' },
+                    { ky_tu_lua_chon: 'D', noi_dung: '' },
+                ],
+            },
+        ],
+        // 6: [{ passage: '', questions: [{ noi_dung: '', dap_an_dung: '' }] }],
+        // 7: [{ passage: '', questions: [{ noi_dung: '', dap_an_dung: '' }] }],
     };
 
     const [allPartsData, setAllPartsData] = useState(initialAllPartsData);
+
+    // Đảm bảo Part 6 luôn có object { id_doan_van, questions } với 4 câu
+    useEffect(() => {
+        setAllPartsData((prev) => {
+            if (Array.isArray(prev[6])) {
+                // Chuyển từ mảng -> object chuẩn
+                return { ...prev, 6: { id_doan_van: '', questions: prev[6] } };
+            }
+            if (!Array.isArray(prev[6].questions) || prev[6].questions.length !== 4) {
+                return { ...prev, 6: { ...prev[6], questions: defaultPart6Questions } };
+            }
+            return prev;
+        });
+    }, []);
+
     const [currentPart, setCurrentPart] = useState(1);
 
     const formData = allPartsData[currentPart];
@@ -337,8 +424,24 @@ function CreateQuestionBank() {
             case 5:
                 return <Part5QuestionForm questions={allPartsData[5]} onChangeQuestion={handlePart5Change} />;
             case 6:
+                return (
+                    <Part6QuestionForm
+                        formData={formData}
+                        setFormData={setFormData}
+                        questions={Array.isArray(allPartsData[6]) ? allPartsData[6] : allPartsData[6].questions}
+                        onChangeQuestion={handlePart6Change}
+                        onResetQuestions={() => setAllPartsData(prev => ({ ...prev, 6: { ...prev[6], questions: defaultPart6Questions } }))}
+                    />
+                );
             case 7:
-                return <Part6QuestionForm formData={formData} setFormData={setFormData} />;
+                return (
+                    <Part6QuestionForm
+                        formData={formData}
+                        setFormData={setFormData}
+                        questions={allPartsData[7]}
+                        onChangeQuestion={handlePart7Change}
+                    />
+                );
             // Thêm case cho Part 3, 4, 5 nếu cần
             default:
                 return null;
@@ -364,6 +467,25 @@ function CreateQuestionBank() {
         setAllPartsData((prev) => ({
             ...prev,
             5: prev[5].map((q, i) => (i === index ? { ...q, [field]: value } : q)),
+        }));
+    };
+
+    const handlePart6Change = (index, field, value) => {
+        setAllPartsData((prev) => {
+            if (Array.isArray(prev[6])) {
+                // chưa convert, làm việc trực tiếp trên mảng
+                const newArr = prev[6].map((q, i) => (i === index ? { ...q, [field]: value } : q));
+                return { ...prev, 6: newArr };
+            }
+            const newQuestions = prev[6].questions.map((q, i) => (i === index ? { ...q, [field]: value } : q));
+            return { ...prev, 6: { ...prev[6], questions: newQuestions } };
+        });
+    };
+
+    const handlePart7Change = (index, field, value) => {
+        setAllPartsData((prev) => ({
+            ...prev,
+            7: prev[7].map((q, i) => (i === index ? { ...q, [field]: value } : q)),
         }));
     };
 
@@ -426,6 +548,24 @@ function CreateQuestionBank() {
                     trang_thai: 'da_xuat_ban',
                     lua_chon,
                 };
+            } else if (currentPart === 6) {
+                const part6 = allPartsData[6];
+                const { id_doan_van, questions } = part6;
+                const noi_dung = questions.map(q => q.noi_dung);
+                const dap_an_dung = questions.map(q => q.dap_an_dung);
+                const giai_thich = questions.map(q => q.giai_thich);
+                const lua_chon = questions.map(q => q.lua_chon);
+
+                dataToSend = {
+                    id_phan: 6,
+                    id_doan_van,
+                    noi_dung,
+                    dap_an_dung,
+                    giai_thich,
+                    muc_do_kho: 'trung_binh',
+                    trang_thai: 'da_xuat_ban',
+                    lua_chon,
+                };
             } else {
                 dataToSend = { id_phan: currentPart, ...formData };
             }
@@ -467,7 +607,12 @@ function CreateQuestionBank() {
                                 <label htmlFor="questionDifficulty" className="form-label">
                                     Độ khó
                                 </label>
-                                <select
+                                <Select
+                                    options={dsMucDoKho}
+                                    value={dsMucDoKho.find((option) => option.value === formData.muc_do_kho)}
+                                    onChange={(selected) => setFormData({ ...formData, muc_do_kho: selected.value })}
+                                />
+                                {/* <select
                                     className="form-select"
                                     id="questionDifficulty"
                                     value={formData.muc_do_kho}
@@ -477,39 +622,27 @@ function CreateQuestionBank() {
                                 >
                                     {dsMucDoKho.map((item) => (
                                         <option key={item} value={item}>
-                                            {item === 'de'
-                                                ? 'Dễ'
-                                                : item === 'trung_binh'
+                                            {item === 'trung_binh'
                                                 ? 'Trung bình'
                                                 : item === 'kho'
                                                 ? 'Khó'
+                                                : item === 'de'
+                                                ? 'Dễ'
                                                 : item}
                                         </option>
                                     ))}
-                                </select>
+                                </select> */}
                             </div>
                             <div className="col-md-4">
                                 <label htmlFor="questionStatus" className="form-label">
                                     Trạng thái
                                 </label>
-                                <select
-                                    className="form-select"
-                                    id="questionStatus"
-                                    value={formData.trang_thai}
-                                    onChange={(e) => setFormData({ ...formData, trang_thai: e.target.value })}
-                                    required
-                                    disabled={!dsTrangThai.length}
-                                >
-                                    {dsTrangThai.map((item) => (
-                                        <option key={item} value={item}>
-                                            {item === 'da_xuat_ban'
-                                                ? 'Đã xuất bản'
-                                                : item === 'luu_tru'
-                                                ? 'Lưu trữ'
-                                                : item}
-                                        </option>
-                                    ))}
-                                </select>
+                                <Select
+                                    options={dsTrangThai}
+                                    value={dsTrangThai.find((option) => option.value === formData.trang_thai)}
+                                    onChange={(selected) => setFormData({ ...formData, trang_thai: selected.value })}
+                                    isDisabled={!dsTrangThai.length}
+                                />
                             </div>
                         </div>
 
