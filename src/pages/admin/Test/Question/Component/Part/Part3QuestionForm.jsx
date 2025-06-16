@@ -18,6 +18,7 @@ function Part3QuestionForm({
     audioPreview,
     handleAudioChange,
     removeAudio,
+    audio,
 }) {
     if (!Array.isArray(questions)) return null;
 
@@ -67,7 +68,7 @@ function Part3QuestionForm({
 
             <div className="mb-3" id="audioSection">
                 <label htmlFor="questionAudio" className="form-label">
-                    Âm thanh (Bắt buộc cho part 1)
+                    Âm thanh (Bắt buộc cho part 3)
                 </label>
                 <input
                     className="form-control"
@@ -89,8 +90,8 @@ function Part3QuestionForm({
                                 <i className="fas fa-music text-success"></i>
                             </div>
                             <div>
-                                <p className="mb-0 fw-medium">{formData.audio?.name}</p>
-                                <small className="text-muted">{formatFileSize(formData.audio?.size)}</small>
+                                <p className="mb-0 fw-medium">{audio?.name}</p>
+                                <small className="text-muted">{formatFileSize(audio?.size)}</small>
                             </div>
                         </div>
                         <button type="button" className="btn btn-sm btn-outline-danger" onClick={removeAudio}>

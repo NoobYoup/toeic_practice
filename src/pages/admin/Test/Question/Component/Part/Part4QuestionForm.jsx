@@ -60,7 +60,7 @@ function Part4QuestionForm({
                             <i className="fas fa-trash-alt me-1"></i>Xóa
                         </button>
                     </div>
-                    <audio controls className="w-100 mt-3">
+                    <audio controls className="w-100 mt-3" style={{ maxWidth: '400px' }}>
                         <source src={audioPreview} />
                     </audio>
                 </div>

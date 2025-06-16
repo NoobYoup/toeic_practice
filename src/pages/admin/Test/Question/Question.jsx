@@ -129,13 +129,12 @@ function Question() {
                 <div className="row g-3 mb-3">
                     <div className="col-md-3">
                         <Select
-                            name="trang_thai"
-                            options={optionsTrangThai}
+                            name="id_phan"
+                            options={optionsPhan}
                             onChange={handleSelectChange}
-                            defaultValue={optionsTrangThai[0]}
+                            defaultValue={optionsPhan[0]}
                         />
                     </div>
-
                     <div className="col-md-3">
                         <Select
                             name="muc_do_kho"
@@ -144,13 +143,12 @@ function Question() {
                             defaultValue={optionsMucDo[0]}
                         />
                     </div>
-
                     <div className="col-md-3">
                         <Select
-                            name="id_phan"
-                            options={optionsPhan}
+                            name="trang_thai"
+                            options={optionsTrangThai}
                             onChange={handleSelectChange}
-                            defaultValue={optionsPhan[0]}
+                            defaultValue={optionsTrangThai[0]}
                         />
                     </div>
                 </div>

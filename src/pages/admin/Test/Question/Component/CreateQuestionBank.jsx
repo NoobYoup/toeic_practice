@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { Link, useNavigate } from 'react-router-dom';
@@ -19,7 +19,15 @@ import styles from './CreateQuestionBank.module.scss';
 const cx = classNames.bind(styles);
 
 function CreateQuestionBank() {
+    const formRef = useRef(null);
     const navigate = useNavigate();
+
+    // lưu meta (muc_do_kho, trang_thai) cho các part có allPartsData là mảng
+    const [partMeta, setPartMeta] = useState({
+        3: { muc_do_kho: 'trung_binh', trang_thai: 'da_xuat_ban' },
+        4: { muc_do_kho: 'trung_binh', trang_thai: 'da_xuat_ban' },
+        5: { muc_do_kho: 'trung_binh', trang_thai: 'da_xuat_ban' },
+    });
 
     const [loading, setLoading] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
@@ -60,6 +68,13 @@ function CreateQuestionBank() {
         }
         fetchOptions();
     }, []);
+
+    // fix lỗi part 3-7 khi chọn độ khó và trạng thái
+    const getCurrentPartData = () => {
+        if (currentPart === 1 || currentPart === 2) return formData;
+        if (currentPart === 3 || currentPart === 4 || currentPart === 5) return partMeta[currentPart];
+        return allPartsData[currentPart];
+    };
 
     // khởi tạo dữ liệu từ part 1 -> 7
     const defaultPart6Questions = Array(4)
@@ -431,6 +446,7 @@ function CreateQuestionBank() {
                         handleAudioChange={handleAudioChange}
                         audioPreview={audioPreview}
                         removeAudio={removeAudio}
+                        audio={selectedAudio}
                     />
                 );
             case 4:
@@ -634,9 +650,13 @@ function CreateQuestionBank() {
             await createQuestion({ hinh_anh, am_thanh, data: dataToSend });
             // navigate('/admin/test/question');
             toast.success('Câu hỏi đã được tạo thành công!');
+            // Reset native form inputs (file fields, unchecked radios, etc.)
+            if (formRef.current) {
+                formRef.current.reset();
+            }
             // Reset form
             setAllPartsData(initialAllPartsData);
-            setCurrentPart(1);
+            setCurrentPart(currentPart);
             setSelectedImage(null);
             setSelectedAudio(null);
             setImagePreview(null);
@@ -653,7 +673,7 @@ function CreateQuestionBank() {
             <h1>Thêm câu hỏi mới</h1>
             <div className="card">
                 <div className="card-body">
-                    <form onSubmit={handleSubmit} className="question-form">
+                    <form ref={formRef} onSubmit={handleSubmit} className="question-form">
                         <div className="row mb-3">
                             <div className="col-md-4">
                                 <label htmlFor="questionPart" className="form-label">
@@ -671,29 +691,25 @@ function CreateQuestionBank() {
                                 </label>
                                 <Select
                                     options={dsMucDoKho}
-                                    value={dsMucDoKho.find((option) => option.value === formData.muc_do_kho)}
-                                    onChange={(selected) => setFormData({ ...formData, muc_do_kho: selected.value })}
+                                    value={dsMucDoKho.find(
+                                        (option) => option.value === getCurrentPartData()?.muc_do_kho,
+                                    )}
+                                    onChange={(selected) => {
+                                        if (currentPart === 1 || currentPart === 2) {
+                                            setFormData({ ...formData, muc_do_kho: selected.value });
+                                        } else if (currentPart === 3 || currentPart === 4 || currentPart === 5) {
+                                            setPartMeta((prev) => ({
+                                                ...prev,
+                                                [currentPart]: { ...prev[currentPart], muc_do_kho: selected.value },
+                                            }));
+                                        } else {
+                                            setAllPartsData((prev) => ({
+                                                ...prev,
+                                                [currentPart]: { ...prev[currentPart], muc_do_kho: selected.value },
+                                            }));
+                                        }
+                                    }}
                                 />
-                                {/* <select
-                                    className="form-select"
-                                    id="questionDifficulty"
-                                    value={formData.muc_do_kho}
-                                    onChange={(e) => setFormData({ ...formData, muc_do_kho: e.target.value })}
-                                    required
-                                    disabled={!dsMucDoKho.length}
-                                >
-                                    {dsMucDoKho.map((item) => (
-                                        <option key={item} value={item}>
-                                            {item === 'trung_binh'
-                                                ? 'Trung bình'
-                                                : item === 'kho'
-                                                ? 'Khó'
-                                                : item === 'de'
-                                                ? 'Dễ'
-                                                : item}
-                                        </option>
-                                    ))}
-                                </select> */}
                             </div>
                             <div className="col-md-4">
                                 <label htmlFor="questionStatus" className="form-label">
@@ -701,8 +717,24 @@ function CreateQuestionBank() {
                                 </label>
                                 <Select
                                     options={dsTrangThai}
-                                    value={dsTrangThai.find((option) => option.value === formData.trang_thai)}
-                                    onChange={(selected) => setFormData({ ...formData, trang_thai: selected.value })}
+                                    value={dsTrangThai.find(
+                                        (option) => option.value === getCurrentPartData()?.trang_thai,
+                                    )}
+                                    onChange={(selected) => {
+                                        if (currentPart === 1 || currentPart === 2) {
+                                            setFormData({ ...formData, trang_thai: selected.value });
+                                        } else if (currentPart === 3 || currentPart === 4 || currentPart === 5) {
+                                            setPartMeta((prev) => ({
+                                                ...prev,
+                                                [currentPart]: { ...prev[currentPart], trang_thai: selected.value },
+                                            }));
+                                        } else {
+                                            setAllPartsData((prev) => ({
+                                                ...prev,
+                                                [currentPart]: { ...prev[currentPart], trang_thai: selected.value },
+                                            }));
+                                        }
+                                    }}
                                     isDisabled={!dsTrangThai.length}
                                 />
                             </div>

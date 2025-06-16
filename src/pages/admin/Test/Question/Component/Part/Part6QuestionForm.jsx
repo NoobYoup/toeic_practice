@@ -2,43 +2,18 @@
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import Select from 'react-select';
-import { useState, useEffect } from 'react';
-import { getAllPassage } from '@/services/passageService';
+import { memo, useCallback } from 'react';
+import usePassageOptions from '../utils/usePassageOptions';
+import ChoiceInput from './ChoiceInput';
+import PropTypes from 'prop-types';
 
 function Part6QuestionForm({ formData, setFormData, questions, onChangeQuestion, onResetQuestions }) {
-    // const [currentPassage, setCurrentPassage] = useState(''); // Remove local state, use formData.id_doan_van instead
-    const [passageOptions, setPassageOptions] = useState([]);
+    // Lấy danh sách đoạn văn thông qua hook chung (chỉ gọi API 1 lần)
+    const passageOptions = usePassageOptions(); // Lấy danh sách đoạn văn cho Part 6/7
 
-    // Lấy danh sách đoạn văn cho Part 6/7
-    useEffect(() => {
-        async function fetchPassages() {
-            try {
-                const res = await getAllPassage(1);
-                const passages = res?.data?.data || res?.data?.passages || [];
-                const options = passages.map((p) => ({
-                    value: String(p.id_doan_van),
-                    label: `[${p.id_doan_van}] ${p.tieu_de}`,
-                }));
-                console.log('passageOptions:', options);
-                console.log('formData.id_doan_van:', formData?.id_doan_van);
-                console.log(
-                    'value for Select:',
-                    passageOptions.find((option) => option.value === String(formData?.id_doan_van)),
-                );
-                setPassageOptions(options);
-            } catch (err) {
-                // eslint-disable-next-line no-console
-                console.error('Không thể lấy danh sách đoạn văn:', err);
-
-                setPassageOptions([]);
-            }
-        }
-
-        fetchPassages();
-    }, []);
     return (
         <>
-            <div className="col-md-4">
+            <div className="col-md-4 mb-3">
                 <label htmlFor="questionPart" className="form-label">
                     Đoạn văn
                 </label>
@@ -87,32 +62,22 @@ function Part6QuestionForm({ formData, setFormData, questions, onChangeQuestion,
                         />
                     </div>
 
-                    {['A', 'B', 'C', 'D'].map((option, index) => (
-                        <div className="mb-3" key={option}>
-                            <input
-                                type="radio"
-                                className="form-check-input me-2"
-                                id={`q${idx}-option${option}`}
-                                name={`answerOption${idx}`}
-                                value={option}
-                                checked={q.dap_an_dung === option}
-                                onChange={(e) => onChangeQuestion(idx, 'dap_an_dung', e.target.value)}
-                            />
-                            <label htmlFor={`q${idx}-option${option}`} className="form-label">
-                                Lựa chọn {option}
-                            </label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                id={`q${idx}-option${option}-input`}
-                                value={q.lua_chon[index].noi_dung}
-                                onChange={(e) => {
-                                    const updatedOptions = [...q.lua_chon];
-                                    updatedOptions[index].noi_dung = e.target.value;
-                                    onChangeQuestion(idx, 'lua_chon', updatedOptions);
-                                }}
-                            />
-                        </div>
+                    {/* Render 4 đáp án A-D bằng component con */}
+                    {['A', 'B', 'C', 'D'].map((optionLetter, index) => (
+                        <ChoiceInput
+                            key={optionLetter}
+                            questionIdx={idx}
+                            choiceIdx={index}
+                            optionLetter={optionLetter}
+                            value={q.lua_chon[index].noi_dung}
+                            isCorrect={q.dap_an_dung === optionLetter}
+                            onTextChange={(val) => {
+                                const updatedOptions = [...q.lua_chon];
+                                updatedOptions[index].noi_dung = val;
+                                onChangeQuestion(idx, 'lua_chon', updatedOptions);
+                            }}
+                            onChooseCorrect={(letter) => onChangeQuestion(idx, 'dap_an_dung', letter)}
+                        />
                     ))}
 
                     <div className="mb-3">
@@ -129,4 +94,13 @@ function Part6QuestionForm({ formData, setFormData, questions, onChangeQuestion,
     );
 }
 
-export default Part6QuestionForm;
+// Memo để tránh re-render không cần thiết khi props không đổi
+export default memo(Part6QuestionForm);
+
+Part6QuestionForm.propTypes = {
+    formData: PropTypes.object.isRequired,
+    setFormData: PropTypes.func.isRequired,
+    questions: PropTypes.array.isRequired,
+    onChangeQuestion: PropTypes.func.isRequired,
+    onResetQuestions: PropTypes.func,
+};

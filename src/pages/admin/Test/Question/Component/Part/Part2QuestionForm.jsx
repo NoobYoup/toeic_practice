@@ -19,9 +19,9 @@ function Part2QuestionForm({ formData, setFormData, handleAudioChange, audioPrev
                 </ul>
             </div>
 
-            <div className="mb-3">
+            <div className="mb-3" id="audioSection">
                 <label htmlFor="questionAudio" className="form-label">
-                    Âm thanh (bắt buộc cho Part 2)
+                    Âm thanh (Bắt buộc cho part 2)
                 </label>
                 <input
                     className="form-control"
@@ -30,24 +30,35 @@ function Part2QuestionForm({ formData, setFormData, handleAudioChange, audioPrev
                     accept="audio/*"
                     onChange={handleAudioChange}
                 />
-                {audioPreview && (
-                    <div className="mb-3 p-3 border rounded bg-light">
-                        <div className="d-flex justify-content-between align-items-center">
-                            <div className="d-flex align-items-center">
+            </div>
+
+            {audioPreview && (
+                <div className="mb-3 p-3 border rounded bg-light">
+                    <div className="d-flex justify-content-between align-items-center">
+                        <div className="d-flex align-items-center">
+                            <div
+                                className="bg-success bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3"
+                                style={{ width: '32px', height: '32px' }}
+                            >
+                                <i className="fas fa-music text-success"></i>
+                            </div>
+                            <div>
                                 <p className="mb-0 fw-medium">{formData.audio?.name}</p>
                                 <small className="text-muted">{formatFileSize(formData.audio?.size)}</small>
                             </div>
-                            <button type="button" className="btn btn-sm btn-outline-danger" onClick={removeAudio}>
-                                Xóa
-                            </button>
                         </div>
-                        <audio controls className="w-100 mt-3" style={{ maxWidth: '400px' }}>
+                        <button type="button" className="btn btn-sm btn-outline-danger" onClick={removeAudio}>
+                            <i className="fas fa-trash-alt me-1"></i>Xóa
+                        </button>
+                    </div>
+                    <div className="mt-3">
+                        <audio controls className="w-100" style={{ maxWidth: '400px' }}>
                             <source src={audioPreview} />
-                            Trình duyệt không hỗ trợ audio.
+                            Trình duyệt của bạn không hỗ trợ phát audio.
                         </audio>
                     </div>
-                )}
-            </div>
+                </div>
+            )}
 
             <hr className="my-4" />
 
