@@ -75,9 +75,21 @@ function CreateQuestionBank() {
                 { ky_tu_lua_chon: 'D', noi_dung: '' },
             ],
         }));
-    
 
-const initialAllPartsData = {
+    // Câu hỏi mặc định cho Part 7
+    const defaultPart7Question = {
+        noi_dung: '',
+        dap_an_dung: '',
+        giai_thich: '',
+        lua_chon: [
+            { ky_tu_lua_chon: 'A', noi_dung: '' },
+            { ky_tu_lua_chon: 'B', noi_dung: '' },
+            { ky_tu_lua_chon: 'C', noi_dung: '' },
+            { ky_tu_lua_chon: 'D', noi_dung: '' },
+        ],
+    };
+
+    const initialAllPartsData = {
         1: {
             noi_dung: '',
             dap_an_dung: '',
@@ -250,15 +262,18 @@ const initialAllPartsData = {
                 ],
             },
         ],
-        // 6: [{ passage: '', questions: [{ noi_dung: '', dap_an_dung: '' }] }],
-        // 7: [{ passage: '', questions: [{ noi_dung: '', dap_an_dung: '' }] }],
+        7: {
+            id_doan_van: '',
+            questions: [defaultPart7Question],
+        },
     };
 
     const [allPartsData, setAllPartsData] = useState(initialAllPartsData);
 
-    // Đảm bảo Part 6 luôn có object { id_doan_van, questions } với 4 câu
+    // Đảm bảo Part 6/7 có cấu trúc chuẩn
     useEffect(() => {
         setAllPartsData((prev) => {
+            // Normalize Part 6
             if (Array.isArray(prev[6])) {
                 // Chuyển từ mảng -> object chuẩn
                 return { ...prev, 6: { id_doan_van: '', questions: prev[6] } };
@@ -266,7 +281,15 @@ const initialAllPartsData = {
             if (!Array.isArray(prev[6].questions) || prev[6].questions.length !== 4) {
                 return { ...prev, 6: { ...prev[6], questions: defaultPart6Questions } };
             }
-            return prev;
+            // Normalize Part 7
+            let updated = prev;
+            if (Array.isArray(prev[7])) {
+                updated = { ...updated, 7: { id_doan_van: '', questions: prev[7] } };
+            }
+            if (!Array.isArray(updated[7].questions) || updated[7].questions.length === 0) {
+                updated = { ...updated, 7: { ...updated[7], questions: [defaultPart7Question] } };
+            }
+            return updated;
         });
     }, []);
 
@@ -430,16 +453,23 @@ const initialAllPartsData = {
                         setFormData={setFormData}
                         questions={Array.isArray(allPartsData[6]) ? allPartsData[6] : allPartsData[6].questions}
                         onChangeQuestion={handlePart6Change}
-                        onResetQuestions={() => setAllPartsData(prev => ({ ...prev, 6: { ...prev[6], questions: defaultPart6Questions } }))}
+                        onResetQuestions={() =>
+                            setAllPartsData((prev) => ({
+                                ...prev,
+                                6: { ...prev[6], questions: defaultPart6Questions },
+                            }))
+                        }
                     />
                 );
             case 7:
                 return (
-                    <Part6QuestionForm
+                    <Part7QuestionForm
                         formData={formData}
                         setFormData={setFormData}
-                        questions={allPartsData[7]}
+                        questions={formData.questions || []}
                         onChangeQuestion={handlePart7Change}
+                        onAddQuestion={addPart7Question}
+                        onRemoveQuestion={removePart7Question}
                     />
                 );
             // Thêm case cho Part 3, 4, 5 nếu cần
@@ -483,9 +513,23 @@ const initialAllPartsData = {
     };
 
     const handlePart7Change = (index, field, value) => {
+        setAllPartsData((prev) => {
+            const newQuestions = prev[7].questions.map((q, i) => (i === index ? { ...q, [field]: value } : q));
+            return { ...prev, 7: { ...prev[7], questions: newQuestions } };
+        });
+    };
+
+    const addPart7Question = (template) => {
         setAllPartsData((prev) => ({
             ...prev,
-            7: prev[7].map((q, i) => (i === index ? { ...q, [field]: value } : q)),
+            7: { ...prev[7], questions: [...prev[7].questions, template] },
+        }));
+    };
+
+    const removePart7Question = (idx) => {
+        setAllPartsData((prev) => ({
+            ...prev,
+            7: { ...prev[7], questions: prev[7].questions.filter((_, i) => i !== idx) },
         }));
     };
 
@@ -551,13 +595,31 @@ const initialAllPartsData = {
             } else if (currentPart === 6) {
                 const part6 = allPartsData[6];
                 const { id_doan_van, questions } = part6;
-                const noi_dung = questions.map(q => q.noi_dung);
-                const dap_an_dung = questions.map(q => q.dap_an_dung);
-                const giai_thich = questions.map(q => q.giai_thich);
-                const lua_chon = questions.map(q => q.lua_chon);
+                const noi_dung = questions.map((q) => q.noi_dung);
+                const dap_an_dung = questions.map((q) => q.dap_an_dung);
+                const giai_thich = questions.map((q) => q.giai_thich);
+                const lua_chon = questions.map((q) => q.lua_chon);
 
                 dataToSend = {
                     id_phan: 6,
+                    id_doan_van,
+                    noi_dung,
+                    dap_an_dung,
+                    giai_thich,
+                    muc_do_kho: 'trung_binh',
+                    trang_thai: 'da_xuat_ban',
+                    lua_chon,
+                };
+            } else if (currentPart === 7) {
+                const part7 = allPartsData[7];
+                const { id_doan_van, questions } = part7;
+                const noi_dung = questions.map((q) => q.noi_dung);
+                const dap_an_dung = questions.map((q) => q.dap_an_dung);
+                const giai_thich = questions.map((q) => q.giai_thich);
+                const lua_chon = questions.map((q) => q.lua_chon);
+
+                dataToSend = {
+                    id_phan: 7,
                     id_doan_van,
                     noi_dung,
                     dap_an_dung,
