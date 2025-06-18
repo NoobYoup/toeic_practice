@@ -192,8 +192,8 @@ function Question() {
                                                             <input className="form-check-input" type="checkbox" />
                                                         </div>
                                                     </td>
-                                                    <td className="text-nowrap text-truncate">{question.id_cau_hoi}</td>
-                                                    <td className="text-nowrap text-truncate">
+                                                    <td className="">{question.id_cau_hoi}</td>
+                                                    <td className="">
                                                         {question.phan.loai_phan === 'listening' ? (
                                                             <span
                                                                 className={`${cx(
@@ -201,7 +201,7 @@ function Question() {
                                                                     'question-type-listening',
                                                                 )} rounded-pill px-3 py-2`}
                                                             >
-                                                                {question.phan.loai_phan}
+                                                                {question.phan.loai_phan === 'listening' ? 'Listening' : ''}
                                                             </span>
                                                         ) : (
                                                             <span
@@ -210,29 +210,29 @@ function Question() {
                                                                     'question-type-reading',
                                                                 )} rounded-pill px-3 py-2`}
                                                             >
-                                                                {question.phan.ten_phan}
+                                                                {question.phan.loai_phan === 'reading' ? 'Reading' : ''}
                                                             </span>
                                                         )}
                                                     </td>
-                                                    <td className="text-nowrap text-truncate">
+                                                    <td className="">
                                                         {question.phan.ten_phan}
                                                     </td>
-                                                    <td className="text-nowrap text-truncate">
+                                                    <td className="">
                                                         <div className="d-flex align-items-center">
                                                             {question.noi_dung}
                                                         </div>
                                                     </td>
-                                                    <td className="text-nowrap text-truncate">
+                                                    <td className="">
                                                         {question.muc_do_kho === 'de'
                                                             ? 'Dễ'
                                                             : question.muc_do_kho === 'trung_binh'
                                                             ? 'Trung bình'
                                                             : 'Khó'}
                                                     </td>
-                                                    <td className="text-nowrap text-truncate">
+                                                    <td className="">
                                                         {question.nguon_goc === 'thu_cong' ? 'Thủ công' : ''}
                                                     </td>
-                                                    <td className="text-nowrap text-truncate">
+                                                    <td className="">
                                                         {question.trang_thai === 'da_xuat_ban'
                                                             ? 'Đã xuất bản'
                                                             : question.trang_thai === 'luu_tru'
@@ -247,7 +247,7 @@ function Question() {
                                                             <i className="fas fa-eye"></i>
                                                         </Link>
                                                         <Link
-                                                            to="edit-question"
+                                                            to={`edit-question/${question.id_cau_hoi}`}
                                                             className="btn btn-sm btn-outline-primary me-1"
                                                         >
                                                             <i className="fas fa-edit"></i>

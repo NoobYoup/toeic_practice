@@ -3,7 +3,7 @@ import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import Select from 'react-select';
 import { memo, useCallback } from 'react';
-import usePassageOptions from '../utils/usePassageOptions';
+import usePassageOptions from '@/utils/usePassageOptions';
 import ChoiceInput from './ChoiceInput';
 import PropTypes from 'prop-types';
 

@@ -34,7 +34,9 @@ const createQuestion = async ({ hinh_anh, am_thanh, data }) => {
     const formData = new FormData();
     if (hinh_anh) formData.append('hinh_anh', hinh_anh);
     if (am_thanh) formData.append('am_thanh', am_thanh);
-    formData.append('data', JSON.stringify(data));
+    if (data !== undefined) {
+        formData.append('data', JSON.stringify(data));
+    }
 
     return axios.post(`${API}/questions/create`, formData, {
         headers: {
@@ -44,12 +46,20 @@ const createQuestion = async ({ hinh_anh, am_thanh, data }) => {
     });
 };
 
-const editQuestion = (id, data) => {
+const editQuestion = (id, { hinh_anh, am_thanh, data }) => {
     const token = localStorage.getItem('admin_token');
 
-    return axios.put(`${API}/questions/edit/${id}`, data, {
+    const formData = new FormData();
+    if (hinh_anh) formData.append('hinh_anh', hinh_anh);
+    if (am_thanh) formData.append('am_thanh', am_thanh);
+    if (data !== undefined) {
+        formData.append('data', JSON.stringify(data));
+    }
+
+    return axios.put(`${API}/questions/edit/${id}`, formData, {
         headers: {
             Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data',
         },
     });
 };
