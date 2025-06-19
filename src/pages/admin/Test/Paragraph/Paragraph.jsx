@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import ReactPaginate from 'react-paginate';
+import Select from 'react-select';
 import { getAllPassage, deletePassage } from '@/services/passageService';
 import styles from './Paragraph.module.scss';
 import classNames from 'classnames/bind';
@@ -14,14 +15,24 @@ function Paragraph() {
     const [error, setError] = useState(null);
     const [pagination, setPagination] = useState({ page: 1, limit: 7, total: 0 });
     const [currentPage, setCurrentPage] = useState(1);
+    const [filters, setFilters] = useState({});
+
+    const [optionsPhan, setOptionsPhan] = useState([{ value: '', label: 'Tất cả phần' }]);
 
     async function fetchPassages() {
         setLoading(true);
         setError(null);
         try {
-            const res = await getAllPassage(currentPage);
+            const res = await getAllPassage(currentPage, filters);
             setPassages(res.data.data || []);
             setPagination(res.data.pagination || { page: 1, limit: 7, total: 0 });
+            // setOptionsPhan([
+            //     { value: '', label: 'Tất cả phần' },
+            //     ...res.data.dsPhan.map((item) => ({
+            //         value: item.id_phan.toString(),
+            //         label: item.ten_phan,
+            //     })),
+            // ]);
         } catch (err) {
             setError('Không thể tải danh sách đoạn văn');
         }
@@ -30,7 +41,7 @@ function Paragraph() {
 
     useEffect(() => {
         fetchPassages();
-    }, [currentPage]);
+    }, [currentPage, filters]);
 
     const handlePageClick = (event) => {
         setCurrentPage(event.selected + 1);
@@ -49,6 +60,11 @@ function Paragraph() {
         setLoading(false);
     };
 
+    const handleSelectChange = (selected, { name }) => {
+        setFilters((prev) => ({ ...prev, [name]: selected.value }));
+        setCurrentPage(1);
+    };
+
     return (
         <>
             <div className="d-flex justify-content-between align-items-center mb-4">
@@ -62,46 +78,14 @@ function Paragraph() {
 
             <div className="card">
                 <div className="card-body">
-                    <div className="row mb-3">
-                        <div className="col-md-6">
-                            <div className="input-group">
-                                <input type="text" className="form-control" placeholder="Tìm kiếm đoạn văn..." />
-                                <button className="btn btn-outline-secondary" type="button">
-                                    <i className="fas fa-search"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div className="col-md-6 text-end">
-                            <div className="btn-group">
-                                <button type="button" className="btn btn-outline-secondary">
-                                    <i className="fas fa-filter me-1"></i>Lọc
-                                </button>
-                                <button
-                                    type="button"
-                                    className="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
-                                    data-bs-toggle="dropdown"
-                                    aria-expanded="false"
-                                >
-                                    <span className="visually-hidden">Toggle Dropdown</span>
-                                </button>
-                                <ul className="dropdown-menu">
-                                    <li>
-                                        <a className="dropdown-item" href="#">
-                                            Tất cả
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="dropdown-item" href="#">
-                                            Đang hoạt động
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="dropdown-item" href="#">
-                                            Bản nháp
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
+                    <div className="row g-3 mb-3">
+                        <div className="col-md-3">
+                            <Select
+                                name="id_phan"
+                                options={optionsPhan}
+                                onChange={handleSelectChange}
+                                defaultValue={optionsPhan[0]}
+                            />
                         </div>
                     </div>
 
@@ -116,11 +100,6 @@ function Paragraph() {
                             <table className="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th>
-                                            <div className="form-check">
-                                                <input className="form-check-input" type="checkbox" id="selectAll" />
-                                            </div>
-                                        </th>
                                         <th>ID</th>
                                         <th>Tiêu đề</th>
                                         <th>Nội dung</th>
@@ -138,19 +117,12 @@ function Paragraph() {
                                     ) : (
                                         passages.map((passage) => (
                                             <tr key={passage.id_doan_van}>
-                                                <td>
-                                                    <div className="form-check">
-                                                        <input className="form-check-input" type="checkbox" />
-                                                    </div>
-                                                </td>
                                                 <td>{passage.id_doan_van}</td>
-                                                <td>
-                                                    <strong>{passage.tieu_de}</strong>
-                                                </td>
+                                                <td>{passage.tieu_de}</td>
                                                 <td>
                                                     <div className="passage-excerpt">
-                                                        {passage.noi_dung.length > 100
-                                                            ? passage.noi_dung.slice(0, 100) + '...'
+                                                        {passage.noi_dung.length > 10
+                                                            ? passage.noi_dung.slice(0, 50) + '...'
                                                             : passage.noi_dung}
                                                     </div>
                                                 </td>

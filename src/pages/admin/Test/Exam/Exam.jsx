@@ -1,10 +1,88 @@
 import { Link } from 'react-router-dom';
+import Select from 'react-select';
+import ReactPaginate from 'react-paginate';
+import { format } from 'date-fns';
+import { vi } from 'date-fns/locale';
 import styles from './Exam.module.scss';
+import { getAllExam } from '@/services/examService';
+import { getMe } from '@/services/userService';
 import classNames from 'classnames/bind';
+import { useState, useEffect } from 'react';
 
 const cx = classNames.bind(styles);
 
 function Exam() {
+    const [exams, setExams] = useState([]);
+    const [currentUser, setCurrentUser] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [filters, setFilters] = useState({});
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const [pagination, setPagination] = useState({ page: 1, limit: 3, total: 0 });
+
+    const [optionsTrangThai, setOptionsTrangThai] = useState([
+        { value: '', label: 'Tất cả trạng thái' },
+    ]);
+    const [optionsNamXuatBan, setOptionsNamXuatBan] = useState([
+        { value: '', label: 'Tất cả năm xuất bản' },
+    ]);
+
+    useEffect(() => {
+        const fetchExams = async () => {
+            setLoading(true);
+            try {
+                const res = await getAllExam(currentPage, filters);
+                console.log(res.data.dsTrangThai);
+                console.log(res.data.dsNamXuatBan);
+                setExams(res.data.data);
+                setPagination((prev) => ({
+                    ...prev,
+                    total: res.data.pagination.total,
+                    limit: res.data.pagination.limit,
+                }));
+                setOptionsTrangThai([
+                    { value: '', label: 'Tất cả trạng thái' },
+                    ...res.data.dsTrangThai.map((item) => ({
+                        value: item,
+                        label: item === 'da_xuat_ban' ? 'Đã xuất bản' : item === 'luu_tru' ? 'Lưu trữ' : item === 'nhap' ? 'Nháp' : item,
+                    })),
+                ]);
+                setOptionsNamXuatBan([
+                    { value: '', label: 'Tất cả năm xuất bản' },
+                    ...res.data.dsNamXuatBan.map(({ nam_xuat_ban }) => ({
+                        value: nam_xuat_ban,
+                        label: format(new Date(nam_xuat_ban), 'yyyy', { locale: vi }),
+                    })),
+                ]);
+            } catch (error) {
+                setError(error);
+            }
+            setLoading(false);
+        };
+
+        fetchExams();
+
+        const fetchCurrentUser = async () => {
+            try {
+                const res = await getMe();
+                setCurrentUser(res.data);
+            } catch (err) {
+                console.error('Failed to fetch current user', err);
+            }
+        };
+        fetchCurrentUser();
+    }, [currentPage, filters]);
+
+    const handlePageClick = (data) => {
+        setCurrentPage(data.selected + 1);
+    };
+
+    const handleSelectChange = (selected, { name }) => {
+        setFilters((prev) => ({ ...prev, [name]: selected.value }));
+        setCurrentPage(1);
+    };
+
     return (
         <>
             <div className="d-flex justify-content-between align-items-center mb-4">
@@ -16,142 +94,115 @@ function Exam() {
                 </div>
             </div>
 
+            <div className='row g-3 mb-3'>
+                <div className='col-md-3'>
+                    <Select
+                        name="trang_thai"
+                        options={optionsTrangThai}
+                        onChange={handleSelectChange}
+                        defaultValue={optionsTrangThai[0]}
+                    />
+                </div>
+                <div className='col-md-3'>
+                    <Select
+                        name="nam_xuat_ban"
+                        options={optionsNamXuatBan}
+                        onChange={handleSelectChange}
+                        defaultValue={optionsNamXuatBan[0]}
+                    />
+                </div>
+            </div>
+
             <div class="card">
                 <div class="card-body">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Tìm kiếm đề thi..." />
-                                <button class="btn btn-outline-secondary" type="button">
-                                    <i class="fas fa-search"></i>
-                                </button>
+                {loading ? (
+                            <div className="text-center">
+                                <i className="fas fa-spinner fa-spin fa-2x"></i>
                             </div>
-                        </div>
-                        <div class="col-md-6 text-end">
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-outline-secondary">
-                                    <i class="fas fa-filter me-1"></i>Lọc
-                                </button>
-                                <button
-                                    type="button"
-                                    class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
-                                    data-bs-toggle="dropdown"
-                                    aria-expanded="false"
-                                >
-                                    <span class="visually-hidden">Toggle Dropdown</span>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <a class="dropdown-item" href="#">
-                                            Tất cả
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="#">
-                                            Đang hoạt động
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="#">
-                                            Bản nháp
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
+                        ) : (
+                            
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th>#</th>
-                                    <th>Tên đề thi</th>
+                                    <th>ID</th>
+                                    <th>Tên bài thi</th>
                                     <th>Mô tả</th>
                                     <th>Điểm tối đa</th>
-                                    <th>Thời gian (phút)</th>
+                                    <th>Năm xuất bản</th>
+                                    <th>Bài thi đầu vào</th>
                                     <th>Trạng thái</th>
+                                    <th>Người tạo</th>
+                                    <th>Thời gian tạo</th>
+                                    <th>Thời gian cập nhật</th>
                                     <th>Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>TOEIC Practice Test 1</td>
-                                    <td>Bài thi TOEIC đầy đủ để luyện tập</td>
-                                    <td>990</td>
-                                    <td>120</td>
-                                    <td>
-                                        <span class={`${cx('exam-status-active')} badge rounded-pill px-3 py-2`}>
-                                            Hoạt động
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <Link to="edit-exam" class="btn btn-sm btn-outline-primary">
-                                                <i class="fas fa-edit"></i>
+                                {exams.map((exam) => (
+                                    <tr key={exam.id_bai_thi}>
+                                        <td>{exam.id_bai_thi}</td>
+                                        <td>{exam.ten_bai_thi}</td>
+                                        <td>{exam.mo_ta}</td>
+                                        <td>{exam.diem_toi_da}</td>
+
+                                        <td>
+                                            {format(new Date(exam.nam_xuat_ban), 'yyyy', {
+                                                locale: vi,
+                                            })}
+                                        </td>
+
+                                        <td>{exam.la_bai_thi_dau_vao ? 'Có' : 'Không'}</td>
+
+                                        <td>{exam.trang_thai === 'da_xuat_ban' ? 'Đã xuất bản' : 'Lưu trữ'}</td>
+                                        <td>{currentUser.vai_tro === 'quan_tri_vien' ? 'Quản trị viên' : 'Giáo viên'}</td>
+                                        <td>
+                                            {format(new Date(exam.thoi_gian_tao), 'dd/MM/yyyy', {
+                                                locale: vi,
+                                            })}
+                                        </td>
+                                        <td>
+                                            {format(new Date(exam.thoi_gian_cap_nhat), 'dd/MM/yyyy', {
+                                                locale: vi,
+                                            })}
+                                        </td>
+                                        <td>
+                                            <Link
+                                                to={`edit-exam/${exam.id_bai_thi}`}
+                                                className="btn btn-sm btn-outline-primary"
+                                            >
+                                                <i className="fas fa-edit"></i>
                                             </Link>
-                                            <button type="button" class="btn btn-sm btn-outline-danger">
-                                                <i class="fas fa-trash-alt"></i>
+                                            <button type="button" className="btn btn-sm btn-outline-danger">
+                                                <i className="fas fa-trash-alt"></i>
                                             </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>Mini TOEIC Test</td>
-                                    <td>Bài thi TOEIC rút gọn cho người mới</td>
-                                    <td>495</td>
-                                    <td>60</td>
-                                    <td>
-                                        <span class={`${cx('exam-status-draft')} badge rounded-pill px-3 py-2`}>
-                                            Bản nháp
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <Link to="edit-exam" class="btn btn-sm btn-outline-primary">
-                                                <i class="fas fa-edit"></i>
-                                            </Link>
-                                            <button type="button" class="btn btn-sm btn-outline-danger">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>
+                        )}
 
-                    <nav aria-label="Page navigation">
-                        <ul class="pagination justify-content-center">
-                            <li class="page-item disabled">
-                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
-                                    Trước
-                                </a>
-                            </li>
-                            <li class="page-item active">
-                                <a class="page-link" href="#">
-                                    1
-                                </a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">
-                                    2
-                                </a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">
-                                    3
-                                </a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">
-                                    Sau
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
+                    <div className="d-flex justify-content-center">
+                        <ReactPaginate
+                            breakLabel="..."
+                            nextLabel="Sau"
+                            onPageChange={handlePageClick}
+                            pageRangeDisplayed={3}
+                            pageCount={Math.ceil(pagination.total / pagination.limit)}
+                            previousLabel="Trước"
+                            renderOnZeroPageCount={null}
+                            containerClassName="pagination justify-content-center"
+                            pageClassName="page-item"
+                            pageLinkClassName="page-link"
+                            activeClassName="active"
+                            previousClassName="page-item"
+                            nextClassName="page-item"
+                            previousLinkClassName="page-link"
+                            nextLinkClassName="page-link"
+                        />
+                    </div>
                 </div>
             </div>
         </>

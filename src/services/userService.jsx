@@ -92,4 +92,12 @@ const changeUserStatus = (id, status) => {
     });
 };
 
-export { getAllUser, getDetailUser, deleteUser, editUser, getProfile, updateProfile, changeUserStatus };
+const getMe = () => {
+    const token = localStorage.getItem('admin_token');
+
+    return axios.get(`${API}/users/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+};
+
+export { getAllUser, getDetailUser, deleteUser, editUser, getProfile, updateProfile, changeUserStatus, getMe };

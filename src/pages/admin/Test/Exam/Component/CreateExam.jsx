@@ -19,7 +19,7 @@ function CreateExam() {
                 <div className="card-body">
                     <form onSubmit={handleSubmit} className="question-form">
                         <div className="row mb-3">
-                            <div className="col-md-6">
+                            <div className="col-md-3">
                                 <div class="form-group">
                                     <label for="examName" class="form-label">
                                         Tên đề thi
@@ -32,18 +32,41 @@ function CreateExam() {
                                     />
                                 </div>
                             </div>
-                            <div className="col-md-6">
-                                <div className="mb-3">
-                                    <label htmlFor="draftExam" className="form-label">
-                                        Bản nháp
+                            <div className="col-md-3">
+                                <div class="form-group">
+                                    <label for="examTime" class="form-label">
+                                        Thời gian làm bài (phút)
                                     </label>
-                                    <select className="form-select" id="draftExam" required>
-                                        <option value="ban_nhap" selected>
-                                            Bản nháp
-                                        </option>
-                                        <option value="hoat_dong">Hoạt động</option>
-                                        <option value="khong_hoat_dong">Không hoạt động</option>
-                                    </select>
+                                    <input
+                                        type="number"
+                                        class="form-control"
+                                        id="examTime"
+                                        placeholder="Nhập thời gian làm bài"
+                                        min="0"
+                                        max="120"
+                                    />
+                                </div>
+                            </div>
+                            <div className="col-md-3">
+                                <div class="form-group">
+                                    <label for="examTime" class="form-label">
+                                        Năm xuất bản
+                                    </label>
+                                    <input
+                                        type="number"
+                                        class="form-control"
+                                        id="examTime"
+                                        placeholder="Nhập năm xuất bản"
+                                        min='2000'
+                                        
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="col-md-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" defaultChecked />
+                                    <label class="form-check-label">Bài thi đầu vào</label>
                                 </div>
                             </div>
                         </div>
@@ -63,33 +86,6 @@ function CreateExam() {
                                     placeholder: 'Mô tả ngắn về đề thi',
                                 }}
                             />
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="examScore" class="form-label">
-                                        Điểm tối đa
-                                    </label>
-                                    <input type="number" class="form-control" id="examScore" />
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="examTime" class="form-label">
-                                        Thời gian làm bài (phút)
-                                    </label>
-                                    <input type="number" class="form-control" id="examTime" />
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="examQuestionCount" class="form-label">
-                                        Số câu hỏi
-                                    </label>
-                                    <input type="number" class="form-control" id="examQuestionCount" />
-                                </div>
-                            </div>
                         </div>
 
                         <div class="form-group mb-3">

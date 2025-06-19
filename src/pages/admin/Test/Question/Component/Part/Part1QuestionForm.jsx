@@ -84,17 +84,15 @@ function Part1QuestionForm({
             <form onSubmit={handleSubmit(submit)}>
                 {/* Độ khó & Trạng thái */}
                 <div className="row mb-3">
-                    {/* <div className="col-md-4">
+                    <div className="col-md-4">
                         <label className="form-label">Phần</label>
                         <Controller
                             control={control}
                             name="phan"
-                            defaultValue={defaultValues.phan?.id_phan ? String(defaultValues.phan.id_phan) : ''}
                             render={({ field }) => (
                                 <Select
                                     {...field}
                                     options={partOptions.map((o) => ({ ...o, value: String(o.value) }))}
-                                    onChange={() => {}}
                                     value={partOptions
                                         .map((o) => ({ ...o, value: String(o.value) }))
                                         .find((o) => o.value === String(field.value))}
@@ -102,7 +100,7 @@ function Part1QuestionForm({
                                 />
                             )}
                         />
-                    </div> */}
+                    </div>
 
                     <div className="col-md-4">
                         <label className="form-label">Độ khó</label>

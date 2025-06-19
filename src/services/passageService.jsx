@@ -2,13 +2,19 @@ import axios from 'axios';
 
 const API = import.meta.env.VITE_API_BASE_URL;
 
-const getAllPassage = (page) => {
+const getAllPassage = (page, filters = {}) => {
     const token = localStorage.getItem('admin_token');
 
-    return axios.get(`${API}/passages?page=${page}`, {
+    const params = {
+        page,
+        ...filters,
+    };
+
+    return axios.get(`${API}/passages`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },
+        params,
     });
 };
 

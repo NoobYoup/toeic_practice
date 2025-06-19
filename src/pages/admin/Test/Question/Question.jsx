@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import ReactPaginate from 'react-paginate';
 import Select from 'react-select';
+import { format } from 'date-fns';
+import { vi } from 'date-fns/locale';
 import { getAllQuestion } from '@/services/questionService';
 import styles from './QuestionBank.module.scss';
 import classNames from 'classnames/bind';
@@ -66,6 +68,8 @@ function Question() {
         setFilters((prev) => ({ ...prev, [name]: selected.value }));
         setPagination((prev) => ({ ...prev, page: 1 }));
     };
+
+    console.log('questions', questions);
 
     return (
         <>
@@ -164,22 +168,17 @@ function Question() {
                                 <table className="table table-hover">
                                     <thead>
                                         <tr>
-                                            <th>
-                                                <div className="form-check">
-                                                    <input
-                                                        className="form-check-input"
-                                                        type="checkbox"
-                                                        id="selectAll"
-                                                    />
-                                                </div>
-                                            </th>
                                             <th>ID</th>
                                             <th>Loại</th>
                                             <th>Phần</th>
+                                            <th>ID Âm thanh</th>
+                                            <th>ID Hình ảnh</th>
                                             <th>Nội dung câu hỏi</th>
                                             <th>Độ khó</th>
                                             <th>Nguồn gốc</th>
                                             <th>Trạng thái</th>
+                                            <th>Ngày tạo</th>
+                                            <th>Ngày cập nhật</th>
                                             <th>Thao tác</th>
                                         </tr>
                                     </thead>
@@ -187,11 +186,7 @@ function Question() {
                                         {questions.length > 0 ? (
                                             questions.map((question) => (
                                                 <tr key={question.id_cau_hoi}>
-                                                    <td>
-                                                        <div className="form-check">
-                                                            <input className="form-check-input" type="checkbox" />
-                                                        </div>
-                                                    </td>
+                                                    
                                                     <td className="">{question.id_cau_hoi}</td>
                                                     <td className="">
                                                         {question.phan.loai_phan === 'listening' ? (
@@ -201,7 +196,9 @@ function Question() {
                                                                     'question-type-listening',
                                                                 )} rounded-pill px-3 py-2`}
                                                             >
-                                                                {question.phan.loai_phan === 'listening' ? 'Listening' : ''}
+                                                                {question.phan.loai_phan === 'listening'
+                                                                    ? 'Listening'
+                                                                    : ''}
                                                             </span>
                                                         ) : (
                                                             <span
@@ -214,8 +211,20 @@ function Question() {
                                                             </span>
                                                         )}
                                                     </td>
+                                                    <td className="">{question.phan.ten_phan}</td>
                                                     <td className="">
-                                                        {question.phan.ten_phan}
+                                                        <div className="d-flex align-items-center">
+                                                            {question.id_phuong_tien_am_thanh
+                                                                ? question.id_phuong_tien_am_thanh
+                                                                : 'Không có'}
+                                                        </div>
+                                                    </td>
+                                                    <td className="">
+                                                        <div className="d-flex align-items-center">
+                                                            {question.id_phuong_tien_hinh_anh
+                                                                ? question.id_phuong_tien_hinh_anh
+                                                                : 'Không có'}
+                                                        </div>
                                                     </td>
                                                     <td className="">
                                                         <div className="d-flex align-items-center">
@@ -232,12 +241,27 @@ function Question() {
                                                     <td className="">
                                                         {question.nguon_goc === 'thu_cong' ? 'Thủ công' : ''}
                                                     </td>
+                                                    
                                                     <td className="">
                                                         {question.trang_thai === 'da_xuat_ban'
                                                             ? 'Đã xuất bản'
                                                             : question.trang_thai === 'luu_tru'
                                                             ? 'Lưu trữ'
                                                             : ''}
+                                                    </td>
+                                                    <td className="">
+                                                        {format(new Date(question.thoi_gian_tao), 'dd/MM/yyyy HH:mm', {
+                                                            locale: vi,
+                                                        })}
+                                                    </td>
+                                                    <td className="">
+                                                        {format(
+                                                            new Date(question.thoi_gian_cap_nhat),
+                                                            'dd/MM/yyyy HH:mm',
+                                                            {
+                                                                locale: vi,
+                                                            },
+                                                        )}
                                                     </td>
                                                     <td>
                                                         <Link
@@ -260,7 +284,7 @@ function Question() {
                                             ))
                                         ) : (
                                             <tr>
-                                                <td colSpan="9" className="text-center">
+                                                <td colSpan="13" className="text-center">
                                                     Không có dữ liệu
                                                 </td>
                                             </tr>
