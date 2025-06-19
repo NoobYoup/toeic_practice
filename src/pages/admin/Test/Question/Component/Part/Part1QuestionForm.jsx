@@ -26,18 +26,6 @@ function Part1QuestionForm({
     onSubmit,
     loading,
 }) {
-    // Nếu không có các hàm/prop được truyền (khi dùng trong EditQuestionBank), ta vẫn đảm bảo component hoạt động
-    const safeFormatFileSize = (bytes) => {
-        if (typeof formatFileSize === 'function') return formatFileSize(bytes);
-        if (!bytes && bytes !== 0) return '';
-        return `${(bytes / 1024).toFixed(1)} KB`;
-    };
-
-    const safeRemoveImage = typeof removeImage === 'function' ? removeImage : () => {};
-    const safeRemoveAudio = typeof removeAudio === 'function' ? removeAudio : () => {};
-    const safeHandleImageChange = typeof handleImageChange === 'function' ? handleImageChange : () => {};
-    const safeHandleAudioChange = typeof handleAudioChange === 'function' ? handleAudioChange : () => {};
-
     // options for selects
     const [difficultyOptions, setDifficultyOptions] = useState([]);
     const [statusOptions, setStatusOptions] = useState([]);
@@ -218,11 +206,11 @@ function Part1QuestionForm({
                     />
                 </div>
                 <div className="text-end">
-    <button type="submit" className="btn btn-success" disabled={loading}>
-        {loading && <i className="fas fa-spinner fa-spin me-2"></i>}
-        {mode === 'edit' ? 'Lưu thay đổi' : 'Thêm câu hỏi'}
-    </button>
-</div>
+                    <button type="submit" className="btn btn-success" disabled={loading}>
+                        {loading && <i className="fas fa-spinner fa-spin me-2"></i>}
+                        {mode === 'edit' ? 'Lưu thay đổi' : 'Thêm câu hỏi'}
+                    </button>
+                </div>
             </form>
         );
     }
