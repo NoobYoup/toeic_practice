@@ -18,6 +18,22 @@ const getAllExam = (page = 1, filters = {}) => {
     });
 };
 
+const getAllQuestionExam = (page = 1, filters = {}) => {
+    const token = localStorage.getItem('admin_token');
+
+    const params = {
+        page,
+        ...filters,
+    };
+
+    return axios.get(`${API}/exams/questions`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        params,
+    });
+};
+
 const createExam = (examData) => {
     const token = localStorage.getItem('admin_token');
 
@@ -28,4 +44,4 @@ const createExam = (examData) => {
     });
 };
 
-export { getAllExam, createExam };
+export { getAllExam, getAllQuestionExam, createExam };

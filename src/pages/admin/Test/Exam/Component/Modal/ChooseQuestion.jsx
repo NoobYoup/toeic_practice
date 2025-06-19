@@ -1,0 +1,286 @@
+import { useState, useEffect } from 'react';
+import Select from 'react-select';
+import ReactPaginate from 'react-paginate';
+import { motion, AnimatePresence } from 'framer-motion';
+import { getAllQuestionExam } from '@/services/examService';
+
+
+
+
+/**
+ * Modal chọn câu hỏi (sử dụng trong tạo đề thi)
+ * 
+ * Props:
+ *  - isOpen: boolean   : điều khiển bật / tắt modal
+ *  - onClose: () => void : hàm đóng modal
+ *  - onSelect: (questions: array) => void : callback khi người dùng chọn câu hỏi và nhấn Xác nhận
+ */
+function ChooseQuestion({ isOpen, onClose, onSelect }) {
+    /* States */
+    const [questions, setQuestions] = useState([]);
+    const [selectedIds, setSelectedIds] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    const [filters, setFilters] = useState({});
+
+    const [optionsPhan, setOptionsPhan] = useState([{ value: '', label: 'Tất cả phần' }]);
+    const [optionsMucDo] = useState([
+        { value: '', label: 'Tất cả độ khó' },
+        { value: 'de', label: 'Dễ' },
+        { value: 'trung_binh', label: 'Trung bình' },
+        { value: 'kho', label: 'Khó' },
+    ]);
+    const [optionsTrangThai] = useState([
+        { value: '', label: 'Tất cả trạng thái' },
+        { value: 'da_xuat_ban', label: 'Đã xuất bản' },
+        { value: 'luu_tru', label: 'Lưu trữ' },
+    ]);
+
+    const [pagination, setPagination] = useState({ page: 1, limit: 7, total: 0 });
+    const [currentPage, setCurrentPage] = useState(1);
+
+    /* Fetch */
+    async function fetchQuestions() {
+        setLoading(true);
+        try {
+            const res = await getAllQuestionExam(currentPage, filters);
+            setQuestions(res.data.data || []);
+            setPagination(res.data.pagination || { page: 1, limit: 7, total: 0 });
+            // Lấy options phần
+            if (res.data.dsPhan) {
+                setOptionsPhan([
+                    { value: '', label: 'Tất cả phần' },
+                    ...res.data.dsPhan.map((item) => ({
+                        value: item.id_phan.toString(),
+                        label: item.ten_phan,
+                    })),
+                ]);
+            }
+        } catch (err) {
+            // eslint-disable-next-line no-console
+            console.error(err);
+        }
+        setLoading(false);
+    }
+
+    useEffect(() => {
+        if (isOpen) {
+            fetchQuestions();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isOpen, currentPage, filters]);
+
+    /* Handlers */
+    const handlePageClick = (e) => setCurrentPage(e.selected + 1);
+
+    const handleSelectChange = (selected, { name }) => {
+        setFilters((prev) => ({ ...prev, [name]: selected.value }));
+        setCurrentPage(1);
+    };
+
+    const handleCheckbox = (id) => {
+        setSelectedIds((prev) =>
+            prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],
+        );
+    };
+
+    const handleConfirm = () => {
+        const chosen = questions.filter((q) => selectedIds.includes(q.id_cau_hoi));
+        if (onSelect) onSelect(chosen);
+        onClose();
+    };
+
+    /* Animation variants */
+    const backdrop = {
+        hidden: { opacity: 0 },
+        visible: { opacity: 1 },
+    };
+
+    const modal = {
+        hidden: { y: -50, opacity: 0 },
+        visible: { y: 0, opacity: 1 },
+        exit: { y: -50, opacity: 0 },
+    };
+
+    return (
+        <AnimatePresence>
+            {isOpen && (
+                <motion.div
+                    className="modal-backdrop show d-flex align-items-center justify-content-center"
+                    variants={backdrop}
+                    initial="hidden"
+                    animate="visible"
+                    exit="hidden"
+                    style={{ backgroundColor: 'rgba(0,0,0,0.5)', position: 'fixed', inset: 0, zIndex: 1050 }}
+                    onClick={onClose}
+                >
+                    <motion.div
+                        className="bg-white rounded shadow w-100 mx-3"
+                        style={{ maxWidth: '90%' }}
+                        variants={modal}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="p-3 border-bottom d-flex justify-content-between align-items-center">
+                            <h5 className="mb-0">Chọn câu hỏi</h5>
+                            <button type="button" className="btn-close" aria-label="Close" onClick={onClose}></button>
+                        </div>
+                        <div className="p-3">
+                            {/* Filters */}
+                            <div className="row g-3 mb-3">
+                                <div className="col-md-3">
+                                    <Select
+                                        name="id_phan"
+                                        options={optionsPhan}
+                                        onChange={handleSelectChange}
+                                        defaultValue={optionsPhan[0]}
+                                    />
+                                </div>
+                                <div className="col-md-3">
+                                    <Select
+                                        name="muc_do_kho"
+                                        options={optionsMucDo}
+                                        onChange={handleSelectChange}
+                                        defaultValue={optionsMucDo[0]}
+                                    />
+                                </div>
+                                <div className="col-md-3">
+                                    <Select
+                                        name="trang_thai"
+                                        options={optionsTrangThai}
+                                        onChange={handleSelectChange}
+                                        defaultValue={optionsTrangThai[0]}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Table */}
+                            {loading ? (
+                                <div className="text-center">
+                                    <i className="fas fa-spinner fa-spin fa-2x"></i>
+                                </div>
+                            ) : (
+                                <div className="table-responsive" style={{ maxHeight: '60vh' }}>
+                                    <table className="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={
+                                                            questions.length > 0 &&
+                                                            selectedIds.length === questions.length
+                                                        }
+                                                        onChange={(e) => {
+                                                            if (e.target.checked) {
+                                                                setSelectedIds(questions.map((q) => q.id_cau_hoi));
+                                                            } else {
+                                                                setSelectedIds([]);
+                                                            }
+                                                        }}
+                                                    />
+                                                </th>
+                                                <th>ID</th>
+                                                <th>Loại</th>
+                                                <th>Phần</th>
+                                                <th>ID Âm thanh</th>
+                                                <th>ID Hình ảnh</th>
+                                                <th>Nội dung câu hỏi</th>
+                                                <th>Độ khó</th>
+                                                <th>Trạng thái</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {questions.length > 0 ? (
+                                                questions.map((question) => (
+                                                    <tr key={question.id_cau_hoi}>
+                                                        <td>
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={selectedIds.includes(question.id_cau_hoi)}
+                                                                onChange={() => handleCheckbox(question.id_cau_hoi)}
+                                                            />
+                                                        </td>
+                                                        <td>{question.id_cau_hoi}</td>
+                                                        <td>
+                                                            {question.phan.loai_phan === 'listening' ? 'Listening' : 'Reading'}
+                                                        </td>
+                                                        <td>{question.phan.ten_phan}</td>
+                                                        <td>
+                                                            {question.id_phuong_tien_am_thanh
+                                                                ? question.id_phuong_tien_am_thanh
+                                                                : 'Không có'}
+                                                        </td>
+                                                        <td>
+                                                            {question.id_phuong_tien_hinh_anh
+                                                                ? question.id_phuong_tien_hinh_anh
+                                                                : 'Không có'}
+                                                        </td>
+                                                        <td style={{ maxWidth: '250px' }}>
+                                                            <div className="text-truncate" style={{ maxWidth: '100%' }}>
+                                                                {question.noi_dung}
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            {question.muc_do_kho === 'de'
+                                                                ? 'Dễ'
+                                                                : question.muc_do_kho === 'trung_binh'
+                                                                ? 'Trung bình'
+                                                                : 'Khó'}
+                                                        </td>
+                                                        <td>
+                                                            {question.trang_thai === 'da_xuat_ban' ? 'Đã xuất bản' : 'Lưu trữ'}
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                            ) : (
+                                                <tr>
+                                                    <td colSpan="10" className="text-center">
+                                                        Không có dữ liệu
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            )}
+
+                            {/* Pagination */}
+                            <div className="d-flex justify-content-center mt-3">
+                                <ReactPaginate
+                                    breakLabel="..."
+                                    nextLabel="Sau"
+                                    onPageChange={handlePageClick}
+                                    pageRangeDisplayed={3}
+                                    pageCount={Math.ceil(pagination.total / pagination.limit)}
+                                    previousLabel="Trước"
+                                    renderOnZeroPageCount={null}
+                                    containerClassName="pagination justify-content-center"
+                                    pageClassName="page-item"
+                                    pageLinkClassName="page-link"
+                                    activeClassName="active"
+                                    previousClassName="page-item"
+                                    nextClassName="page-item"
+                                    previousLinkClassName="page-link"
+                                    nextLinkClassName="page-link"
+                                />
+                            </div>
+                        </div>
+                        <div className="p-3 border-top d-flex justify-content-end gap-2">
+                            <button className="btn btn-secondary" onClick={onClose}>
+                                Hủy
+                            </button>
+                            <button className="btn btn-primary" onClick={handleConfirm} disabled={selectedIds.length === 0}>
+                                Thêm ({selectedIds.length})
+                            </button>
+                        </div>
+                    </motion.div>
+                </motion.div>
+            )}
+        </AnimatePresence>
+    );
+}
+
+export default ChooseQuestion;
