@@ -154,7 +154,7 @@ function Exam() {
 
                                         <td>{exam.la_bai_thi_dau_vao ? 'Có' : 'Không'}</td>
 
-                                        <td>{exam.trang_thai === 'da_xuat_ban' ? 'Đã xuất bản' : 'Lưu trữ'}</td>
+                                        <td>{exam.trang_thai === 'da_xuat_ban' ? 'Đã xuất bản' : 'Nháp'}</td>
                                         <td>{currentUser.vai_tro === 'quan_tri_vien' ? 'Quản trị viên' : 'Giáo viên'}</td>
                                         <td>
                                             {format(new Date(exam.thoi_gian_tao), 'dd/MM/yyyy', {

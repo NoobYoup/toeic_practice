@@ -44,4 +44,24 @@ const createExam = (examData) => {
     });
 };
 
-export { getAllExam, getAllQuestionExam, createExam };
+const addQuestionToExam = (examId, questionIds) => {
+    const token = localStorage.getItem('admin_token');
+
+    return axios.post(`${API}/exams/questions/add-questions/${examId}`, { ds_cau_hoi: questionIds }, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+const approveExam = (examId) => {
+    const token = localStorage.getItem('admin_token');
+
+    return axios.post(`${API}/exams/approve/${examId}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+export { getAllExam, getAllQuestionExam, createExam, addQuestionToExam, approveExam };

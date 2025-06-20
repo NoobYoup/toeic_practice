@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import Select from 'react-select';
 import ReactPaginate from 'react-paginate';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getAllQuestionExam } from '@/services/examService';
+import { getAllQuestionExam, addQuestionToExam } from '@/services/examService';
+import { toast } from 'react-toastify';
 
 
 
@@ -15,10 +16,11 @@ import { getAllQuestionExam } from '@/services/examService';
  *  - onClose: () => void : hàm đóng modal
  *  - onSelect: (questions: array) => void : callback khi người dùng chọn câu hỏi và nhấn Xác nhận
  */
-function ChooseQuestion({ isOpen, onClose, onSelect }) {
+function ChooseQuestion({ isOpen, onClose, onSelect, examId }) {
     /* States */
     const [questions, setQuestions] = useState([]);
     const [selectedIds, setSelectedIds] = useState([]);
+    const [selectedData, setSelectedData] = useState([]);
     const [loading, setLoading] = useState(false);
 
     const [filters, setFilters] = useState({});
@@ -78,16 +80,34 @@ function ChooseQuestion({ isOpen, onClose, onSelect }) {
         setCurrentPage(1);
     };
 
-    const handleCheckbox = (id) => {
+    const handleCheckbox = (question) => {
+        const id = question.id_cau_hoi;
         setSelectedIds((prev) =>
             prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],
         );
+        setSelectedData((prev) => {
+            if (prev.find((q) => q.id_cau_hoi === id)) {
+                return prev.filter((q) => q.id_cau_hoi !== id);
+            }
+            return [...prev, question];
+        });
     };
 
-    const handleConfirm = () => {
-        const chosen = questions.filter((q) => selectedIds.includes(q.id_cau_hoi));
-        if (onSelect) onSelect(chosen);
-        onClose();
+    const [adding, setAdding] = useState(false);
+
+    const handleConfirm = async () => {
+        if (!examId || selectedIds.length === 0) return;
+        setAdding(true);
+        try {
+            await addQuestionToExam(examId, selectedIds);
+            toast.success('Đã thêm câu hỏi vào đề thi');
+            if (onSelect) onSelect(selectedData);
+            onClose();
+        } catch (err) {
+            console.error(err);
+            toast.error(err.response?.data?.message || 'Thêm câu hỏi thất bại');
+        }
+        setAdding(false);
     };
 
     /* Animation variants */
@@ -116,7 +136,7 @@ function ChooseQuestion({ isOpen, onClose, onSelect }) {
                 >
                     <motion.div
                         className="bg-white rounded shadow w-100 mx-3"
-                        style={{ maxWidth: '90%' }}
+                        style={{ maxWidth: '80%' }}
                         variants={modal}
                         initial="hidden"
                         animate="visible"
@@ -154,6 +174,9 @@ function ChooseQuestion({ isOpen, onClose, onSelect }) {
                                         defaultValue={optionsTrangThai[0]}
                                     />
                                 </div>
+                                <div className="col-md-3">
+                                    <p className="mb-0 text-end text-muted">Đã chọn: {selectedIds.length} câu hỏi</p>
+                                </div>
                             </div>
 
                             {/* Table */}
@@ -170,14 +193,27 @@ function ChooseQuestion({ isOpen, onClose, onSelect }) {
                                                     <input
                                                         type="checkbox"
                                                         checked={
-                                                            questions.length > 0 &&
-                                                            selectedIds.length === questions.length
+                                                            questions.length > 0 && questions.every((q) => selectedIds.includes(q.id_cau_hoi))
                                                         }
                                                         onChange={(e) => {
+                                                            const currentPageIds = questions.map((q) => q.id_cau_hoi);
                                                             if (e.target.checked) {
-                                                                setSelectedIds(questions.map((q) => q.id_cau_hoi));
+                                                                const currentPageObjects = questions.filter((q) => currentPageIds.includes(q.id_cau_hoi));
+                                                                setSelectedData((prev) => {
+                                                                    const merged = [...prev];
+                                                                    currentPageObjects.forEach((q) => {
+                                                                        if (!merged.find((i) => i.id_cau_hoi === q.id_cau_hoi)) {
+                                                                            merged.push(q);
+                                                                        }
+                                                                    });
+                                                                    return merged;
+                                                                });
+                                                                // Merge current page ids to selectedIds (no duplicates)
+                                                                setSelectedIds((prev) => Array.from(new Set([...prev, ...currentPageIds])));
                                                             } else {
-                                                                setSelectedIds([]);
+                                                                // Remove only current page ids from selectedIds
+                                                                setSelectedIds((prev) => prev.filter((id) => !currentPageIds.includes(id)));
+                                                                setSelectedData((prev) => prev.filter((q) => !currentPageIds.includes(q.id_cau_hoi)));
                                                             }
                                                         }}
                                                     />
@@ -200,7 +236,7 @@ function ChooseQuestion({ isOpen, onClose, onSelect }) {
                                                             <input
                                                                 type="checkbox"
                                                                 checked={selectedIds.includes(question.id_cau_hoi)}
-                                                                onChange={() => handleCheckbox(question.id_cau_hoi)}
+                                                                onChange={() => handleCheckbox(question)}
                                                             />
                                                         </td>
                                                         <td>{question.id_cau_hoi}</td>
@@ -272,8 +308,8 @@ function ChooseQuestion({ isOpen, onClose, onSelect }) {
                             <button className="btn btn-secondary" onClick={onClose}>
                                 Hủy
                             </button>
-                            <button className="btn btn-primary" onClick={handleConfirm} disabled={selectedIds.length === 0}>
-                                Thêm ({selectedIds.length})
+                            <button className="btn btn-primary" onClick={handleConfirm} disabled={selectedIds.length === 0 || adding}>
+                                {adding ? (<><i className="fas fa-spinner fa-spin me-2"></i>Đang thêm...</>) : `Thêm (${selectedIds.length})`}
                             </button>
                         </div>
                     </motion.div>
