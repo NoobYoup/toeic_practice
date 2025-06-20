@@ -57,11 +57,21 @@ const addQuestionToExam = (examId, questionIds) => {
 const approveExam = (examId) => {
     const token = localStorage.getItem('admin_token');
 
-    return axios.post(`${API}/exams/approve/${examId}`, {
+    return axios.post(`${API}/exams/approve/${examId}`, {}, {
         headers: {
             Authorization: `Bearer ${token}`,
         },
     });
 };
 
-export { getAllExam, getAllQuestionExam, createExam, addQuestionToExam, approveExam };
+const deleteExam = (examId) => {
+    const token = localStorage.getItem('admin_token');
+
+    return axios.delete(`${API}/exams/delete/${examId}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+export { getAllExam, getAllQuestionExam, createExam, addQuestionToExam, approveExam, deleteExam };

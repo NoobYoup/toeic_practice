@@ -3,8 +3,9 @@ import Select from 'react-select';
 import ReactPaginate from 'react-paginate';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
+import { toast } from 'react-toastify';
 import styles from './Exam.module.scss';
-import { getAllExam } from '@/services/examService';
+import { getAllExam, deleteExam } from '@/services/examService';
 import { getMe } from '@/services/userService';
 import classNames from 'classnames/bind';
 import { useState, useEffect } from 'react';
@@ -28,49 +29,49 @@ function Exam() {
         { value: '', label: 'Tất cả năm xuất bản' },
     ]);
 
+    const fetchExams = async () => {
+        setLoading(true);
+        try {
+            const res = await getAllExam(currentPage, filters);
+            console.log(res.data.dsTrangThai);
+            console.log(res.data.dsNamXuatBan);
+            setExams(res.data.data);
+            setPagination((prev) => ({
+                ...prev,
+                total: res.data.pagination.total,
+                limit: res.data.pagination.limit,
+            }));
+            setOptionsTrangThai([
+                { value: '', label: 'Tất cả trạng thái' },
+                ...res.data.dsTrangThai.map((item) => ({
+                    value: item,
+                    label: item === 'da_xuat_ban' ? 'Đã xuất bản' : item === 'luu_tru' ? 'Lưu trữ' : item === 'nhap' ? 'Nháp' : item,
+                })),
+            ]);
+            setOptionsNamXuatBan([
+                { value: '', label: 'Tất cả năm xuất bản' },
+                ...res.data.dsNamXuatBan.map(({ nam_xuat_ban }) => ({
+                    value: nam_xuat_ban,
+                    label: format(new Date(nam_xuat_ban), 'yyyy', { locale: vi }),
+                })),
+            ]);
+        } catch (error) {
+            setError(error);
+        }
+        setLoading(false);
+    };
+
+    const fetchCurrentUser = async () => {
+        try {
+            const res = await getMe();
+            setCurrentUser(res.data);
+        } catch (err) {
+            console.error('Failed to fetch current user', err);
+        }
+    };
+
     useEffect(() => {
-        const fetchExams = async () => {
-            setLoading(true);
-            try {
-                const res = await getAllExam(currentPage, filters);
-                console.log(res.data.dsTrangThai);
-                console.log(res.data.dsNamXuatBan);
-                setExams(res.data.data);
-                setPagination((prev) => ({
-                    ...prev,
-                    total: res.data.pagination.total,
-                    limit: res.data.pagination.limit,
-                }));
-                setOptionsTrangThai([
-                    { value: '', label: 'Tất cả trạng thái' },
-                    ...res.data.dsTrangThai.map((item) => ({
-                        value: item,
-                        label: item === 'da_xuat_ban' ? 'Đã xuất bản' : item === 'luu_tru' ? 'Lưu trữ' : item === 'nhap' ? 'Nháp' : item,
-                    })),
-                ]);
-                setOptionsNamXuatBan([
-                    { value: '', label: 'Tất cả năm xuất bản' },
-                    ...res.data.dsNamXuatBan.map(({ nam_xuat_ban }) => ({
-                        value: nam_xuat_ban,
-                        label: format(new Date(nam_xuat_ban), 'yyyy', { locale: vi }),
-                    })),
-                ]);
-            } catch (error) {
-                setError(error);
-            }
-            setLoading(false);
-        };
-
         fetchExams();
-
-        const fetchCurrentUser = async () => {
-            try {
-                const res = await getMe();
-                setCurrentUser(res.data);
-            } catch (err) {
-                console.error('Failed to fetch current user', err);
-            }
-        };
         fetchCurrentUser();
     }, [currentPage, filters]);
 
@@ -81,6 +82,17 @@ function Exam() {
     const handleSelectChange = (selected, { name }) => {
         setFilters((prev) => ({ ...prev, [name]: selected.value }));
         setCurrentPage(1);
+    };
+
+    const handleDeleteExam = async (examId) => {
+        try {
+            const res = await deleteExam(examId);
+            toast.success(res.data.message);
+            await fetchExams();
+        } catch (err) {
+            console.error(err);
+            toast.error(err.response?.data?.message);
+        }
     };
 
     return (
@@ -173,7 +185,11 @@ function Exam() {
                                             >
                                                 <i className="fas fa-edit"></i>
                                             </Link>
-                                            <button type="button" className="btn btn-sm btn-outline-danger">
+                                            <button
+                                                onClick={() => handleDeleteExam(exam.id_bai_thi)}
+                                                type="button"
+                                                className="btn btn-sm btn-outline-danger"
+                                            >
                                                 <i className="fas fa-trash-alt"></i>
                                             </button>
                                         </td>

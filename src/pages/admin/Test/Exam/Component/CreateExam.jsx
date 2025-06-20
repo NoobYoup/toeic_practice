@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import ChooseQuestion from './Modal/ChooseQuestion';
-import { createExam, addQuestionToExam } from '@/services/examService';
+import { createExam, addQuestionToExam, approveExam } from '@/services/examService';
 
 function CreateExam() {
     const [tenBaiThi, setTenBaiThi] = useState('');
@@ -15,6 +15,7 @@ function CreateExam() {
     const [content, setContent] = useState('');
     const [showChooseModal, setShowChooseModal] = useState(false);
     const [selectedQuestions, setSelectedQuestions] = useState([]);
+    const [approving, setApproving] = useState(false);
     const [addingQuestions, setAddingQuestions] = useState(false);
     const [loading, setLoading] = useState(false);
     const [examId, setExamId] = useState(null);
@@ -41,6 +42,7 @@ function CreateExam() {
         setLoading(false);
     };
 
+    // Gọi khi thêm câu hỏi vào đề thi (nếu còn dùng ở nơi khác)
     const handleAddQuestions = async () => {
         if (!examId || selectedQuestions.length === 0) return;
         const ids = selectedQuestions.map((q) => q.id_cau_hoi);
@@ -53,6 +55,19 @@ function CreateExam() {
             toast.error(err.response?.data?.message || 'Thêm câu hỏi thất bại');
         }
         setAddingQuestions(false);
+    };
+
+    const handleApproveExam = async () => {
+        if (!examId) return;
+        setApproving(true);
+        try {
+            const res = await approveExam(examId);
+            toast.success(res.data.message);
+        } catch (err) {
+            console.error(err);
+            toast.error(err.response?.data?.message);
+        }
+        setApproving(false);
     };
 
     return (
@@ -215,10 +230,10 @@ function CreateExam() {
                                 <button
                                     type="button"
                                     className="btn btn-success"
-                                    disabled={addingQuestions || selectedQuestions.length === 0}
-                                    onClick={handleAddQuestions}
+                                    disabled={approving || !examId}
+                                    onClick={handleApproveExam}
                                 >
-                                    {addingQuestions && <i className="fas fa-spinner fa-spin me-2"></i>}
+                                    {approving && <i className="fas fa-spinner fa-spin me-2"></i>}
                                     Duyệt đề thi
                                 </button>
                             </div>
