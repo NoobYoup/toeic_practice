@@ -74,4 +74,14 @@ const deleteExam = (examId) => {
     });
 };
 
-export { getAllExam, getAllQuestionExam, createExam, addQuestionToExam, approveExam, deleteExam };
+const getDraftExam = (examId) => {
+    const token = localStorage.getItem('admin_token');
+
+    return axios.get(`${API}/exams/draft/${examId}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+export { getAllExam, getAllQuestionExam, createExam, addQuestionToExam, approveExam, deleteExam, getDraftExam };

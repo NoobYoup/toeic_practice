@@ -180,6 +180,13 @@ function Exam() {
                                         </td>
                                         <td>
                                             <Link
+                                                to={`detail-exam/${exam.id_bai_thi}`}
+                                                // onClick={() => localStorage.setItem('examId', exam.id_bai_thi)}
+                                                className="btn btn-sm btn-outline-primary"
+                                            >
+                                                <i className="fas fa-eye"></i>
+                                            </Link>
+                                            <Link
                                                 to={`edit-exam/${exam.id_bai_thi}`}
                                                 className="btn btn-sm btn-outline-primary"
                                             >

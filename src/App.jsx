@@ -30,6 +30,14 @@ import TestAdmin from './pages/admin/Test/Test.jsx';
 import Exam from './pages/admin/Test/Exam/Exam.jsx';
 import CreateExam from './pages/admin/Test/Exam/Component/CreateExam.jsx';
 import EditExam from './pages/admin/Test/Exam/Component/EditExam.jsx';
+import DetailExam from './pages/admin/Test/Exam/Component/DetailExam.jsx';
+import Part1Detail from './pages/admin/Test/Exam/Component/Part/Part1Detail.jsx';
+import Part2Detail from './pages/admin/Test/Exam/Component/Part/Part2Detail.jsx';
+import Part3Detail from './pages/admin/Test/Exam/Component/Part/Part3Detail.jsx';
+import Part4Detail from './pages/admin/Test/Exam/Component/Part/Part4Detail.jsx';
+import Part5Detail from './pages/admin/Test/Exam/Component/Part/Part5Detail.jsx';
+import Part6Detail from './pages/admin/Test/Exam/Component/Part/Part6Detail.jsx';
+import Part7Detail from './pages/admin/Test/Exam/Component/Part/Part7Detail.jsx';
 import Question from './pages/admin/Test/Question/Question.jsx';
 import CreateQuestionBank from './pages/admin/Test/Question/Component/CreateQuestionBank.jsx';
 import EditQuestionBank from './pages/admin/Test/Question/Component/EditQuestionBank.jsx';
@@ -78,11 +86,22 @@ function App() {
                                 <Route path="exam" element={<Exam />} />
                                 <Route path="exam/create-exam" element={<CreateExam />} />
                                 <Route path="exam/edit-exam" element={<EditExam />} />
+                                <Route path="exam/detail-exam/:id" element={<DetailExam />}>
+                                    <Route path="part1" element={<Part1Detail />} />
+                                    <Route path="part2" element={<Part2Detail />} />
+                                    <Route path="part3" element={<Part3Detail />} />
+                                    <Route path="part4" element={<Part4Detail />} />
+                                    <Route path="part5" element={<Part5Detail />} />
+                                    <Route path="part6" element={<Part6Detail />} />
+                                    <Route path="part7" element={<Part7Detail />} />
+                                    <Route index element={<Navigate to="part1" replace />} />
+                                </Route>
 
                                 <Route path="question" element={<Question />} />
                                 <Route path="question/create-question" element={<CreateQuestionBank />} />
                                 <Route path="question/edit-question/:id" element={<EditQuestionBank />} />
-                                <Route path="question/detail-question/:id" element={<DetailQuestionBank />} />
+                                <Route path="question/detail-question" element={<DetailQuestionBank />} />
+                                    
 
                                 <Route path="paragraph" element={<Paragraph />} />
                                 <Route path="paragraph/create" element={<CreateParagraph />} />
