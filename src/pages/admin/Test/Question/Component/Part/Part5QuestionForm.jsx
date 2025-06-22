@@ -65,7 +65,10 @@ function Part5QuestionForm({
     // CHỈ reset khi ở edit mode
     useEffect(() => {
         if (mode === 'edit') {
-            reset(defaultValues);
+            reset({
+                ...defaultValues,
+                phan: String(defaultValues?.phan?.id_phan || ''),
+              });
         }
     }, [mode, defaultValues, reset]);
 
@@ -82,7 +85,7 @@ function Part5QuestionForm({
             <form onSubmit={handleSubmit(submit)}>
                 {/* Phần chọn meta */}
                 <div className="row mb-3">
-                    {/* <div className="col-md-4">
+                    <div className="col-md-4">
                         <label className="form-label">Phần</label>
                         <Controller
                             control={control}
@@ -93,10 +96,11 @@ function Part5QuestionForm({
                                     options={partOptions}
                                     onChange={(val) => field.onChange(val?.value)}
                                     value={partOptions.find((o) => String(o.value) === String(field.value)) || null}
+                                    isDisabled
                                 />
                             )}
                         />
-                    </div> */}
+                    </div>
                     <div className="col-md-4">
                         <label className="form-label">Độ khó</label>
                         <Controller

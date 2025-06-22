@@ -76,8 +76,6 @@ function Paragraph() {
                 </div>
             </div>
 
-            <div className="card">
-                <div className="card-body">
                     <div className="row g-3 mb-3">
                         <div className="col-md-3">
                             <Select
@@ -88,6 +86,8 @@ function Paragraph() {
                             />
                         </div>
                     </div>
+            <div className="card">
+                <div className="card-body">
 
                     <div className="table-responsive">
                         {loading ? (
@@ -135,9 +135,10 @@ function Paragraph() {
                                                     >
                                                         <i className="fas fa-eye"></i>
                                                     </Link> */}
+                                                    <div className="btn-group">
                                                     <Link
                                                         to={`/admin/test/paragraph/edit/${passage.id_doan_van}`}
-                                                        className="btn btn-sm btn-outline-primary me-1"
+                                                        className="btn btn-sm btn-outline-primary"
                                                     >
                                                         <i className="fas fa-edit"></i>
                                                     </Link>
@@ -147,6 +148,7 @@ function Paragraph() {
                                                     >
                                                         <i className="fas fa-trash-alt"></i>
                                                     </button>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         ))
@@ -174,7 +176,7 @@ function Paragraph() {
                             nextClassName="page-item"
                             previousLinkClassName="page-link"
                             nextLinkClassName="page-link"
-                            forcePage={currentPage - 1}
+                           
                         />
                     </div>
                 </div>

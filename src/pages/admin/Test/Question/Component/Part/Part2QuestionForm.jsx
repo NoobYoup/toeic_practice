@@ -78,21 +78,14 @@ function Part2QuestionForm({
     // reset when defaultValues change in edit mode
     useEffect(() => {
         if (mode === 'edit') {
-            reset(defaultValues);
+            reset({
+                ...defaultValues,
+                phan: String(defaultValues?.phan?.id_phan || ''),
+              });
         }
     }, [mode, defaultValues, reset]);
 
     /* -------------------- Audio preview handling (edit mode) -------------------- */
-    const [audioPreviewEdit, setAudioPreviewEdit] = useState(
-        mode === 'edit' ? defaultValues?.am_thanh?.url_phuong_tien || null : null,
-    );
-
-    const handleAudioInput = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            setAudioPreviewEdit(URL.createObjectURL(file));
-        }
-    };
 
     /* -------------------- Submit -------------------- */
     const submit = (values) => {
@@ -107,7 +100,7 @@ function Part2QuestionForm({
             <form onSubmit={handleSubmit(submit)}>
                 {/* Phần, Độ khó, Trạng thái */}
                 <div className="row mb-3">
-                    {/* <div className="col-md-4">
+                    <div className="col-md-4">
                         <label className="form-label">Phần</label>
                         <Controller
                             control={control}
@@ -124,7 +117,7 @@ function Part2QuestionForm({
                                 />
                             )}
                         />
-                    </div> */}
+                    </div>
 
                     <div className="col-md-4">
                         <label className="form-label">Độ khó</label>
@@ -160,10 +153,10 @@ function Part2QuestionForm({
                     </div>
                 </div>
 
-                {audioPreviewEdit && (
+                {audioPreview || defaultValues.am_thanh.url_phuong_tien && (
                     
                         <audio controls className="w-100" style={{ maxWidth: '400px' }}>
-                            <source src={audioPreviewEdit} />
+                            <source src={audioPreview || defaultValues.am_thanh.url_phuong_tien} />
                             Trình duyệt của bạn không hỗ trợ phát audio.
                         </audio>
                    
@@ -257,7 +250,7 @@ function Part2QuestionForm({
                     type="file"
                     id="questionAudio"
                     accept="audio/*"
-                    onChange={safeHandleAudioChange}
+                    onChange={handleAudioChange}
                 />
             </div>
 
@@ -273,10 +266,10 @@ function Part2QuestionForm({
                             </div>
                             <div>
                                 <p className="mb-0 fw-medium">{formData?.audio?.name}</p>
-                                <small className="text-muted">{safeFormatFileSize(formData?.audio?.size)}</small>
+                                <small className="text-muted">{formatFileSize(formData?.audio?.size)}</small>
                             </div>
                         </div>
-                        <button type="button" className="btn btn-sm btn-outline-danger" onClick={safeRemoveAudio}>
+                        <button type="button" className="btn btn-sm btn-outline-danger" onClick={removeAudio}>
                             <i className="fas fa-trash-alt me-1"></i>Xóa
                         </button>
                     </div>

@@ -26,10 +26,8 @@ function EditQuestionBank() {
             setLoadingFetch(true);
             try {
                 const res = await getDetailQuestion(id);
-                console.log(res.data);
                 setQuestion(res.data.data);
                 setContent(res.data.data.noi_dung || '');
-                console.log('id_phan =', res.data.data.phan.id_phan);
             } catch (error) {
                 console.error('Lỗi khi lấy thông tin câu hỏi:', error);
             }
@@ -63,15 +61,9 @@ function EditQuestionBank() {
     const handleSubmit = async (values) => {
         setLoadingSubmit(true);
         try {
-            // const { hinh_anh, am_thanh, ...pureData } = values;
-            // const payload = { data: pureData };
-            // if (hinh_anh) payload.hinh_anh = hinh_anh;
-            // if (am_thanh) payload.am_thanh = am_thanh;
-            // const res = await editQuestion(id, payload);
             const res = await editQuestion(id, { data: values });
-            console.log(res.data);
-            toast.success('Cập nhật câu hỏi thành công!');
-            // navigate('/admin/question');
+            toast.success(res.data.message);
+            // navigate(`/admin/test/question/detail-question/${id}`);
         } catch (error) {
             console.error('Lỗi khi cập nhật câu hỏi:', error);
             toast.error(error?.response?.data?.message || 'Đã xảy ra lỗi');

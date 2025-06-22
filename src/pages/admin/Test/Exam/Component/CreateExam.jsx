@@ -32,7 +32,6 @@ function CreateExam() {
                 nam_xuat_ban: Number(namXuatBan),
             };
             const res = await createExam(payload);
-            console.log(res);
             setExamId(res.data.data.id_bai_thi); // Lưu ID bài thi vào state
             toast.success(res.data.message);
         } catch (err) {
@@ -78,13 +77,13 @@ function CreateExam() {
                     <form onSubmit={handleSubmit} className="question-form">
                         <div className="row mb-3">
                             <div className="col-md-3">
-                                <div class="form-group">
-                                    <label for="examName" class="form-label">
+                                <div className="form-group">
+                                    <label htmlFor="examName" className="form-label">
                                         Tên đề thi
                                     </label>
                                     <input
                                         type="text"
-                                        class="form-control"
+                                        className="form-control"
                                         id="examName"
                                         placeholder="Nhập tên đề thi"
                                         value={tenBaiThi}
@@ -93,13 +92,13 @@ function CreateExam() {
                                 </div>
                             </div>
                             <div className="col-md-3">
-                                <div class="form-group">
-                                    <label for="examTime" class="form-label">
+                                <div className="form-group">
+                                    <label htmlFor="examTime" className="form-label">
                                         Thời gian làm bài (phút)
                                     </label>
                                     <input
                                         type="number"
-                                        class="form-control"
+                                        className="form-control"
                                         id="examTime"
                                         placeholder="Nhập thời gian làm bài"
                                         value={thoiGianBaiThi}
@@ -108,13 +107,13 @@ function CreateExam() {
                                 </div>
                             </div>
                             <div className="col-md-3">
-                                <div class="form-group">
-                                    <label for="examTime" class="form-label">
+                                <div className="form-group">
+                                    <label htmlFor="examTime" className="form-label">
                                         Năm xuất bản
                                     </label>
                                     <input
                                         type="number"
-                                        class="form-control"
+                                        className="form-control"
                                         id="examYear"
                                         placeholder="Nhập năm xuất bản"
                                         value={namXuatBan}
@@ -124,14 +123,14 @@ function CreateExam() {
                             </div>
 
                             <div className="col-md-3">
-                                <div class="form-check form-switch">
+                                    <label className="form-check-label">Bài thi đầu vào</label>
+                                <div className="form-check form-switch">
                                     <input
-                                        class="form-check-input"
+                                        className="form-check-input"
                                         type="checkbox"
                                         checked={laBaiThiDauVao}
                                         onChange={(e) => setLaBaiThiDauVao(e.target.checked)}
                                     />
-                                    <label class="form-check-label">Bài thi đầu vào</label>
                                 </div>
                             </div>
                         </div>

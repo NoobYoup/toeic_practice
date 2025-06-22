@@ -100,7 +100,7 @@ function App() {
                                 <Route path="question" element={<Question />} />
                                 <Route path="question/create-question" element={<CreateQuestionBank />} />
                                 <Route path="question/edit-question/:id" element={<EditQuestionBank />} />
-                                <Route path="question/detail-question" element={<DetailQuestionBank />} />
+                                <Route path="question/detail-question/:id" element={<DetailQuestionBank />} />
                                     
 
                                 <Route path="paragraph" element={<Paragraph />} />

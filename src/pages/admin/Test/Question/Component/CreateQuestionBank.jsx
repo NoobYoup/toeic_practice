@@ -735,7 +735,7 @@ function CreateQuestionBank() {
                                             }));
                                         }
                                     }}
-                                    isDisabled={!dsTrangThai.length}
+                                    // isDisabled={!dsTrangThai.length}
                                 />
                             </div>
                         </div>

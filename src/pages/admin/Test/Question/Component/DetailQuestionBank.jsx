@@ -11,7 +11,6 @@ function DetailQuesionBank() {
         setLoading(true);
         try {
             const res = await getDetailQuestion(id);
-            console.log(res.data.data);
             setQuestionData(res.data.data);
         } catch (error) {
             console.error('Error fetching question detail:', error);
@@ -84,12 +83,10 @@ function DetailQuesionBank() {
                 </div>
 
                 <div>
-                    <Link to="/admin/test/question/edit-question" className="btn btn-primary me-2">
+                    <Link to={`/admin/test/question/edit-question/${id}`} className="btn btn-primary me-2">
                         <i className="fas fa-edit me-2"></i>Chỉnh sửa
                     </Link>
-                    <button className="btn btn-danger">
-                        <i className="fas fa-trash-alt me-2"></i>Xóa
-                    </button>
+                   
                 </div>
             </div>
 

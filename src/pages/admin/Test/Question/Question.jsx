@@ -69,7 +69,6 @@ function Question() {
         setPagination((prev) => ({ ...prev, page: 1 }));
     };
 
-    console.log('questions', questions);
 
     return (
         <>
@@ -86,7 +85,7 @@ function Question() {
             </div>
 
             <div className="row mb-4">
-                <div className="col-md-4">
+                {/* <div className="col-md-4">
                     <div className={`${cx('card')} card text-white bg-primary`}>
                         <div className="card-body">
                             <div className="d-flex justify-content-between align-items-center">
@@ -128,7 +127,7 @@ function Question() {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> */}
 
                 <div className="row g-3 mb-3">
                     <div className="col-md-3">
@@ -216,19 +215,21 @@ function Question() {
                                                         <div className="d-flex align-items-center">
                                                             {question.id_phuong_tien_am_thanh
                                                                 ? question.id_phuong_tien_am_thanh
-                                                                : 'Không có'}
+                                                                : 'Không'}
                                                         </div>
                                                     </td>
                                                     <td className="">
                                                         <div className="d-flex align-items-center">
                                                             {question.id_phuong_tien_hinh_anh
                                                                 ? question.id_phuong_tien_hinh_anh
-                                                                : 'Không có'}
+                                                                : 'Không'}
                                                         </div>
                                                     </td>
                                                     <td className="">
                                                         <div className="d-flex align-items-center">
-                                                            {question.noi_dung}
+                                                            {question.noi_dung.length > 20
+                                                            ? question.noi_dung.slice(0, 20) + '...'
+                                                            : question.noi_dung}
                                                         </div>
                                                     </td>
                                                     <td className="">
@@ -264,21 +265,23 @@ function Question() {
                                                         )}
                                                     </td>
                                                     <td>
+                                                        <div className="btn-group">
                                                         <Link
                                                             to={`detail-question/${question.id_cau_hoi}`}
-                                                            className="btn btn-sm btn-outline-info me-1"
+                                                            className="btn btn-sm btn-outline-info"
                                                         >
                                                             <i className="fas fa-eye"></i>
                                                         </Link>
                                                         <Link
                                                             to={`edit-question/${question.id_cau_hoi}`}
-                                                            className="btn btn-sm btn-outline-primary me-1"
+                                                            className="btn btn-sm btn-outline-primary"
                                                         >
                                                             <i className="fas fa-edit"></i>
                                                         </Link>
                                                         <button className="btn btn-sm btn-outline-danger">
-                                                            <i className="fas fa-trash-alt"></i>
-                                                        </button>
+                                                                <i className="fas fa-trash-alt"></i>
+                                                            </button>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             ))

@@ -24,7 +24,6 @@ function User() {
             setLoading(true);
             try {
                 const res = await getAllUser(searchTerm, currentPage);
-                console.log(res.data);
 
                 setUsers(res.data.data);
                 setPagination((prev) => ({ ...prev, total: res.data.pagination.total }));

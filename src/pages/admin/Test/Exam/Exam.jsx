@@ -33,8 +33,7 @@ function Exam() {
         setLoading(true);
         try {
             const res = await getAllExam(currentPage, filters);
-            console.log(res.data.dsTrangThai);
-            console.log(res.data.dsNamXuatBan);
+
             setExams(res.data.data);
             setPagination((prev) => ({
                 ...prev,
@@ -125,16 +124,20 @@ function Exam() {
                 </div>
             </div>
 
-            <div class="card">
-                <div class="card-body">
+            <div className="card">
+                <div className="card-body">
                 {loading ? (
                             <div className="text-center">
                                 <i className="fas fa-spinner fa-spin fa-2x"></i>
                             </div>
+                        ) : error ? (
+                            <div className="alert alert-danger">
+                                {error?.response?.data?.message || 'Có lỗi xảy ra!'}
+                            </div>
                         ) : (
                             
-                    <div class="table-responsive">
-                        <table class="table table-hover">
+                    <div className="table-responsive">
+                        <table className="table table-hover">
                             <thead>
                                 <tr>
                                     <th>ID</th>
@@ -167,7 +170,7 @@ function Exam() {
                                         <td>{exam.la_bai_thi_dau_vao ? 'Có' : 'Không'}</td>
 
                                         <td>{exam.trang_thai === 'da_xuat_ban' ? 'Đã xuất bản' : 'Nháp'}</td>
-                                        <td>{currentUser.vai_tro === 'quan_tri_vien' ? 'Quản trị viên' : 'Giáo viên'}</td>
+                                        <td>{currentUser ? (currentUser.vai_tro === 'quan_tri_vien' ? 'Quản trị viên' : 'Giáo viên') : ''}</td>
                                         <td>
                                             {format(new Date(exam.thoi_gian_tao), 'dd/MM/yyyy', {
                                                 locale: vi,
@@ -179,10 +182,11 @@ function Exam() {
                                             })}
                                         </td>
                                         <td>
+                                            <div className="btn-group">
                                             <Link
                                                 to={`detail-exam/${exam.id_bai_thi}`}
                                                 // onClick={() => localStorage.setItem('examId', exam.id_bai_thi)}
-                                                className="btn btn-sm btn-outline-primary"
+                                                className="btn btn-sm btn-outline-info"
                                             >
                                                 <i className="fas fa-eye"></i>
                                             </Link>
@@ -197,8 +201,9 @@ function Exam() {
                                                 type="button"
                                                 className="btn btn-sm btn-outline-danger"
                                             >
-                                                <i className="fas fa-trash-alt"></i>
-                                            </button>
+                                                    <i className="fas fa-trash-alt"></i>
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}

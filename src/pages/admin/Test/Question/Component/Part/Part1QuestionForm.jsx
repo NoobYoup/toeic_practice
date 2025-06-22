@@ -66,13 +66,15 @@ function Part1QuestionForm({
         control,
         formState: { errors },
     } = useForm({ defaultValues });
-    // const [imagePreviewEdit, setImagePreviewEdit] = useState(defaultValues?.anh_url || null);
-    // const [audioPreviewEdit, setAudioPreviewEdit] = useState(defaultValues?.audio_url || null);
+
 
     // CHỈ reset khi ở edit mode
     useEffect(() => {
         if (mode === 'edit') {
-            reset(defaultValues);
+            reset({
+                ...defaultValues,
+                phan: String(defaultValues?.phan?.id_phan || ''),
+            });
         }
     }, [mode, defaultValues, reset]);
 

@@ -32,23 +32,7 @@ function Part3QuestionForm({
     onSubmit,
     loading,
 }) {
-        /* ------------------------------------------------------------ */
-    /* Helpers an toàn cho props của create mode                     */
-    /* ------------------------------------------------------------ */
-    const safeFormatFileSize = (bytes) => {
-        if (typeof formatFileSize === 'function') return formatFileSize(bytes);
-        if (!bytes && bytes !== 0) return '';
-        return `${(bytes / 1024).toFixed(1)} KB`;
-    };
 
-    const safeRemoveImage = typeof removeImage === 'function' ? removeImage : () => {};
-    const safeHandleImageChange = typeof handleImageChange === 'function' ? handleImageChange : () => {};
-    const safeRemoveAudio = typeof removeAudio === 'function' ? removeAudio : () => {};
-    const safeHandleAudioChange = typeof handleAudioChange === 'function' ? handleAudioChange : () => {};
-
-    /* ------------------------------------------------------------ */
-    /* Common select options                                        */
-    /* ------------------------------------------------------------ */
     const [difficultyOptions, setDifficultyOptions] = useState([]);
     const [statusOptions, setStatusOptions] = useState([]);
     const [partOptions, setPartOptions] = useState([]);
