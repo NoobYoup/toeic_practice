@@ -4,7 +4,8 @@ import ReactPaginate from 'react-paginate';
 import Select from 'react-select';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
-import { getAllQuestion } from '@/services/questionService';
+import { getAllQuestion, importExcel } from '@/services/questionService';
+import { toast } from 'react-toastify';
 import styles from './QuestionBank.module.scss';
 import classNames from 'classnames/bind';
 
@@ -18,6 +19,9 @@ function Question() {
     const [optionsTrangThai, setOptionsTrangThai] = useState([{ value: '', label: 'Tất cả trạng thái' }]);
     const [optionsMucDo, setOptionsMucDo] = useState([{ value: '', label: 'Tất cả mức độ' }]);
     const [optionsPhan, setOptionsPhan] = useState([{ value: '', label: 'Tất cả phần' }]);
+    const [showImportModal, setShowImportModal] = useState(false);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [importing, setImporting] = useState(false);
 
     const fetchQuestions = async () => {
         setLoading(true);
@@ -69,15 +73,44 @@ function Question() {
         setPagination((prev) => ({ ...prev, page: 1 }));
     };
 
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setSelectedFile(file);
+        }
+    };
+
+    const handleImport = async () => {
+        if (!selectedFile) {
+            toast.warning('Vui lòng chọn file Excel để import');
+            return;
+        }
+
+        setImporting(true);
+        try {
+            const response = await importExcel(selectedFile);
+            toast.success('Import câu hỏi thành công!');
+            setShowImportModal(false);
+            setSelectedFile(null);
+            // Làm mới danh sách câu hỏi sau khi import
+            fetchQuestions();
+        } catch (error) {
+            console.error('Lỗi khi import Excel:', error);
+            toast.error(error.response?.data?.message || 'Có lỗi xảy ra khi import file Excel');
+        } finally {
+            setImporting(false);
+        }
+    };
 
     return (
         <>
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h2>Quản lý Ngân Hàng Câu Hỏi</h2>
                 <div>
-                    <button className="btn btn-success me-2">
+                    <button className="btn btn-success me-2" onClick={() => setShowImportModal(true)}>
                         <i className="fas fa-file-excel me-2"></i>Import Excel
                     </button>
+
                     <Link to="create-question" className="btn btn-primary">
                         <i className="fas fa-plus-circle me-2"></i>Thêm Câu Hỏi
                     </Link>
@@ -185,7 +218,6 @@ function Question() {
                                         {questions.length > 0 ? (
                                             questions.map((question) => (
                                                 <tr key={question.id_cau_hoi}>
-                                                    
                                                     <td className="">{question.id_cau_hoi}</td>
                                                     <td className="">
                                                         {question.phan.loai_phan === 'listening' ? (
@@ -227,9 +259,9 @@ function Question() {
                                                     </td>
                                                     <td className="">
                                                         <div className="d-flex align-items-center">
-                                                            {question.noi_dung.length > 20
-                                                            ? question.noi_dung.slice(0, 20) + '...'
-                                                            : question.noi_dung}
+                                                            {question.noi_dung && question.noi_dung.length > 20
+                                                                ? question.noi_dung.slice(0, 20) + '...'
+                                                                : question.noi_dung || 'Không có nội dung'}
                                                         </div>
                                                     </td>
                                                     <td className="">
@@ -242,7 +274,7 @@ function Question() {
                                                     <td className="">
                                                         {question.nguon_goc === 'thu_cong' ? 'Thủ công' : ''}
                                                     </td>
-                                                    
+
                                                     <td className="">
                                                         {question.trang_thai === 'da_xuat_ban'
                                                             ? 'Đã xuất bản'
@@ -266,19 +298,19 @@ function Question() {
                                                     </td>
                                                     <td>
                                                         <div className="btn-group">
-                                                        <Link
-                                                            to={`detail-question/${question.id_cau_hoi}`}
-                                                            className="btn btn-sm btn-outline-info"
-                                                        >
-                                                            <i className="fas fa-eye"></i>
-                                                        </Link>
-                                                        <Link
-                                                            to={`edit-question/${question.id_cau_hoi}`}
-                                                            className="btn btn-sm btn-outline-primary"
-                                                        >
-                                                            <i className="fas fa-edit"></i>
-                                                        </Link>
-                                                        <button className="btn btn-sm btn-outline-danger">
+                                                            <Link
+                                                                to={`detail-question/${question.id_cau_hoi}`}
+                                                                className="btn btn-sm btn-outline-info"
+                                                            >
+                                                                <i className="fas fa-eye"></i>
+                                                            </Link>
+                                                            <Link
+                                                                to={`edit-question/${question.id_cau_hoi}`}
+                                                                className="btn btn-sm btn-outline-primary"
+                                                            >
+                                                                <i className="fas fa-edit"></i>
+                                                            </Link>
+                                                            <button className="btn btn-sm btn-outline-danger">
                                                                 <i className="fas fa-trash-alt"></i>
                                                             </button>
                                                         </div>
@@ -318,6 +350,75 @@ function Question() {
                     </div>
                 </div>
             </div>
+
+            {/* Modal Import Excel */}
+            {showImportModal && (
+                <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">Import câu hỏi từ Excel</h5>
+                                <button
+                                    type="button"
+                                    className="btn-close"
+                                    onClick={() => {
+                                        setShowImportModal(false);
+                                        setSelectedFile(null);
+                                    }}
+                                ></button>
+                            </div>
+                            <div className="modal-body">
+                                <div className="mb-3">
+                                    <label htmlFor="excelFile" className="form-label">
+                                        Chọn file Excel
+                                    </label>
+                                    <input
+                                        type="file"
+                                        className="form-control"
+                                        id="excelFile"
+                                        accept=".xlsx, .xls"
+                                        onChange={handleFileChange}
+                                    />
+                                    <div className="form-text">
+                                        Vui lòng chọn file Excel theo đúng định dạng mẫu.
+                                        <a href="/templates/import_question_template.xlsx" className="ms-2">
+                                            Tải mẫu file
+                                        </a>
+                                    </div>
+                                </div>
+                                {selectedFile && (
+                                    <div className="alert alert-info">
+                                        <i className="fas fa-file-excel me-2"></i>
+                                        {selectedFile.name}
+                                    </div>
+                                )}
+                            </div>
+                            <div className="modal-footer">
+                                <button
+                                    type="button"
+                                    className="btn btn-secondary"
+                                    onClick={() => {
+                                        setShowImportModal(false);
+                                        setSelectedFile(null);
+                                    }}
+                                    disabled={importing}
+                                >
+                                    Hủy
+                                </button>
+                                <button
+                                    type="button"
+                                    className="btn btn-primary"
+                                    onClick={handleImport}
+                                    disabled={!selectedFile || importing}
+                                >
+                                    {importing && <i className="fas fa-spinner fa-spin me-2"></i>}
+                                    Import
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 }

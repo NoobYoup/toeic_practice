@@ -41,7 +41,7 @@ function Part3Detail() {
                         {/* Hiển thị audio nếu có */}
                         {group.audio?.url_phuong_tien && (
                             <div className="mb-4">
-                                <h6 className="mb-2">Audio:</h6>
+                                <h6 className="mb-2">Âm thanh:</h6>
                                 <audio controls className="w-100">
                                     <source src={group.audio.url_phuong_tien} type="audio/mpeg" />
                                     Trình duyệt của bạn không hỗ trợ audio.
@@ -80,7 +80,7 @@ function Part3Detail() {
 
                                 {question.giai_thich && (
                                     <div className="mt-2">
-                                        <small className="text-muted">Giải thích: {question.giai_thich}</small>
+                                        <small className="text-muted fs-6">Giải thích: {question.giai_thich}</small>
                                     </div>
                                 )}
                             </div>

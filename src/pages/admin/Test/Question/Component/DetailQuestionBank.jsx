@@ -109,7 +109,7 @@ function DetailQuesionBank() {
                         </div>
                         <div className="card-body">
                             <div className="alert alert-light" role="alert">
-                                <p className="mb-0 fs-5">{questionData?.noi_dung}</p>
+                                <p className="mb-0 fs-5">{questionData?.noi_dung || 'Không có nội dung'}</p>
                             </div>
                         </div>
                     </div>

@@ -74,4 +74,18 @@ const deleteQuestion = (id) => {
     });
 };
 
-export { getAllQuestion, getDetailQuestion, createQuestion, editQuestion, deleteQuestion };
+const importExcel = (file) => {
+    const token = localStorage.getItem('admin_token');
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return axios.post(`${API}/questions/import-excel`, formData, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data',
+        },
+    });
+};
+
+export { getAllQuestion, getDetailQuestion, createQuestion, editQuestion, deleteQuestion, importExcel };
