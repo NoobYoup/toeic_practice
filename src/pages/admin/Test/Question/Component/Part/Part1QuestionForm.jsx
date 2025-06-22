@@ -302,7 +302,7 @@ function Part1QuestionForm({
 
             <hr className="my-4" />
 
-            <div className="mb-3">
+            {/* <div className="mb-3">
                 <label htmlFor="questionContent" className="form-label">
                     Nội dung câu hỏi (mô tả hình ảnh)
                 </label>
@@ -312,7 +312,7 @@ function Part1QuestionForm({
                     onChange={(event, editor) => setFormData({ ...formData, noi_dung: editor.getData() })}
                     config={{ placeholder: 'Nhập mô tả hình ảnh...' }}
                 />
-            </div>
+            </div> */}
 
             {['A', 'B', 'C', 'D'].map((option, index) => (
                 <div className="mb-3" key={option}>

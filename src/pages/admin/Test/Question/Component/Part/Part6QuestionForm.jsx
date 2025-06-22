@@ -53,14 +53,14 @@ function Part6QuestionForm({ formData, setFormData, questions, onChangeQuestion,
                         <h6 className="mb-0">Câu {idx + 1}</h6>
                     </div>
 
-                    <div className="mb-3">
+                    {/* <div className="mb-3">
                         <label className="form-label">Nội dung</label>
                         <CKEditor
                             editor={ClassicEditor}
                             data={q.noi_dung}
                             onChange={(_, ed) => onChangeQuestion(idx, 'noi_dung', ed.getData())}
                         />
-                    </div>
+                    </div> */}
 
                     {/* Render 4 đáp án A-D bằng component con */}
                     {['A', 'B', 'C', 'D'].map((optionLetter, index) => (

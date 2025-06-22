@@ -48,10 +48,7 @@ function DetailExam() {
             <div className="mb-4">
                 <h5 className="fw-bold mb-3">Thông tin bài thi</h5>
 
-                <div className="row g-3">
-                    <div className="col-md-4">
-                        <strong>ID bài thi:</strong> <span className="text-primary">{exam.id_bai_thi}</span>
-                    </div>
+                <div className="row g-3">                  
                     <div className="col-md-4">
                         <strong>Tên bài thi:</strong> {exam.ten_bai_thi}
                     </div>
@@ -94,6 +91,8 @@ function DetailExam() {
                         <strong>Thời gian cập nhật:</strong> {new Date(exam.thoi_gian_cap_nhat).toLocaleString()}
                     </div>
                 </div>
+
+                <h5 className="fw-bold my-3">Thông tin câu hỏi</h5>
 
                 <div className={`${cx('part-tab-container')} mt-3`}>
                     {partTabs.map((tab) => (
