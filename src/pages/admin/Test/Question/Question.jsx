@@ -4,7 +4,7 @@ import ReactPaginate from 'react-paginate';
 import Select from 'react-select';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
-import { getAllQuestion, importExcel } from '@/services/questionService';
+import { getAllQuestion, importExcel, deleteQuestion } from '@/services/questionService';
 import { toast } from 'react-toastify';
 import styles from './QuestionBank.module.scss';
 import classNames from 'classnames/bind';
@@ -99,6 +99,17 @@ function Question() {
             toast.error(error.response?.data?.message || 'Có lỗi xảy ra khi import file Excel');
         } finally {
             setImporting(false);
+        }
+    };
+
+    const handleDelete = async (id) => {
+        try {
+            const res = await deleteQuestion(id);
+            toast.success(res.data.message);
+            fetchQuestions();
+        } catch (error) {
+            console.error(error);
+            toast.error(error.response?.data?.message );
         }
     };
 
@@ -310,7 +321,10 @@ function Question() {
                                                             >
                                                                 <i className="fas fa-edit"></i>
                                                             </Link>
-                                                            <button className="btn btn-sm btn-outline-danger">
+                                                            <button
+                                                                className="btn btn-sm btn-outline-danger"
+                                                                onClick={() => handleDelete(question.id_cau_hoi)}
+                                                            >
                                                                 <i className="fas fa-trash-alt"></i>
                                                             </button>
                                                         </div>
