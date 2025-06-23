@@ -16,10 +16,10 @@ import { toast } from 'react-toastify';
  *  - onClose: () => void : hàm đóng modal
  *  - onSelect: (questions: array) => void : callback khi người dùng chọn câu hỏi và nhấn Xác nhận
  */
-function ChooseQuestion({ isOpen, onClose, onSelect, examId }) {
+function ChooseQuestion({ isOpen, onClose, onSelect, examId, initialSelectedIds = [] }) {
     /* States */
     const [questions, setQuestions] = useState([]);
-    const [selectedIds, setSelectedIds] = useState([]);
+    const [selectedIds, setSelectedIds] = useState(initialSelectedIds);
     const [selectedData, setSelectedData] = useState([]);
     const [loading, setLoading] = useState(false);
 
@@ -67,10 +67,12 @@ function ChooseQuestion({ isOpen, onClose, onSelect, examId }) {
 
     useEffect(() => {
         if (isOpen) {
+            setSelectedIds(initialSelectedIds);
+            setSelectedData([]);
             fetchQuestions();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isOpen, currentPage, filters]);
+    }, [isOpen, currentPage, filters, initialSelectedIds]);
 
     /* Handlers */
     const handlePageClick = (e) => setCurrentPage(e.selected + 1);
@@ -96,10 +98,19 @@ function ChooseQuestion({ isOpen, onClose, onSelect, examId }) {
     const [adding, setAdding] = useState(false);
 
     const handleConfirm = async () => {
-        if (!examId || selectedIds.length === 0) return;
+        if (!examId || selectedIds.length === 0) {
+            onClose();
+            return;
+        }
+        // Chỉ thêm những câu hỏi chưa có trước đó
+        const newIds = selectedIds.filter((id) => !initialSelectedIds.includes(id));
+        if (newIds.length === 0) {
+            onClose();
+            return;
+        }
         setAdding(true);
         try {
-            await addQuestionToExam(examId, selectedIds);
+            await addQuestionToExam(examId, newIds);
             toast.success('Đã thêm câu hỏi vào đề thi');
             if (onSelect) onSelect(selectedData);
             onClose();

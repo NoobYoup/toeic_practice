@@ -85,7 +85,7 @@ function App() {
                             <Route path="/admin/test" element={<TestAdmin />}>
                                 <Route path="exam" element={<Exam />} />
                                 <Route path="exam/create-exam" element={<CreateExam />} />
-                                <Route path="exam/edit-exam" element={<EditExam />} />
+                                <Route path="exam/edit-exam/:id" element={<EditExam />} />
                                 <Route path="exam/detail-exam/:id" element={<DetailExam />}>
                                     <Route path="part1" element={<Part1Detail />} />
                                     <Route path="part2" element={<Part2Detail />} />
