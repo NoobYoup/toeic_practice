@@ -214,6 +214,7 @@ function Question() {
                                             <th>ID</th>
                                             <th>Loại</th>
                                             <th>Phần</th>
+                                            <th>ID Đoạn văn</th>
                                             <th>ID Âm thanh</th>
                                             <th>ID Hình ảnh</th>
                                             <th>Nội dung câu hỏi</th>
@@ -254,6 +255,13 @@ function Question() {
                                                         )}
                                                     </td>
                                                     <td className="">{question.phan.ten_phan}</td>
+                                                    <td className="">
+                                                        <div className="d-flex align-items-center">
+                                                            {question.id_phuong_tien_van_ban
+                                                                ? question.id_phuong_tien_van_ban
+                                                                : 'Không'}
+                                                        </div>
+                                                    </td>
                                                     <td className="">
                                                         <div className="d-flex align-items-center">
                                                             {question.id_phuong_tien_am_thanh

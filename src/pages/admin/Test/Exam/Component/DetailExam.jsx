@@ -35,6 +35,41 @@ function DetailExam() {
         fetchExam();
     }, [id]);
 
+    /* ------------------------------------------------------------ */
+    /* TÍNH SỐ THỨ TỰ CÂU HỎI THEO TỪNG PHẦN                       */
+    /* ------------------------------------------------------------ */
+    // Chuẩn bị dữ liệu đếm số câu hỏi cho mỗi phần
+    const questionCounts = {};
+    if (exam && Array.isArray(exam.cau_hoi_cua_bai_thi)) {
+        exam.cau_hoi_cua_bai_thi.forEach((item) => {
+            const partId = item?.cau_hoi?.id_phan;
+            if (partId) {
+                questionCounts[partId] = (questionCounts[partId] || 0) + 1;
+            }
+        });
+    }
+
+    // Tạo mảng thông tin chi tiết cho từng phần (bắt đầu, kết thúc, số lượng)
+    const partInfos = [];
+    let currentNumber = 1;
+    for (let part = 1; part <= 7; part += 1) {
+        const count = questionCounts[part] || 0;
+        if (count > 0) {
+            partInfos.push({
+                part,
+                count,
+                start: currentNumber,
+                end: currentNumber + count - 1,
+            });
+            currentNumber += count;
+        }
+    }
+
+    const listeningParts = partInfos.filter((p) => p.part <= 4);
+    const readingParts = partInfos.filter((p) => p.part >= 5);
+    const listeningTotal = listeningParts.reduce((sum, p) => sum + p.count, 0);
+    const readingTotal = readingParts.reduce((sum, p) => sum + p.count, 0);
+
     if (loading || !exam) {
         return (
             <div className="text-center">
@@ -114,134 +149,58 @@ function DetailExam() {
 
                     <div className="col-md-3">
                         <div className={`${cx('question-nav')} mb-4`}>
-                            <h5 className="mb-3">Listening (100 câu)</h5>
-                            <div className="mb-2">
-                                <strong>Part 1: Questions 1-6</strong>
-                            </div>
-                            <div className="mb-3">
-                                <span className={`${cx('question-number')} active`}>1</span>
-                                <span className={`${cx('question-number')}`}>2</span>
-                                <span className={`${cx('question-number')}`}>3</span>
-                                <span className={`${cx('question-number')}`}>4</span>
-                                <span className={`${cx('question-number')}`}>5</span>
-                                <span className={`${cx('question-number')}`}>6</span>
-                            </div>
+                            {/* ---------------------- LISTENING ---------------------- */}
+                            {listeningParts.length > 0 && (
+                                <>
+                                    <h5 className="mb-3">Listening ({listeningTotal} câu)</h5>
+                                    {listeningParts.map((p) => (
+                                        <div key={`part-${p.part}`} className="mb-3">
+                                            <div className="mb-2">
+                                                <strong>
+                                                    Part {p.part}: Questions {p.start}-{p.end}
+                                                </strong>
+                                            </div>
+                                            <div className="mb-2">
+                                                {Array.from({ length: p.count }).map((_, idx) => (
+                                                    <span
+                                                        key={p.start + idx}
+                                                        className={cx('question-number')}
+                                                    >
+                                                        {p.start + idx}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ))}
+                                    <hr />
+                                </>
+                            )}
 
-                            <div className="mb-2">
-                                <strong>Part 2: Questions 7-31</strong>
-                            </div>
-                            <div className="mb-3">
-                                <span className={`${cx('question-number')}`}>7</span>
-                                <span className={`${cx('question-number')}`}>8</span>
-                                <span className={`${cx('question-number')}`}>9</span>
-                                <span className={`${cx('question-number')}`}>10</span>
-                                <span className={`${cx('question-number')}`}>11</span>
-                                <span className={`${cx('question-number')}`}>12</span>
-                                <span className={`${cx('question-number')}`}>13</span>
-                                <span className={`${cx('question-number')}`}>14</span>
-                                <span className={`${cx('question-number')}`}>15</span>
-                                <span className={`${cx('question-number')}`}>16</span>
-                                <span className={`${cx('question-number')}`}>17</span>
-                                <span className={`${cx('question-number')}`}>18</span>
-                                <span className={`${cx('question-number')}`}>19</span>
-                                <span className={`${cx('question-number')}`}>20</span>
-                                <span className={`${cx('question-number')}`}>21</span>
-                                <span className={`${cx('question-number')}`}>22</span>
-                                <span className={`${cx('question-number')}`}>23</span>
-                                <span className={`${cx('question-number')}`}>24</span>
-                                <span className={`${cx('question-number')}`}>25</span>
-                                <span className={`${cx('question-number')}`}>26</span>
-                                <span className={`${cx('question-number')}`}>27</span>
-                                <span className={`${cx('question-number')}`}>28</span>
-                                <span className={`${cx('question-number')}`}>29</span>
-                                <span className={`${cx('question-number')}`}>30</span>
-                                <span className={`${cx('question-number')}`}>31</span>
-                            </div>
-
-                            <div className="mb-2">
-                                <strong>Part 3: Questions 32-70</strong>
-                            </div>
-                            <div className="mb-3">
-                                <span className={`${cx('question-number')}`}>32</span>
-                                <span className={`${cx('question-number')}`}>33</span>
-                                <span className={`${cx('question-number')}`}>34</span>
-                                <span className={`${cx('question-number')}`}>35</span>
-                                <span className={`${cx('question-number')}`}>36</span>
-                                <span className={`${cx('question-number')}`}>37</span>
-                                <span className={`${cx('question-number')}`}>38</span>
-                                <span className={`${cx('question-number')}`}>39</span>
-                                <span className={`${cx('question-number')}`}>40</span>
-                                <span className={`${cx('question-number')}`}>...</span>
-                            </div>
-
-                            <div className="mb-2">
-                                <strong>Part 4: Questions 71-100</strong>
-                            </div>
-                            <div className="mb-3">
-                                <span className={`${cx('question-number')}`}>71</span>
-                                <span className={`${cx('question-number')}`}>72</span>
-                                <span className={`${cx('question-number')}`}>73</span>
-                                <span className={`${cx('question-number')}`}>74</span>
-                                <span className={`${cx('question-number')}`}>75</span>
-                                <span className={`${cx('question-number')}`}>76</span>
-                            </div>
-
-                            <hr />
-
-                            <h5 className="mb-3">Reading (100 câu)</h5>
-                            <div className="mb-2">
-                                <strong>Part 5: Questions 101-130</strong>
-                            </div>
-                            <div className="mb-3">
-                                <span className={`${cx('question-number')}`}>101</span>
-                                <span className={`${cx('question-number')}`}>102</span>
-                                <span className={`${cx('question-number')}`}>103</span>
-                                <span className={`${cx('question-number')}`}>104</span>
-                                <span className={`${cx('question-number')}`}>105</span>
-                                <span className={`${cx('question-number')}`}>...</span>
-                            </div>
-
-                            <div className="mb-2">
-                                <strong>Part 6: Questions 131-146</strong>
-                            </div>
-                            <div className="mb-3">
-                                <span className={`${cx('question-number')}`}>131</span>
-                                <span className={`${cx('question-number')}`}>132</span>
-                                <span className={`${cx('question-number')}`}>133</span>
-                                <span className={`${cx('question-number')}`}>134</span>
-                                <span className={`${cx('question-number')}`}>135</span>
-                                <span className={`${cx('question-number')}`}>...</span>
-                            </div>
-
-                            <div className="mb-2">
-                                <strong>Part 7: Questions 147-200</strong>
-                            </div>
-                            <div className="mb-3">
-                                <span className={`${cx('question-number')}`}>147</span>
-                                <span className={`${cx('question-number')}`}>148</span>
-                                <span className={`${cx('question-number')}`}>149</span>
-                                <span className={`${cx('question-number')}`}>150</span>
-                                <span className={`${cx('question-number')}`}>...</span>
-                            </div>
-
-                            {/* <div className="mt-4">
-                                <div className="d-flex align-items-center mb-2">
-                                    <span className={`${cx('question-number')}`}></span>
-                                    <small>Chưa trả lời</small>
-                                </div>
-                                <div className="d-flex align-items-center mb-2">
-                                    <span className={`${cx('question-number')}`}></span>
-                                    <small>Câu hiện tại</small>
-                                </div>
-                                <div className="d-flex align-items-center mb-2">
-                                    <span className={`${cx('question-number')}`}></span>
-                                    <small>Đã trả lời</small>
-                                </div>
-                                <div className="d-flex align-items-center">
-                                    <span className={`${cx('question-number')}`}></span>
-                                    <small>Đánh dấu xem lại</small>
-                                </div>
-                            </div> */}
+                            {/* ---------------------- READING ----------------------- */}
+                            {readingParts.length > 0 && (
+                                <>
+                                    <h5 className="mb-3">Reading ({readingTotal} câu)</h5>
+                                    {readingParts.map((p) => (
+                                        <div key={`part-${p.part}`} className="mb-3">
+                                            <div className="mb-2">
+                                                <strong>
+                                                    Part {p.part}: Questions {p.start}-{p.end}
+                                                </strong>
+                                            </div>
+                                            <div className="mb-2">
+                                                {Array.from({ length: p.count }).map((_, idx) => (
+                                                    <span
+                                                        key={p.start + idx}
+                                                        className={cx('question-number')}
+                                                    >
+                                                        {p.start + idx}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>

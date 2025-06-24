@@ -12,10 +12,24 @@ function PartDetailTemplate({ partId }) {
         );
     }
 
-    // Lọc danh sách câu hỏi theo id_phan tương ứng
+    // Lọc danh sách câu hỏi của part hiện tại
     const questions = (exam.cau_hoi_cua_bai_thi || [])
         .filter((item) => item.cau_hoi.id_phan === partId)
         .map((item) => item.cau_hoi);
+
+    // Tính số câu của các part trước để xác định số bắt đầu
+    let startNumber = 1;
+    if (Array.isArray(exam.cau_hoi_cua_bai_thi)) {
+        const countsBefore = {};
+        // đếm số câu theo part
+        exam.cau_hoi_cua_bai_thi.forEach((item) => {
+            const pId = item.cau_hoi.id_phan;
+            countsBefore[pId] = (countsBefore[pId] || 0) + 1;
+        });
+        for (let p = 1; p < partId; p += 1) {
+            startNumber += countsBefore[p] || 0;
+        }
+    }
 
     if (questions.length === 0) {
         return <p>Không có câu hỏi cho phần này.</p>;
@@ -26,13 +40,13 @@ function PartDetailTemplate({ partId }) {
             {questions.map((q, idx) => (
                 <div className="card" key={q.id_cau_hoi}>
                     <div className="card-body">
-                        <h6 className="card-title mb-3">Câu {idx + 1}</h6>
+                        <h6 className="card-title mb-3">Câu {startNumber + idx}</h6>
 
                         {q.hinh_anh?.url_phuong_tien && (
                             <img
                                 src={q.hinh_anh.url_phuong_tien}
                                 className="img-fluid rounded mb-3"
-                                alt={`Ảnh câu hỏi ${idx + 1}`}
+                                alt={`Ảnh câu hỏi ${startNumber + idx}`}
                             />
                         )}
 
