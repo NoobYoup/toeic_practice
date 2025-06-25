@@ -90,7 +90,7 @@ function Question() {
         setImporting(true);
         try {
             const response = await importExcel(selectedFile);
-            toast.success('Import câu hỏi thành công!');
+            toast.success(response.data.message);
             setShowImportModal(false);
             setSelectedFile(null);
             // Làm mới danh sách câu hỏi sau khi import
@@ -112,6 +112,13 @@ function Question() {
             console.error(error);
             toast.error(error.response?.data?.message );
         }
+    };
+
+    const handleUpdate = () => {
+        // Đặt lại filter về mặc định (rỗng)
+        setFilters({});
+        // Đặt lại trang về 1
+        setPagination((prev) => ({ ...prev, page: 1 }));
     };
 
     return (
@@ -180,7 +187,7 @@ function Question() {
                             name="id_phan"
                             options={optionsPhan}
                             onChange={handleSelectChange}
-                            defaultValue={optionsPhan[0]}
+                            value={optionsPhan.find((opt) => opt.value === (filters.id_phan ?? '')) || optionsPhan[0]}
                         />
                     </div>
                     <div className="col-md-3">
@@ -188,7 +195,7 @@ function Question() {
                             name="muc_do_kho"
                             options={optionsMucDo}
                             onChange={handleSelectChange}
-                            defaultValue={optionsMucDo[0]}
+                            value={optionsMucDo.find((opt) => opt.value === (filters.muc_do_kho ?? '')) || optionsMucDo[0]}
                         />
                     </div>
                     <div className="col-md-3">
@@ -196,8 +203,13 @@ function Question() {
                             name="trang_thai"
                             options={optionsTrangThai}
                             onChange={handleSelectChange}
-                            defaultValue={optionsTrangThai[0]}
+                            value={optionsTrangThai.find((opt) => opt.value === (filters.trang_thai ?? '')) || optionsTrangThai[0]}
                         />
+                    </div>
+                    <div className="col-md-3 px-0">
+                        <button className="btn btn-info d-block ms-auto" onClick={handleUpdate}>
+                            <i className="fas fa-sync-alt me-2"></i>Cập nhật
+                        </button>
                     </div>
                 </div>
 
@@ -258,8 +270,8 @@ function Question() {
                                                     <td className="">{question.phan.ten_phan}</td>
                                                     <td className="">
                                                         <div className="d-flex align-items-center">
-                                                            {question.id_phuong_tien_van_ban
-                                                                ? question.id_phuong_tien_van_ban
+                                                            {question.id_doan_van
+                                                                ? question.id_doan_van
                                                                 : 'Không'}
                                                         </div>
                                                     </td>
@@ -292,7 +304,7 @@ function Question() {
                                                             : 'Khó'}
                                                     </td>
                                                     <td className="">
-                                                        {question.nguon_goc === 'thu_cong' ? 'Thủ công' : ''}
+                                                        {question.nguon_goc === 'thu_cong' ? 'Thủ công' : question.nguon_goc === 'nhap_excel' ? 'Nhập excel' : ''}
                                                     </td>
 
                                                     <td className="">

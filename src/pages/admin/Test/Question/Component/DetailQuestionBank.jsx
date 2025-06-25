@@ -253,7 +253,7 @@ function DetailQuesionBank() {
 
                                 <div className="col-12">
                                     <label className="form-label fw-bold text-muted">Nguồn gốc</label>
-                                    <p className="mb-0">{questionData?.nguon_goc === 'thu_cong' ? 'Thủ công' : ''}</p>
+                                    <p className="mb-0">{questionData?.nguon_goc === 'thu_cong' ? 'Thủ công' : questionData?.nguon_goc === 'nhap_excel' ? 'Nhập excel' : ''}</p>
                                 </div>
 
                                 <div className="col-12">

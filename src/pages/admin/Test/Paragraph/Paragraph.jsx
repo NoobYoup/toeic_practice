@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import ReactPaginate from 'react-paginate';
 import Select from 'react-select';
+import { format } from 'date-fns';
+import { vi } from 'date-fns/locale';
 import { getAllPassage, deletePassage } from '@/services/passageService';
 import styles from './Paragraph.module.scss';
 import classNames from 'classnames/bind';
@@ -27,13 +29,13 @@ function Paragraph() {
             console.log(res.data.data);
             setPassages(res.data.data || []);
             setPagination(res.data.pagination || { page: 1, limit: 7, total: 0 });
-            // setOptionsPhan([
-            //     { value: '', label: 'Tất cả phần' },
-            //     ...res.data.dsPhan.map((item) => ({
-            //         value: item.id_phan.toString(),
-            //         label: item.ten_phan,
-            //     })),
-            // ]);
+            setOptionsPhan([
+                { value: '', label: 'Tất cả phần' },
+                ...res.data.dsPhanCauHoi.map((item) => ({
+                    value: item.id_phan.toString(),
+                    label: item.ten_phan,
+                })),
+            ]);
         } catch (err) {
             setError('Không thể tải danh sách đoạn văn');
         }
@@ -66,6 +68,11 @@ function Paragraph() {
         setCurrentPage(1);
     };
 
+    const handleUpdate = () => {
+        setFilters({});
+        setCurrentPage(1);
+    };
+
     return (
         <>
             <div className="d-flex justify-content-between align-items-center mb-4">
@@ -77,19 +84,25 @@ function Paragraph() {
                 </div>
             </div>
 
-                    <div className="row g-3 mb-3">
-                        <div className="col-md-3">
-                            <Select
-                                name="id_phan"
-                                options={optionsPhan}
-                                onChange={handleSelectChange}
-                                defaultValue={optionsPhan[0]}
-                            />
-                        </div>
-                    </div>
+            <div className="row g-3 mb-3">
+                <div className="col-md-3">
+                    <Select
+                        name="id_phan"
+                        options={optionsPhan}
+                        onChange={handleSelectChange}
+                        value={optionsPhan.find((opt) => opt.value === (filters.id_phan ?? '')) || optionsPhan[0]}
+                    />
+                </div>
+                <div className="col-md-3"></div>
+                <div className="col-md-3"></div>
+                <div className="col-md-3">
+                    <button className="btn btn-info d-block ms-auto" onClick={handleUpdate}>
+                        <i className="fas fa-sync-alt me-2"></i>Cập nhật
+                    </button>
+                </div>
+            </div>
             <div className="card">
                 <div className="card-body">
-
                     <div className="table-responsive">
                         {loading ? (
                             <div className="text-center my-4">
@@ -132,8 +145,8 @@ function Paragraph() {
                                                 </td>
                                                 <td>{passage.loai_doan_van}</td>
                                                 <td>{passage.id_phan}</td>
-                                                <td>{passage.thoi_gian_tao}</td>
-                                                <td>{passage.thoi_gian_cap_nhat}</td>
+                                                <td>{format(new Date(passage.thoi_gian_tao), 'dd/MM/yyyy HH:mm', { locale: vi })}</td>
+                                                <td>{format(new Date(passage.thoi_gian_cap_nhat), 'dd/MM/yyyy HH:mm', { locale: vi })}</td>
 
                                                 <td>
                                                     {/* <Link
@@ -143,18 +156,18 @@ function Paragraph() {
                                                         <i className="fas fa-eye"></i>
                                                     </Link> */}
                                                     <div className="btn-group">
-                                                    <Link
-                                                        to={`/admin/test/paragraph/edit/${passage.id_doan_van}`}
-                                                        className="btn btn-sm btn-outline-primary"
-                                                    >
-                                                        <i className="fas fa-edit"></i>
-                                                    </Link>
-                                                    <button
-                                                        onClick={() => handleDelete(passage.id_doan_van)}
-                                                        className="btn btn-sm btn-outline-danger"
-                                                    >
-                                                        <i className="fas fa-trash-alt"></i>
-                                                    </button>
+                                                        <Link
+                                                            to={`/admin/test/paragraph/edit/${passage.id_doan_van}`}
+                                                            className="btn btn-sm btn-outline-primary"
+                                                        >
+                                                            <i className="fas fa-edit"></i>
+                                                        </Link>
+                                                        <button
+                                                            onClick={() => handleDelete(passage.id_doan_van)}
+                                                            className="btn btn-sm btn-outline-danger"
+                                                        >
+                                                            <i className="fas fa-trash-alt"></i>
+                                                        </button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -183,7 +196,6 @@ function Paragraph() {
                             nextClassName="page-item"
                             previousLinkClassName="page-link"
                             nextLinkClassName="page-link"
-                           
                         />
                     </div>
                 </div>

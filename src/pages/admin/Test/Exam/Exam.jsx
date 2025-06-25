@@ -22,12 +22,8 @@ function Exam() {
 
     const [pagination, setPagination] = useState({ page: 1, limit: 3, total: 0 });
 
-    const [optionsTrangThai, setOptionsTrangThai] = useState([
-        { value: '', label: 'Tất cả trạng thái' },
-    ]);
-    const [optionsNamXuatBan, setOptionsNamXuatBan] = useState([
-        { value: '', label: 'Tất cả năm xuất bản' },
-    ]);
+    const [optionsTrangThai, setOptionsTrangThai] = useState([{ value: '', label: 'Tất cả trạng thái' }]);
+    const [optionsNamXuatBan, setOptionsNamXuatBan] = useState([{ value: '', label: 'Tất cả năm xuất bản' }]);
 
     const fetchExams = async () => {
         setLoading(true);
@@ -44,7 +40,14 @@ function Exam() {
                 { value: '', label: 'Tất cả trạng thái' },
                 ...res.data.dsTrangThai.map((item) => ({
                     value: item,
-                    label: item === 'da_xuat_ban' ? 'Đã xuất bản' : item === 'luu_tru' ? 'Lưu trữ' : item === 'nhap' ? 'Nháp' : item,
+                    label:
+                        item === 'da_xuat_ban'
+                            ? 'Đã xuất bản'
+                            : item === 'luu_tru'
+                            ? 'Lưu trữ'
+                            : item === 'nhap'
+                            ? 'Nháp'
+                            : item,
                 })),
             ]);
             setOptionsNamXuatBan([
@@ -94,6 +97,11 @@ function Exam() {
         }
     };
 
+    const handleUpdate = () => {
+        setFilters({});
+        setCurrentPage(1);
+    };
+
     return (
         <>
             <div className="d-flex justify-content-between align-items-center mb-4">
@@ -105,112 +113,127 @@ function Exam() {
                 </div>
             </div>
 
-            <div className='row g-3 mb-3'>
-                <div className='col-md-3'>
+            <div className="row g-3 mb-3">
+                <div className="col-md-3">
                     <Select
                         name="trang_thai"
                         options={optionsTrangThai}
                         onChange={handleSelectChange}
-                        defaultValue={optionsTrangThai[0]}
+                        value={
+                            optionsTrangThai.find((opt) => opt.value === (filters.trang_thai ?? '')) ||
+                            optionsTrangThai[0]
+                        }
                     />
                 </div>
-                <div className='col-md-3'>
+                <div className="col-md-3">
                     <Select
                         name="nam_xuat_ban"
                         options={optionsNamXuatBan}
                         onChange={handleSelectChange}
-                        defaultValue={optionsNamXuatBan[0]}
+                        value={
+                            optionsNamXuatBan.find((opt) => opt.value === (filters.nam_xuat_ban ?? '')) ||
+                            optionsNamXuatBan[0]
+                        }
                     />
+                </div>
+                <div className="col-md-3"></div>
+                <div className="col-md-3">
+                    <button className="btn btn-info d-block ms-auto" onClick={handleUpdate}>
+                        <i className="fas fa-sync-alt me-2"></i>Cập nhật
+                    </button>
                 </div>
             </div>
 
             <div className="card">
                 <div className="card-body">
-                {loading ? (
-                            <div className="text-center">
-                                <i className="fas fa-spinner fa-spin fa-2x"></i>
-                            </div>
-                        ) : error ? (
-                            <div className="alert alert-danger">
-                                {error?.response?.data?.message || 'Có lỗi xảy ra!'}
-                            </div>
-                        ) : (
-                            
-                    <div className="table-responsive">
-                        <table className="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Tên bài thi</th>
-                                    <th>Mô tả</th>
-                                    <th>Điểm tối đa</th>
-                                    <th>Năm xuất bản</th>
-                                    <th>Bài thi đầu vào</th>
-                                    <th>Trạng thái</th>
-                                    <th>Người tạo</th>
-                                    <th>Thời gian tạo</th>
-                                    <th>Thời gian cập nhật</th>
-                                    <th>Thao tác</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {exams.map((exam) => (
-                                    <tr key={exam.id_bai_thi}>
-                                        <td>{exam.id_bai_thi}</td>
-                                        <td>{exam.ten_bai_thi}</td>
-                                        <td>{exam.mo_ta}</td>
-                                        <td>{exam.diem_toi_da}</td>
-
-                                        <td>
-                                            {format(new Date(exam.nam_xuat_ban), 'yyyy', {
-                                                locale: vi,
-                                            })}
-                                        </td>
-
-                                        <td>{exam.la_bai_thi_dau_vao ? 'Có' : 'Không'}</td>
-
-                                        <td>{exam.trang_thai === 'da_xuat_ban' ? 'Đã xuất bản' : 'Nháp'}</td>
-                                        <td>{currentUser ? (currentUser.vai_tro === 'quan_tri_vien' ? 'Quản trị viên' : 'Giáo viên') : ''}</td>
-                                        <td>
-                                            {format(new Date(exam.thoi_gian_tao), 'dd/MM/yyyy', {
-                                                locale: vi,
-                                            })}
-                                        </td>
-                                        <td>
-                                            {format(new Date(exam.thoi_gian_cap_nhat), 'dd/MM/yyyy', {
-                                                locale: vi,
-                                            })}
-                                        </td>
-                                        <td>
-                                            <div className="btn-group">
-                                            <Link
-                                                to={`detail-exam/${exam.id_bai_thi}`}
-                                                // onClick={() => localStorage.setItem('examId', exam.id_bai_thi)}
-                                                className="btn btn-sm btn-outline-info"
-                                            >
-                                                <i className="fas fa-eye"></i>
-                                            </Link>
-                                            <Link
-                                                to={`edit-exam/${exam.id_bai_thi}`}
-                                                className="btn btn-sm btn-outline-primary"
-                                            >
-                                                <i className="fas fa-edit"></i>
-                                            </Link>
-                                            <button
-                                                onClick={() => handleDeleteExam(exam.id_bai_thi)}
-                                                type="button"
-                                                className="btn btn-sm btn-outline-danger"
-                                            >
-                                                    <i className="fas fa-trash-alt"></i>
-                                                </button>
-                                            </div>
-                                        </td>
+                    {loading ? (
+                        <div className="text-center">
+                            <i className="fas fa-spinner fa-spin fa-2x"></i>
+                        </div>
+                    ) : error ? (
+                        <div className="alert alert-danger">{error?.response?.data?.message || 'Có lỗi xảy ra!'}</div>
+                    ) : (
+                        <div className="table-responsive">
+                            <table className="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Tên bài thi</th>
+                                        <th>Mô tả</th>
+                                        <th>Điểm tối đa</th>
+                                        <th>Năm xuất bản</th>
+                                        <th>Bài thi đầu vào</th>
+                                        <th>Trạng thái</th>
+                                        <th>Người tạo</th>
+                                        <th>Thời gian tạo</th>
+                                        <th>Thời gian cập nhật</th>
+                                        <th>Thao tác</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                        )}
+                                </thead>
+                                <tbody>
+                                    {exams.map((exam) => (
+                                        <tr key={exam.id_bai_thi}>
+                                            <td>{exam.id_bai_thi}</td>
+                                            <td>{exam.ten_bai_thi}</td>
+                                            <td>{exam.mo_ta}</td>
+                                            <td>{exam.diem_toi_da}</td>
+
+                                            <td>
+                                                {format(new Date(exam.nam_xuat_ban), 'yyyy', {
+                                                    locale: vi,
+                                                })}
+                                            </td>
+
+                                            <td>{exam.la_bai_thi_dau_vao ? 'Có' : 'Không'}</td>
+
+                                            <td>{exam.trang_thai === 'da_xuat_ban' ? 'Đã xuất bản' : 'Nháp'}</td>
+                                            <td>
+                                                {currentUser
+                                                    ? currentUser.vai_tro === 'quan_tri_vien'
+                                                        ? 'Quản trị viên'
+                                                        : 'Giáo viên'
+                                                    : ''}
+                                            </td>
+                                            <td>
+                                                {format(new Date(exam.thoi_gian_tao), 'dd/MM/yyyy', {
+                                                    locale: vi,
+                                                })}
+                                            </td>
+                                            <td>
+                                                {format(new Date(exam.thoi_gian_cap_nhat), 'dd/MM/yyyy', {
+                                                    locale: vi,
+                                                })}
+                                            </td>
+                                            <td>
+                                                <div className="btn-group">
+                                                    <Link
+                                                        to={`detail-exam/${exam.id_bai_thi}`}
+                                                        // onClick={() => localStorage.setItem('examId', exam.id_bai_thi)}
+                                                        className="btn btn-sm btn-outline-info"
+                                                    >
+                                                        <i className="fas fa-eye"></i>
+                                                    </Link>
+                                                    <Link
+                                                        to={`edit-exam/${exam.id_bai_thi}`}
+                                                        className="btn btn-sm btn-outline-primary"
+                                                    >
+                                                        <i className="fas fa-edit"></i>
+                                                    </Link>
+                                                    <button
+                                                        onClick={() => handleDeleteExam(exam.id_bai_thi)}
+                                                        type="button"
+                                                        className="btn btn-sm btn-outline-danger"
+                                                    >
+                                                        <i className="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
 
                     <div className="d-flex justify-content-center">
                         <ReactPaginate
