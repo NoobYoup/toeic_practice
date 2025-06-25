@@ -3,6 +3,7 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import Select from 'react-select';
 import { useState, useEffect } from 'react';
 import { getAllPassage } from '@/services/passageService';
+import { toast } from 'react-toastify';
 
 function Part7QuestionForm({
     formData,
@@ -43,6 +44,15 @@ function Part7QuestionForm({
             { ky_tu_lua_chon: 'C', noi_dung: '' },
             { ky_tu_lua_chon: 'D', noi_dung: '' },
         ],
+    };
+
+    // Hàm thêm câu hỏi với giới hạn tối đa 5
+    const handleAddQuestion = () => {
+        if (questions.length >= 5) {
+            toast.warning('Chỉ được thêm tối đa 5 câu hỏi', { toastId: 'max-questions' });
+            return;
+        }
+        onAddQuestion(defaultQuestion);
     };
 
     return (
@@ -129,7 +139,8 @@ function Part7QuestionForm({
             <button
                 type="button"
                 className="btn btn-outline-primary"
-                onClick={() => onAddQuestion(defaultQuestion)}
+                onClick={handleAddQuestion}
+                disabled={questions.length >= 5}
             >
                 Thêm câu hỏi
             </button>
