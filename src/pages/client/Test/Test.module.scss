@@ -1,0 +1,136 @@
+.test-container {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.part-label {
+    background-color: #e9ecef;
+    color: #495057;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 0.5rem 1.25rem;
+    border-radius: 50px;
+    display: inline-block;
+}
+
+.part-label:hover,
+.part-label.active,
+.part-label:focus {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.question-nav {
+    background-color: var(--light-color);
+    border-radius: 10px;
+}
+
+.question-number {
+    width: 2.5rem;
+    height: 2.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0.25rem;
+    border-radius: 50%;
+    background-color: #e9ecef;
+    color: #495057;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.question-number:hover {
+    background-color: #dee2e6;
+}
+
+.question-number.active {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+.question-number.answered {
+    background-color: #20c997;
+    color: #fff;
+}
+
+.question-number.flagged {
+    border: 2px solid #fd7e14;
+}
+
+.timer-container {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 1rem;
+}
+
+.timer {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.question-section {
+    // border-bottom: 1px solid #dee2e6;
+    // padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.question-text {
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+}
+
+.audio-player {
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+
+.answer-option {
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.75rem;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.answer-option:hover {
+    background-color: #f8f9fa;
+}
+
+.answer-option.selected {
+    border-color: var(--primary-color);
+    background-color: rgba(37, 99, 235, 0.1);
+}
+
+.question-number:hover {
+    background-color: #dee2e6;
+}
+
+.question-number.active {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+.question-number.answered {
+    background-color: #20c997;
+    color: #fff;
+}
+
+.question-number.flagged {
+    border: 2px solid #fd7e14;
+}
+
+.flag-btn {
+    color: #6c757d;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.flag-btn:hover, 
+.flag-btn.active {
+    color: #fd7e14;
+}

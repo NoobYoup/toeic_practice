@@ -12,6 +12,8 @@ import Security from './pages/client/Account/EditAccount/Security.jsx';
 import Dictionary from './pages/client/Dictionary';
 import Grammar from './pages/client/Grammar';
 import Test from './pages/client/Test';
+import ListTest from './pages/client/Test/Component/ListTest.jsx';
+import DetailTest from './pages/client/Test/Component/DetailTest.jsx';
 import Course from './pages/client/Course/Course.jsx';
 import History from './pages/client/History/History.jsx';
 import SettingUser from './pages/client/History';
@@ -47,6 +49,7 @@ import CreateParagraph from './pages/admin/Test/Paragraph/Component/CreateParagr
 import EditParagraph from './pages/admin/Test/Paragraph/Component/EditParagraph.jsx';
 import DetailParagraph from './pages/admin/Test/Paragraph/Component/DetailParagraph.jsx';
 
+
 function App() {
     return (
         <>
@@ -59,6 +62,8 @@ function App() {
                         <Route path="/dictionary" element={<Dictionary />} />
                         <Route path="/grammar" element={<Grammar />} />
                         <Route path="/test" element={<Test />} />
+                        <Route path="/list-test" element={<ListTest />} />
+                        <Route path="/detail-test/:id" element={<DetailTest />} />
                         <Route path="/course" element={<Course />} />
                         <Route path="/history" element={<History />} />
                         <Route path="/setting" element={<SettingUser />} />

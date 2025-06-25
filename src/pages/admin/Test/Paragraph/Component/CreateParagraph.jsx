@@ -53,6 +53,26 @@ function CreateParagraph() {
                                 </div>
                             </div>
                             <div className="col-md-6">
+                                <div className="mb-3">
+                                    <label htmlFor="draftExam" className="form-label">
+                                        Loại đoạn văn
+                                    </label>
+                                    <select
+                                        className="form-select"
+                                        id="draftExam"
+                                        required
+                                        value={passageData.id_phan}
+                                        onChange={(e) =>
+                                            setPassageData((prev) => ({ ...prev, id_phan: e.target.value }))
+                                        }
+                                    >
+                                        <option value="6">Single</option>
+                                        <option value="7">Double</option>
+                                        <option value="7">Triple</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="col-md-6">
                                 <div className="form-group">
                                     <label htmlFor="titlePassage" className="form-label">
                                         Tiêu đề
@@ -87,6 +107,38 @@ function CreateParagraph() {
                                 }}
                             />
                         </div>
+
+                        <div className="mb-3">
+                <label htmlFor="questionImage" className="form-label">
+                    Hình ảnh (bắt buộc cho Part 1)
+                </label>
+                <input
+                    className="form-control"
+                    type="file"
+                    id="questionImage"
+                    accept="image/*"
+                    // onChange={handleImageChange}
+                />
+                {/* {imagePreview && ( */}
+                    <div className="mb-3 p-3 border rounded bg-light">
+                        <div className="d-flex justify-content-between align-items-start">
+                            <div className="flex-grow-1">
+                                <p className="mb-0 fw-medium">{passageData.image?.name}</p>
+                                <small className="text-muted"></small>
+                                <img
+                                    src={passageData.image?.url_phuong_tien}
+                                    alt="Preview"
+                                    className="img-thumbnail mt-2"
+                                    style={{ maxWidth: '200px', maxHeight: '200px', objectFit: 'contain' }}
+                                />
+                            </div>
+                            <button type="button" className="btn btn-sm btn-outline-danger ms-3" >
+                                Xóa
+                            </button>
+                        </div>
+                    </div>
+                {/* )} */}
+            </div>
 
                         <div className="text-end">
                             <Link to="/admin/test/paragraph" type="button" className="btn btn-secondary me-2">

@@ -85,7 +85,7 @@ function Header() {
                             </li>
 
                             <li className="nav-item">
-                                <Link className="nav-link" to="/test">
+                                <Link className="nav-link" to="/list-test">
                                     Bài thi thử
                                 </Link>
                             </li>
