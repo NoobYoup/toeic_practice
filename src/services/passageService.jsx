@@ -21,9 +21,13 @@ const getAllPassage = (page, filters = {}) => {
 const createPassage = (passageData) => {
     const token = localStorage.getItem('admin_token');
 
+    // Nếu dữ liệu được truyền vào là FormData (upload ảnh) thì đặt header multipart/form-data
+    const isFormData = passageData instanceof FormData;
+
     return axios.post(`${API}/passages/create`, passageData, {
         headers: {
             Authorization: `Bearer ${token}`,
+            ...(isFormData && { 'Content-Type': 'multipart/form-data' }),
         },
     });
 };

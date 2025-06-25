@@ -24,6 +24,7 @@ function Paragraph() {
         setError(null);
         try {
             const res = await getAllPassage(currentPage, filters);
+            console.log(res.data.data);
             setPassages(res.data.data || []);
             setPagination(res.data.pagination || { page: 1, limit: 7, total: 0 });
             // setOptionsPhan([
@@ -103,7 +104,10 @@ function Paragraph() {
                                         <th>ID</th>
                                         <th>Tiêu đề</th>
                                         <th>Nội dung</th>
+                                        <th>Loại đoạn văn</th>
                                         <th>Phần</th>
+                                        <th>Thời gian tạo</th>
+                                        <th>Thời gian cập nhật</th>
                                         <th>Thao tác</th>
                                     </tr>
                                 </thead>
@@ -121,13 +125,16 @@ function Paragraph() {
                                                 <td>{passage.tieu_de}</td>
                                                 <td>
                                                     <div className="passage-excerpt">
-                                                        {passage.noi_dung.length > 10
+                                                        {passage.noi_dung && passage.noi_dung.length > 10
                                                             ? passage.noi_dung.slice(0, 50) + '...'
                                                             : passage.noi_dung}
                                                     </div>
                                                 </td>
-
+                                                <td>{passage.loai_doan_van}</td>
                                                 <td>{passage.id_phan}</td>
+                                                <td>{passage.thoi_gian_tao}</td>
+                                                <td>{passage.thoi_gian_cap_nhat}</td>
+
                                                 <td>
                                                     {/* <Link
                                                         to={`/admin/paragraph/detail/${passage.id_doan_van}`}

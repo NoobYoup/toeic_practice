@@ -10,6 +10,8 @@ function CreateParagraph() {
         tieu_de: '',
         noi_dung: '',
         id_phan: '6',
+        loai_doan_van: 'single',
+        hinh_anh: [],
     });
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -18,7 +20,19 @@ function CreateParagraph() {
         e.preventDefault();
         setLoading(true);
         try {
-            await createPassage(passageData);
+            // Chuẩn bị dữ liệu gửi đi dưới dạng multipart/form-data để có thể upload nhiều ảnh
+            const formData = new FormData();
+            formData.append('tieu_de', passageData.tieu_de);
+            formData.append('noi_dung', passageData.noi_dung);
+            formData.append('id_phan', passageData.id_phan);
+            formData.append('loai_doan_van', passageData.loai_doan_van);
+
+            // Thêm từng file ảnh vào formData (sử dụng mảng hinh_anh)
+            (Array.isArray(passageData.hinh_anh) ? passageData.hinh_anh : []).forEach((file) => {
+                formData.append('hinh_anh', file); // backend có thể đọc mảng cùng tên
+            });
+
+            await createPassage(formData);
             navigate('/admin/test/paragraph');
             toast.success('Tạo đoạn văn thành công!');
         } catch (error) {
@@ -61,14 +75,14 @@ function CreateParagraph() {
                                         className="form-select"
                                         id="draftExam"
                                         required
-                                        value={passageData.id_phan}
+                                        value={passageData.loai_doan_van}
                                         onChange={(e) =>
-                                            setPassageData((prev) => ({ ...prev, id_phan: e.target.value }))
+                                            setPassageData((prev) => ({ ...prev, loai_doan_van: e.target.value }))
                                         }
                                     >
-                                        <option value="6">Single</option>
-                                        <option value="7">Double</option>
-                                        <option value="7">Triple</option>
+                                        <option value="single">Single</option>
+                                        <option value="double">Double</option>
+                                        <option value="triple">Triple</option>
                                     </select>
                                 </div>
                             </div>
@@ -109,36 +123,67 @@ function CreateParagraph() {
                         </div>
 
                         <div className="mb-3">
-                <label htmlFor="questionImage" className="form-label">
-                    Hình ảnh (bắt buộc cho Part 1)
-                </label>
-                <input
-                    className="form-control"
-                    type="file"
-                    id="questionImage"
-                    accept="image/*"
-                    // onChange={handleImageChange}
-                />
-                {/* {imagePreview && ( */}
-                    <div className="mb-3 p-3 border rounded bg-light">
-                        <div className="d-flex justify-content-between align-items-start">
-                            <div className="flex-grow-1">
-                                <p className="mb-0 fw-medium">{passageData.image?.name}</p>
-                                <small className="text-muted"></small>
-                                <img
-                                    src={passageData.image?.url_phuong_tien}
-                                    alt="Preview"
-                                    className="img-thumbnail mt-2"
-                                    style={{ maxWidth: '200px', maxHeight: '200px', objectFit: 'contain' }}
-                                />
-                            </div>
-                            <button type="button" className="btn btn-sm btn-outline-danger ms-3" >
-                                Xóa
-                            </button>
+                            <label htmlFor="questionImage" className="form-label">
+                                Hình ảnh (Có thể chọn tối đa 3 ảnh hoặc không chọn)
+                            </label>
+                            <input
+                                className="form-control"
+                                type="file"
+                                id="questionImage"
+                                accept="image/*"
+                                multiple
+                                onChange={(e) => {
+                                    const selectedFiles = Array.from(e.target.files);
+                                    setPassageData((prev) => {
+                                        const totalFiles = prev.hinh_anh.length + selectedFiles.length;
+                                        if (totalFiles > 3) {
+                                            toast.warning('Chỉ được chọn tối đa 3 hình ảnh');
+                                            // Chỉ thêm số ảnh đủ để đạt 3
+                                            const availableSlots = 3 - prev.hinh_anh.length;
+                                            return {
+                                                ...prev,
+                                                hinh_anh: [...prev.hinh_anh, ...selectedFiles.slice(0, availableSlots)],
+                                            };
+                                        }
+                                        return {
+                                            ...prev,
+                                            hinh_anh: [...prev.hinh_anh, ...selectedFiles],
+                                        };
+                                    });
+                                }}
+                            />
+                            {passageData.hinh_anh.length > 0 && (
+                                <div className="mt-3">
+                                    {passageData.hinh_anh.map((file, index) => (
+                                        <div key={index} className="mb-3 p-3 border rounded bg-light">
+                                            <div className="d-flex justify-content-between align-items-start">
+                                                <div className="flex-grow-1">
+                                                    <p className="mb-0 fw-medium">{file.name}</p>
+                                                    <img
+                                                        src={URL.createObjectURL(file)}
+                                                        alt="Preview"
+                                                        className="img-thumbnail mt-2"
+                                                        style={{ maxWidth: '200px', maxHeight: '200px', objectFit: 'contain' }}
+                                                    />
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-sm btn-outline-danger ms-3"
+                                                    onClick={() =>
+                                                        setPassageData((prev) => ({
+                                                            ...prev,
+                                                            hinh_anh: prev.hinh_anh.filter((_, i) => i !== index),
+                                                        }))
+                                                    }
+                                                >
+                                                    Xóa
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
-                    </div>
-                {/* )} */}
-            </div>
 
                         <div className="text-end">
                             <Link to="/admin/test/paragraph" type="button" className="btn btn-secondary me-2">

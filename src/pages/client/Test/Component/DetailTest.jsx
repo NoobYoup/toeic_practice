@@ -216,8 +216,7 @@ function DetailTest() {
 
                             <div class="alert alert-warning mt-3">
                                 <i class="fas fa-exclamation-triangle me-2"></i>
-                                <strong>Lưu ý:</strong> Trong phần Listening, audio sẽ chỉ phát một lần duy nhất. Hãy
-                                tập trung lắng nghe.
+                                <strong>Lưu ý:</strong> Trong phần Listening, audio sẽ được chia thành các đoạn nhỏ cho từng câu hỏi (có thể nghe lại nhiều lần).
                             </div>
                         </div>
                         <div class="modal-footer">
