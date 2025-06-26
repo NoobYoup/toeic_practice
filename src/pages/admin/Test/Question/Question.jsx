@@ -97,7 +97,7 @@ function Question() {
             fetchQuestions();
         } catch (error) {
             console.error('Lỗi khi import Excel:', error);
-            toast.error(error.response?.data?.message || 'Có lỗi xảy ra khi import file Excel');
+            toast.error(error.response?.data?.message);
         } finally {
             setImporting(false);
         }

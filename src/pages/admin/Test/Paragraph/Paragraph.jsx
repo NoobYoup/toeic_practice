@@ -127,7 +127,7 @@ function Paragraph() {
                                 <tbody>
                                     {passages.length === 0 ? (
                                         <tr>
-                                            <td colSpan={7} className="text-center text-muted">
+                                            <td colSpan={8} className="text-center text-muted">
                                                 Không có dữ liệu
                                             </td>
                                         </tr>

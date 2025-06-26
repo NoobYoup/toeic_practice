@@ -171,7 +171,14 @@ function Exam() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {exams.map((exam) => (
+                                    {exams.length === 0 ? (
+                                        <tr>
+                                            <td colSpan={11} className="text-center text-muted">
+                                                Không có dữ liệu
+                                            </td>
+                                        </tr>
+                                    ) : (
+                                        exams.map((exam) => (
                                         <tr key={exam.id_bai_thi}>
                                             <td>{exam.id_bai_thi}</td>
                                             <td>{exam.ten_bai_thi}</td>
@@ -229,7 +236,8 @@ function Exam() {
                                                 </div>
                                             </td>
                                         </tr>
-                                    ))}
+                                        ))
+                                    )}
                                 </tbody>
                             </table>
                         </div>

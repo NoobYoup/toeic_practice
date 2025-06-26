@@ -47,7 +47,7 @@ function Test() {
 
     return (
         <>
-            <div className="container mb-5 main-content">
+            <div className="container-fluid mb-5 main-content">
                 {partInfos.map(({ part }) => (
                     <button
                         key={part}
@@ -58,11 +58,11 @@ function Test() {
                     </button>
                 ))}
                 <div className="row g-4">
-                    <div className="col-lg-8">
+                    <div className="col-lg-9">
                         {renderCurrentPart()}
                     </div>
 
-                    <div className="col-lg-4">
+                    <div className="col-lg-3">
                         <div className="shadow p-4 my-4" style={{ borderRadius: '10px' }}>
                             <div className={`${cx('timer-container')} mb-4`}>
                                 <div class="d-flex justify-content-between align-items-center mb-3">

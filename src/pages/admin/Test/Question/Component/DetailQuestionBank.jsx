@@ -11,6 +11,7 @@ function DetailQuesionBank() {
         setLoading(true);
         try {
             const res = await getDetailQuestion(id);
+            console.log(res.data.data);
             setQuestionData(res.data.data);
         } catch (error) {
             console.error('Error fetching question detail:', error);
@@ -86,7 +87,6 @@ function DetailQuesionBank() {
                     <Link to={`/admin/test/question/edit-question/${id}`} className="btn btn-primary me-2">
                         <i className="fas fa-edit me-2"></i>Chỉnh sửa
                     </Link>
-                   
                 </div>
             </div>
 
@@ -101,18 +101,40 @@ function DetailQuesionBank() {
                 {/* Main Content */}
                 <div className="col-lg-8">
                     {/* Question Content */}
-                    <div className="card mb-4">
-                        <div className="card-header">
-                            <h5 className="mb-0">
-                                <i className="fas fa-question-circle me-2"></i>Nội dung câu hỏi
-                            </h5>
-                        </div>
-                        <div className="card-body">
-                            <div className="alert alert-light" role="alert">
-                                <p className="mb-0 fs-5">{questionData?.noi_dung || 'Không có nội dung'}</p>
+                    {questionData?.noi_dung ? (
+                        <div className="card mb-4">
+                            <div className="card-header">
+                                <h5 className="mb-0">
+                                    <i className="fas fa-question-circle me-2"></i>Nội dung câu hỏi
+                                </h5>
+                            </div>
+                            <div className="card-body">
+                                <div className="alert alert-light" role="alert">
+                                    <p className="mb-0 fs-5">{questionData?.noi_dung}</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    ) : (
+                        <></>
+                    )}
+
+                    {questionData?.doan_van.noi_dung ? (
+                        <div className="card mb-4">
+                            <div className="card-header">
+                                <h5 className="mb-0">
+                                    <i className="fas fa-question-circle me-2"></i>Nội dung đoạn văn
+                                </h5>
+                            </div>
+                                    <h3 className="mb-0 px-3">{questionData?.doan_van.tieu_de}</h3>
+                            <div className="card-body">
+                                <div className="alert alert-light" role="alert">
+                                    <p className="mb-0 fs-5">{questionData?.doan_van.noi_dung}</p>
+                                </div>
+                            </div>
+                        </div>
+                    ) : (
+                        <></>
+                    )}
 
                     {/* Media Content */}
                     {(questionData?.hinh_anh || questionData?.am_thanh) && (
@@ -253,7 +275,13 @@ function DetailQuesionBank() {
 
                                 <div className="col-12">
                                     <label className="form-label fw-bold text-muted">Nguồn gốc</label>
-                                    <p className="mb-0">{questionData?.nguon_goc === 'thu_cong' ? 'Thủ công' : questionData?.nguon_goc === 'nhap_excel' ? 'Nhập excel' : ''}</p>
+                                    <p className="mb-0">
+                                        {questionData?.nguon_goc === 'thu_cong'
+                                            ? 'Thủ công'
+                                            : questionData?.nguon_goc === 'nhap_excel'
+                                            ? 'Nhập excel'
+                                            : ''}
+                                    </p>
                                 </div>
 
                                 <div className="col-12">

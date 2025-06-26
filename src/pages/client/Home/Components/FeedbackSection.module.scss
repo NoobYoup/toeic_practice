@@ -1,0 +1,11 @@
+@use '@/styles/_variables.scss' as v;
+
+.testimonials {
+    background-color: v.$light-color;
+}
+
+.testimonial-card {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}

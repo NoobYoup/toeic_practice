@@ -15,6 +15,8 @@ function Part2Test() {
                 </audio>
 
                 <div className={cx('question-section', 'mt-3')}>
+                    <h5 className={cx('question-text')}>1. Look at the picture and listen to the four statements. Choose the statement that best describes what you see in the picture.</h5>
+
                     <div className={cx('answer-options')}>
                         <div className={`${cx('answer-option')} d-flex align-items-center`}>
                             <input type="radio" name="question1" id="q1-a" className="me-3" />

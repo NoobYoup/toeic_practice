@@ -26,6 +26,8 @@ function DetailExam() {
             setLoading(true);
             try {
                 const res = await getDraftExam(id);
+                console.log(res.data.data);
+                
                 setExam(res.data.data);
             } catch (err) {
                 console.error(err);

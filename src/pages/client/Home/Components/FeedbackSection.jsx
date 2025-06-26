@@ -1,8 +1,11 @@
 import { DEFAULT_AVATAR } from '@/constants/default';
+import styles from './FeedbackSection.module.scss';
+import classNames from 'classnames/bind';
+const cx = classNames.bind(styles);
 
 function FeedbackSection() {
     return (
-        <section className="testimonials py-5">
+        <section className={`${cx('testimonials')} py-5`}>
             <div className="container">
                 <div className="text-center mb-5">
                     <h2 className="fw-bold">Học viên nói gì về chúng tôi</h2>
@@ -10,7 +13,7 @@ function FeedbackSection() {
                 </div>
                 <div className="row g-4">
                     <div className="col-lg-4 col-md-6">
-                        <div className="testimonial-card p-4">
+                        <div className={`${cx('testimonial-card')} p-4`}>
                             <div className="d-flex align-items-center mb-3">
                                 <img
                                     src={DEFAULT_AVATAR}
@@ -37,7 +40,7 @@ function FeedbackSection() {
                         </div>
                     </div>
                     <div className="col-lg-4 col-md-6">
-                        <div className="testimonial-card p-4">
+                        <div className={`${cx('testimonial-card')} p-4`}>
                             <div className="d-flex align-items-center mb-3">
                                 <img
                                     src={DEFAULT_AVATAR}
@@ -64,7 +67,7 @@ function FeedbackSection() {
                         </div>
                     </div>
                     <div className="col-lg-4 col-md-6">
-                        <div className="testimonial-card p-4">
+                        <div className={`${cx('testimonial-card')} p-4`}>
                             <div className="d-flex align-items-center mb-3">
                                 <img
                                     src={DEFAULT_AVATAR}
