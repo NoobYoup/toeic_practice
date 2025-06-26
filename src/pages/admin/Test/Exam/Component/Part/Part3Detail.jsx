@@ -48,7 +48,7 @@ function Part3Detail() {
     const questionGroups = Object.values(groupedQuestions);
 
     return (
-        <div className="vstack gap-4">
+        <div className="vstack gap-5">
             {questionGroups.map((group, groupIndex) => (
                 <div className="card" key={group.audio?.id_phuong_tien || `group-${groupIndex}`}>
                     <div className="card-body">

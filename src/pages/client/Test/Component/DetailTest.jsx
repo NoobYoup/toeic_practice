@@ -17,6 +17,7 @@ function DetailTest() {
             setLoading(true);
             try {
                 const res = await getDraftExam(id);
+                console.log(res.data.data);
                 setExam(res.data.data);
             } catch (err) {
                 console.log(err);
@@ -26,135 +27,138 @@ function DetailTest() {
         fetchExam();
     }, [id]);
 
-    if (loading) {
-        return (
-            <div className="text-center py-5">
-                <i className="fas fa-spinner fa-spin fa-2x"></i>
-            </div>
-        );
-    }
-
     return (
         <>
-            <header className={cx('test-header')}>
-                <div class="container">
-                    <div class="row align-items-center">
-                        <div class="col-md-8">
-                            <h1>{exam.ten_bai_thi}</h1>
-                            
-                        </div>
-                        <div className="col-md-4 text-md-end mt-3 mt-md-0">
-                            <button
-                                className="btn btn-light btn-lg"
-                                data-bs-toggle="modal"
-                                data-bs-target="#testInstructionsModal"
-                            >
-                                <i className="fas fa-info-circle me-2"></i>Hướng dẫn làm bài
-                            </button>
-                        </div>
-                    </div>
+            {loading ? (
+                <div className="text-center py-5 min-vh-100 d-flex flex-column ">
+                    <i className="fas fa-spinner fa-spin fa-2x"></i>
                 </div>
-            </header>
+            ) : (
+                <>
+                    <header className={cx('test-header')}>
+                        <div class="container">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <h1>{exam?.ten_bai_thi}</h1>
+                                </div>
+                                <div className="col-md-4 text-md-end mt-3 mt-md-0">
+                                    <button
+                                        className="btn btn-light btn-lg"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#testInstructionsModal"
+                                    >
+                                        <i className="fas fa-info-circle me-2"></i>Hướng dẫn làm bài
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
 
-            <div className="container">
-                <div className="card h-100 border-0 shadow p-5 my-5" style={{ borderRadius: '15px' }}>
-                    <div class="row">
-                        <div class="col-lg-8">
-                            <h4 class="fw-bold mb-3">Mô tả</h4>
-                            <p class="mb-4">
-                                {exam.mo_ta}
-                            </p>
-
-                            <h5 class="fw-bold mb-3">Đặc điểm nổi bật:</h5>
-                            <ul class="list-unstyled">
-                                <li class="mb-2">
-                                    <i class="fas fa-check-circle text-success me-2"></i>Format đề thi chuẩn ETS 2023
-                                </li>
-                                <li class="mb-2">
-                                    <i class="fas fa-check-circle text-success me-2"></i>Audio chất lượng cao với nhiều
-                                    giọng địa phương
-                                </li>
-                                <li class="mb-2">
-                                    <i class="fas fa-check-circle text-success me-2"></i>Đáp án chi tiết và giải thích
-                                </li>
-                                <li class="mb-2">
-                                    <i class="fas fa-check-circle text-success me-2"></i>Phân tích kết quả theo từng
-                                    part
-                                </li>
-                                <li class="mb-2">
-                                    <i class="fas fa-check-circle text-success me-2"></i>Tính điểm theo thang chuẩn
-                                    TOEIC
-                                </li>
-                            </ul>
-
-                            <h5 class="fw-bold mb-3">Phù hợp với:</h5>
+                    <div className="container min-vh-100 d-flex flex-column">
+                        <div className="card h-100 border-0 shadow p-5 my-5" style={{ borderRadius: '15px' }}>
                             <div class="row">
-                                <div class="col-md-6">
-                                    <ul class="list-unstyled">
-                                        <li class="mb-2">
-                                            <i class="fas fa-user-check text-primary me-2"></i>Người mới bắt đầu học
-                                            TOEIC
-                                        </li>
-                                        <li class="mb-2">
-                                            <i class="fas fa-user-check text-primary me-2"></i>Học viên có điểm {exam.muc_do_diem}
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="col-md-6">
-                                    <ul class="list-unstyled">
-                                        <li class="mb-2">
-                                            <i class="fas fa-user-check text-primary me-2"></i>Muốn làm quen với format
-                                            đề thi
-                                        </li>
-                                        <li class="mb-2">
-                                            <i class="fas fa-user-check text-primary me-2"></i>Test năng lực hiện tại
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
+                                <div class="col-lg-8">
+                                    <h4 class="fw-bold mb-3">Mô tả</h4>
+                                    <p class="mb-4">{exam?.mo_ta}</p>
 
-                        <div className="col-lg-4">
-                            <div className="d-flex flex-column h-100">
-                                <div className="test-info-card">
-                                    <h5 className="fw-bold mb-3">Thông tin đề thi</h5>
-                                    <div className="d-flex justify-content-between mb-2">
-                                        <span>Số câu hỏi:</span>
-                                        <strong>{exam.so_luong_cau_hoi || 200} câu</strong>
+                                    <h5 class="fw-bold mb-3">Đặc điểm nổi bật:</h5>
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2">
+                                            <i class="fas fa-check-circle text-success me-2"></i>Format đề thi chuẩn ETS
+                                            2023
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="fas fa-check-circle text-success me-2"></i>Audio chất lượng cao
+                                            với nhiều giọng địa phương
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="fas fa-check-circle text-success me-2"></i>Đáp án chi tiết và giải
+                                            thích
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="fas fa-check-circle text-success me-2"></i>Phân tích kết quả theo
+                                            từng part
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="fas fa-check-circle text-success me-2"></i>Tính điểm theo thang
+                                            chuẩn TOEIC
+                                        </li>
+                                    </ul>
+
+                                    <h5 class="fw-bold mb-3">Phù hợp với:</h5>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <ul class="list-unstyled">
+                                                <li class="mb-2">
+                                                    <i class="fas fa-user-check text-primary me-2"></i>Người mới bắt đầu
+                                                    học TOEIC
+                                                </li>
+                                                <li class="mb-2">
+                                                    <i class="fas fa-user-check text-primary me-2"></i>Học viên có điểm{' '}
+                                                    {exam?.muc_do_diem}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <ul class="list-unstyled">
+                                                <li class="mb-2">
+                                                    <i class="fas fa-user-check text-primary me-2"></i>Muốn làm quen với
+                                                    format đề thi
+                                                </li>
+                                                <li class="mb-2">
+                                                    <i class="fas fa-user-check text-primary me-2"></i>Test năng lực
+                                                    hiện tại
+                                                </li>
+                                            </ul>
+                                        </div>
                                     </div>
-                                    
-                                    <div class="d-flex justify-content-between mb-2">
-                                        <span>Tổng thời gian:</span>
-                                        <strong>{exam.thoi_gian_bai_thi || exam.thoi_gian_thi || '--'} phút</strong>
-                                    </div>
-                                    <div className="d-flex justify-content-between mb-2">
-                                        <span>Mức độ điểm:</span>
-                                        <strong>{exam.muc_do_diem || '--'}</strong>
-                                    </div>
-                                    <div className="d-flex justify-content-between mb-2">
-                                        <span>Năm xuất bản:</span>
-                                        <strong>{exam.nam_xuat_ban ? new Date(exam.nam_xuat_ban).getFullYear() : '--'}</strong>
-                                    </div>
-                                    <div className="d-flex justify-content-between mb-2">
-                                        <span>Ngày tạo:</span>
-                                        <strong>{new Date(exam.thoi_gian_tao).toLocaleString()}</strong>
-                                    </div>
-                                    <div className="d-flex justify-content-between mb-3">
-                                        <span>Cập nhật:</span>
-                                        <strong>{new Date(exam.thoi_gian_cap_nhat).toLocaleString()}</strong>
-                                    </div>
-                                    <hr className="my-4" />
                                 </div>
-                                <div className="mt-auto">
-                                    <Link to='/test' className="btn btn-primary w-100 btn-lg">
-                                        Bắt đầu làm bài
-                                    </Link>
+
+                                <div className="col-lg-4">
+                                    <div className="d-flex flex-column h-100">
+                                        <div className="test-info-card">
+                                            <h5 className="fw-bold mb-3">Thông tin đề thi</h5>
+                                            <div className="d-flex justify-content-between mb-2">
+                                                <span>Số câu hỏi:</span>
+                                                <strong>{exam?.so_luong_cau_hoi || 200} câu</strong>
+                                            </div>
+
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <span>Tổng thời gian:</span>
+                                                <strong>
+                                                    {exam?.thoi_gian_bai_thi || exam?.thoi_gian_thi || '--'} phút
+                                                </strong>
+                                            </div>
+                                            <div className="d-flex justify-content-between mb-2">
+                                                <span>Mức độ điểm:</span>
+                                                <strong>{exam?.muc_do_diem || '--'}</strong>
+                                            </div>
+                                            <div className="d-flex justify-content-between mb-2">
+                                                <span>Năm xuất bản:</span>
+                                                <strong>{exam?.nam_xuat_ban}</strong>
+                                            </div>
+                                            <div className="d-flex justify-content-between mb-2">
+                                                <span>Ngày tạo:</span>
+                                                <strong>{new Date(exam?.thoi_gian_tao).toLocaleString()}</strong>
+                                            </div>
+                                            <div className="d-flex justify-content-between mb-3">
+                                                <span>Cập nhật:</span>
+                                                <strong>{new Date(exam?.thoi_gian_cap_nhat).toLocaleString()}</strong>
+                                            </div>
+                                            <hr className="my-4" />
+                                        </div>
+                                        <div className="mt-auto">
+                                            <Link to="/test" className="btn btn-primary w-100 btn-lg">
+                                                Bắt đầu làm bài
+                                            </Link>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                </>
+            )}
 
             <div class="modal fade" id="testInstructionsModal" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
@@ -216,7 +220,8 @@ function DetailTest() {
 
                             <div class="alert alert-warning mt-3">
                                 <i class="fas fa-exclamation-triangle me-2"></i>
-                                <strong>Lưu ý:</strong> Trong phần Listening, audio sẽ được chia thành các đoạn nhỏ cho từng câu hỏi (có thể nghe lại nhiều lần).
+                                <strong>Lưu ý:</strong> Trong phần Listening, audio sẽ được chia thành các đoạn nhỏ cho
+                                từng câu hỏi (có thể nghe lại nhiều lần).
                             </div>
                         </div>
                         <div class="modal-footer">

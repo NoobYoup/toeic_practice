@@ -5,6 +5,8 @@ import MainLayout from './layouts/MainLayout.jsx';
 
 import Home from './pages/client/Home/Home.jsx';
 import Blog from './pages/client/Blog';
+import DetailBlog from './pages/client/Blog/Component/DetailBlog.jsx';
+
 import Account from './pages/client/Account/Account.jsx';
 import EditAccount from './pages/client/Account/EditAccount/EditAccount.jsx';
 import Information from './pages/client/Account/EditAccount/Information.jsx';
@@ -59,6 +61,7 @@ function App() {
                     <Route element={<MainLayout />}>
                         <Route path="/" element={<Home />} />
                         <Route path="/blog" element={<Blog />} />
+                        <Route path="/blog/detail-blog" element={<DetailBlog />} />
                         <Route path="/dictionary" element={<Dictionary />} />
                         <Route path="/grammar" element={<Grammar />} />
                         <Route path="/test" element={<Test />} />

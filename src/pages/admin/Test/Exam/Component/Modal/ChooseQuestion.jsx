@@ -46,6 +46,7 @@ function ChooseQuestion({ isOpen, onClose, onSelect, examId, initialSelectedIds 
         setLoading(true);
         try {
             const res = await getAllQuestionExam(currentPage, filters);
+            console.log(res.data.data);
             setQuestions(res.data.data || []);
             setPagination(res.data.pagination || { page: 1, limit: 7, total: 0 });
             // Lấy options phần
@@ -65,14 +66,24 @@ function ChooseQuestion({ isOpen, onClose, onSelect, examId, initialSelectedIds 
         setLoading(false);
     }
 
+    // Khi mở modal lần đầu: reset lựa chọn theo `initialSelectedIds`
     useEffect(() => {
         if (isOpen) {
             setSelectedIds(initialSelectedIds);
+            // Khôi phục dữ liệu câu hỏi đã chọn (nếu cha truyền vào sau này ta có thể map từ ids -> objects)
+            // Hiện tại chỉ reset mảng dữ liệu, giữ lại các id để checkbox hiển thị đúng
             setSelectedData([]);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isOpen]);
+
+    // Gọi API mỗi khi trang hoặc bộ lọc thay đổi (khi modal đang mở)
+    useEffect(() => {
+        if (isOpen) {
             fetchQuestions();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isOpen, currentPage, filters, initialSelectedIds]);
+    }, [isOpen, currentPage, filters]);
 
     /* Handlers */
     const handlePageClick = (e) => setCurrentPage(e.selected + 1);
@@ -166,7 +177,7 @@ function ChooseQuestion({ isOpen, onClose, onSelect, examId, initialSelectedIds 
                                         name="id_phan"
                                         options={optionsPhan}
                                         onChange={handleSelectChange}
-                                        defaultValue={optionsPhan[0]}
+                                        value={optionsPhan.find((opt) => opt.value === (filters.id_phan ?? '')) || optionsPhan[0]}
                                     />
                                 </div>
                                 <div className="col-md-3">
@@ -174,7 +185,7 @@ function ChooseQuestion({ isOpen, onClose, onSelect, examId, initialSelectedIds 
                                         name="muc_do_kho"
                                         options={optionsMucDo}
                                         onChange={handleSelectChange}
-                                        defaultValue={optionsMucDo[0]}
+                                        value={optionsMucDo.find((opt) => opt.value === (filters.muc_do_kho ?? '')) || optionsMucDo[0]}
                                     />
                                 </div>
                                 <div className="col-md-3">
@@ -182,7 +193,7 @@ function ChooseQuestion({ isOpen, onClose, onSelect, examId, initialSelectedIds 
                                         name="trang_thai"
                                         options={optionsTrangThai}
                                         onChange={handleSelectChange}
-                                        defaultValue={optionsTrangThai[0]}
+                                        value={optionsTrangThai.find((opt) => opt.value === (filters.trang_thai ?? '')) || optionsTrangThai[0]}
                                     />
                                 </div>
                                 <div className="col-md-3">
@@ -267,7 +278,7 @@ function ChooseQuestion({ isOpen, onClose, onSelect, examId, initialSelectedIds 
                                                         </td>
                                                         <td style={{ maxWidth: '250px' }}>
                                                             <div className="text-truncate" style={{ maxWidth: '100%' }}>
-                                                                {question.noi_dung}
+                                                                {question.noi_dung ? question.noi_dung : 'Không có nội dung'}
                                                             </div>
                                                         </td>
                                                         <td>

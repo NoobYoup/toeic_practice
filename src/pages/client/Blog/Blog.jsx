@@ -9,7 +9,7 @@ const DEFAULT_AVATAR = '/images/logo_black.png';
 function Blog() {
     return (
         <>
-            <header className={cx('blog-header')}>
+            <header className={cx('blog-header')} style={{flex: '1 0 auto'}}>
                 <div className="container">
                     <div className="row align-items-center">
                         <div className="col-lg-8 mx-auto text-center">
@@ -55,7 +55,7 @@ function Blog() {
                         <div className="row">
                             <div className="col-md-6">
                                 <div className={cx('blog-card')}>
-                                    <Link to="/blog/detail_blog">
+                                    <Link to="/blog/detail-blog">
                                         <img
                                             src={DEFAULT_AVATAR}
                                             alt="TOEIC Test"

@@ -36,11 +36,11 @@ function PartDetailTemplate({ partId }) {
     }
 
     return (
-        <div className="vstack gap-4">
+        <div className="vstack gap-5">
             {questions.map((q, idx) => (
                 <div className="card" key={q.id_cau_hoi}>
                     <div className="card-body">
-                        <h6 className="card-title mb-3">Câu {startNumber + idx}</h6>
+                        <h6 className="card-title mb-3">Câu {startNumber + idx}:</h6>
 
                         {q.hinh_anh?.url_phuong_tien && (
                             <img
@@ -83,7 +83,7 @@ function PartDetailTemplate({ partId }) {
 
                         {q.giai_thich && (
                             <div className="mt-3">
-                                <small className="text-muted">Giải thích: {q.giai_thich}</small>
+                                <small className="text-muted fs-6">Giải thích: {q.giai_thich}</small>
                             </div>
                         )}
                     </div>

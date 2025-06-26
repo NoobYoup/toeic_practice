@@ -243,8 +243,8 @@ function Question() {
                                         {questions.length > 0 ? (
                                             questions.map((question) => (
                                                 <tr key={question.id_cau_hoi}>
-                                                    <td className="">{question.id_cau_hoi}</td>
-                                                    <td className="">
+                                                    <td>{question.id_cau_hoi}</td>
+                                                    <td>
                                                         {question.phan.loai_phan === 'listening' ? (
                                                             <span
                                                                 className={`${cx(
@@ -267,59 +267,59 @@ function Question() {
                                                             </span>
                                                         )}
                                                     </td>
-                                                    <td className="">{question.phan.ten_phan}</td>
-                                                    <td className="">
+                                                    <td>{question.phan.ten_phan && question.phan.ten_phan.length > 15 ? question.phan.ten_phan.slice(0, 15) + '...' : question.phan.ten_phan}</td>
+                                                    <td>
                                                         <div className="d-flex align-items-center">
                                                             {question.id_doan_van
                                                                 ? question.id_doan_van
                                                                 : 'Không'}
                                                         </div>
                                                     </td>
-                                                    <td className="">
+                                                    <td>
                                                         <div className="d-flex align-items-center">
                                                             {question.id_phuong_tien_am_thanh
                                                                 ? question.id_phuong_tien_am_thanh
                                                                 : 'Không'}
                                                         </div>
                                                     </td>
-                                                    <td className="">
+                                                    <td>
                                                         <div className="d-flex align-items-center">
                                                             {question.id_phuong_tien_hinh_anh
                                                                 ? question.id_phuong_tien_hinh_anh
                                                                 : 'Không'}
                                                         </div>
                                                     </td>
-                                                    <td className="">
+                                                    <td>
                                                         <div className="d-flex align-items-center">
                                                             {question.noi_dung && question.noi_dung.length > 20
                                                                 ? question.noi_dung.slice(0, 20) + '...'
                                                                 : question.noi_dung || 'Không có nội dung'}
                                                         </div>
                                                     </td>
-                                                    <td className="">
+                                                    <td>
                                                         {question.muc_do_kho === 'de'
                                                             ? 'Dễ'
                                                             : question.muc_do_kho === 'trung_binh'
                                                             ? 'Trung bình'
                                                             : 'Khó'}
                                                     </td>
-                                                    <td className="">
+                                                    <td>
                                                         {question.nguon_goc === 'thu_cong' ? 'Thủ công' : question.nguon_goc === 'nhap_excel' ? 'Nhập excel' : ''}
                                                     </td>
 
-                                                    <td className="">
+                                                    <td>
                                                         {question.trang_thai === 'da_xuat_ban'
                                                             ? 'Đã xuất bản'
                                                             : question.trang_thai === 'luu_tru'
                                                             ? 'Lưu trữ'
                                                             : ''}
                                                     </td>
-                                                    <td className="">
+                                                    <td>
                                                         {format(new Date(question.thoi_gian_tao), 'dd/MM/yyyy HH:mm', {
                                                             locale: vi,
                                                         })}
                                                     </td>
-                                                    <td className="">
+                                                    <td>
                                                         {format(
                                                             new Date(question.thoi_gian_cap_nhat),
                                                             'dd/MM/yyyy HH:mm',

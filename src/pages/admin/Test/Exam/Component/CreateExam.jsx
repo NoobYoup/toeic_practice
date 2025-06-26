@@ -1,6 +1,6 @@
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import ChooseQuestion from './Modal/ChooseQuestion';
@@ -19,6 +19,7 @@ function CreateExam() {
     const [addingQuestions, setAddingQuestions] = useState(false);
     const [loading, setLoading] = useState(false);
     const [examId, setExamId] = useState(null);
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -32,6 +33,7 @@ function CreateExam() {
                 nam_xuat_ban: Number(namXuatBan),
             };
             const res = await createExam(payload);
+            console.log(res.data.data);
             setExamId(res.data.data.id_bai_thi); // Lưu ID bài thi vào state
             toast.success(res.data.message);
         } catch (err) {
@@ -62,6 +64,7 @@ function CreateExam() {
         try {
             const res = await approveExam(examId);
             toast.success(res.data.message);
+            navigate('/admin/test/exam');
         } catch (err) {
             console.error(err);
             toast.error(err.response?.data?.message);

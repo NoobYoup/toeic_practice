@@ -186,9 +186,7 @@ function Exam() {
                                             <td>{exam.diem_toi_da}</td>
 
                                             <td>
-                                                {format(new Date(exam.nam_xuat_ban), 'yyyy', {
-                                                    locale: vi,
-                                                })}
+                                                {exam.nam_xuat_ban}
                                             </td>
 
                                             <td>{exam.la_bai_thi_dau_vao ? 'Có' : 'Không'}</td>
@@ -202,12 +200,12 @@ function Exam() {
                                                     : ''}
                                             </td>
                                             <td>
-                                                {format(new Date(exam.thoi_gian_tao), 'dd/MM/yyyy', {
+                                                {format(new Date(exam.thoi_gian_tao), 'dd/MM/yyyy HH:mm', {
                                                     locale: vi,
                                                 })}
                                             </td>
                                             <td>
-                                                {format(new Date(exam.thoi_gian_cap_nhat), 'dd/MM/yyyy', {
+                                                {format(new Date(exam.thoi_gian_cap_nhat), 'dd/MM/yyyy HH:mm', {
                                                     locale: vi,
                                                 })}
                                             </td>

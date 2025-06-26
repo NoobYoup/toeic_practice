@@ -118,7 +118,7 @@ function DetailQuesionBank() {
                         <></>
                     )}
 
-                    {questionData?.doan_van.noi_dung ? (
+                    { questionData?.doan_van && questionData?.doan_van.noi_dung ? (
                         <div className="card mb-4">
                             <div className="card-header">
                                 <h5 className="mb-0">

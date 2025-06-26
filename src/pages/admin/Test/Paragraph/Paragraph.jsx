@@ -140,10 +140,10 @@ function Paragraph() {
                                                     <div className="passage-excerpt">
                                                         {passage.noi_dung && passage.noi_dung.length > 10
                                                             ? passage.noi_dung.slice(0, 50) + '...'
-                                                            : passage.noi_dung}
+                                                            : passage.noi_dung || 'Không'}
                                                     </div>
                                                 </td>
-                                                <td>{passage.loai_doan_van}</td>
+                                                <td>{passage.loai_doan_van === 'single' ? 'Single' : passage.loai_doan_van === 'double' ? 'Double' : 'Triple'}</td>
                                                 <td>{passage.id_phan}</td>
                                                 <td>{format(new Date(passage.thoi_gian_tao), 'dd/MM/yyyy HH:mm', { locale: vi })}</td>
                                                 <td>{format(new Date(passage.thoi_gian_cap_nhat), 'dd/MM/yyyy HH:mm', { locale: vi })}</td>
