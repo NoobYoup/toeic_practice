@@ -135,7 +135,7 @@ function Paragraph() {
                                         passages.map((passage) => (
                                             <tr key={passage.id_doan_van}>
                                                 <td>{passage.id_doan_van}</td>
-                                                <td>{passage.tieu_de}</td>
+                                                <td>{passage.tieu_de && passage.tieu_de.length > 30 ? passage.tieu_de.slice(0, 30) + '...' : passage.tieu_de || 'Không'}</td>
                                                 <td>
                                                     <div className="passage-excerpt">
                                                         {passage.noi_dung && passage.noi_dung.length > 10

@@ -11,7 +11,7 @@ function Test() {
                 </li>
                 <li className="nav-item">
                     <NavLink to="question" className="nav-link">
-                        <i className="fas fa-question-circle me-2"></i>Câu hỏi
+                        <i className="fas fa-question-circle me-2"></i>Ngân hàng câu hỏi
                     </NavLink>
                 </li>
                 <li className="nav-item">

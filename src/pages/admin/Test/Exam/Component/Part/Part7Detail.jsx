@@ -54,8 +54,46 @@ function Part7Detail() {
                         {/* Đoạn văn */}
                         {group.passage ? (
                             <div className="mb-4 bg-secondary-subtle p-4 rounded-3">
-                                {group.passage.tieu_de && <h6 className="mb-2">{group.passage.tieu_de}</h6>}
-                                {group.passage.noi_dung && <div className="mb-2">{group.passage.noi_dung}</div>}
+                                {/* Tiêu đề đoạn văn */}
+                                {group.passage.tieu_de && (
+                                    <h6 className="mb-2" dangerouslySetInnerHTML={{ __html: group.passage.tieu_de }}></h6>
+                                )}
+
+                                {/* Phương tiện (hình ảnh / âm thanh) của đoạn văn */}
+                                {Array.isArray(group.passage.danh_sach_phuong_tien) && group.passage.danh_sach_phuong_tien.length > 0 && (
+                                    <div className="d-flex flex-wrap gap-3 mb-2">
+                                        {group.passage.danh_sach_phuong_tien.map((media) => {
+                                            if (media.loai_phuong_tien === 'hinh_anh') {
+                                                return (
+                                                    <img
+                                                        key={media.id_phuong_tien}
+                                                        src={media.url_phuong_tien}
+                                                        alt={`Hình ảnh đoạn văn ${media.id_phuong_tien}`}
+                                                        className="img-fluid rounded border"
+                                                        style={{ maxWidth: '100%' }}
+                                                    />
+                                                );
+                                            }
+                                            if (media.loai_phuong_tien === 'am_thanh') {
+                                                return (
+                                                    <audio key={media.id_phuong_tien} controls className="w-100">
+                                                        <source src={media.url_phuong_tien} type="audio/mpeg" />
+                                                        Trình duyệt của bạn không hỗ trợ audio.
+                                                    </audio>
+                                                );
+                                            }
+                                            return null;
+                                        })}
+                                    </div>
+                                )}
+
+                                {/* Nội dung đoạn văn */}
+                                {group.passage.noi_dung && (
+                                    <div
+                                        className="mb-2"
+                                        dangerouslySetInnerHTML={{ __html: group.passage.noi_dung }}
+                                    ></div>
+                                )}
                             </div>
                         ) : (
                             <></>
@@ -71,7 +109,30 @@ function Part7Detail() {
 
                                     {/* Nội dung câu hỏi */}
                                     {question.noi_dung && (
-                                        <p className="fw-semibold">{question.noi_dung}</p>
+                                        <p
+                                            className="fw-semibold"
+                                            dangerouslySetInnerHTML={{ __html: question.noi_dung }}
+                                        ></p>
+                                    )}
+
+                                    {/* Phương tiện của câu hỏi (nếu có) */}
+                                    {question.hinh_anh?.url_phuong_tien && (
+                                        <img
+                                            src={question.hinh_anh.url_phuong_tien}
+                                            className="img-fluid rounded mb-3"
+                                            alt={
+                                                question.noi_dung
+                                                    ? `Hình ảnh câu hỏi ${question.noi_dung}`
+                                                    : `Hình ảnh câu hỏi ${globalNumber}`
+                                            }
+                                        />
+                                    )}
+
+                                    {question.am_thanh?.url_phuong_tien && (
+                                        <audio controls className="w-100 mb-3">
+                                            <source src={question.am_thanh.url_phuong_tien} type="audio/mpeg" />
+                                            Trình duyệt của bạn không hỗ trợ audio.
+                                        </audio>
                                     )}
 
                                     {/* Danh sách đáp án */}
