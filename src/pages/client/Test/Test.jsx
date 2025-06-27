@@ -1,6 +1,8 @@
 import styles from './Test.module.scss';
 import classNames from 'classnames/bind';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { getDraftExam } from '@/services/examService';
 import Part1Test from './Part/Part1Test.jsx';
 import Part2Test from './Part/Part2Test.jsx';
 import Part3Test from './Part/Part3Test.jsx';
@@ -11,45 +13,105 @@ import Part7Test from './Part/Part7Test.jsx';
 
 const cx = classNames.bind(styles);
 
-const partInfos = [
-    { part: 1 },
-    { part: 2 },
-    { part: 3 },
-    { part: 4 },
-    { part: 5 },
-    { part: 6 },
-    { part: 7 },
-];
-
 function Test() {
+    const location = useLocation();
+    const { examId } = location.state || {};
+
+    const [exam, setExam] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [currentPart, setCurrentPart] = useState(1);
 
+    /* ------------------------------------------------------------ */
+    /* FETCH EXAM                                                   */
+    /* ------------------------------------------------------------ */
+    useEffect(() => {
+        if (!examId) {
+            setLoading(false);
+            return;
+        }
+        const fetchExam = async () => {
+            setLoading(true);
+            try {
+                const res = await getDraftExam(examId);
+                setExam(res.data.data);
+            } catch (err) {
+                // eslint-disable-next-line no-console
+                console.error(err);
+            }
+            setLoading(false);
+        };
+        fetchExam();
+    }, [examId]);
+
+    /* ------------------------------------------------------------ */
+    /* TÍNH THÔNG TIN MỖI PART                                      */
+    /* ------------------------------------------------------------ */
+    const questionCounts = {};
+    if (exam && Array.isArray(exam.cau_hoi_cua_bai_thi)) {
+        exam.cau_hoi_cua_bai_thi.forEach((item) => {
+            const pId = item.cau_hoi.id_phan;
+            questionCounts[pId] = (questionCounts[pId] || 0) + 1;
+        });
+    }
+
+    const partInfos = [];
+    let currentNumber = 1;
+    for (let part = 1; part <= 7; part += 1) {
+        const count = questionCounts[part] || 0;
+        if (count > 0) {
+            partInfos.push({ part, count, start: currentNumber, end: currentNumber + count - 1 });
+            currentNumber += count;
+        }
+    }
+
+    const listeningParts = partInfos.filter((p) => p.part <= 4);
+    const readingParts = partInfos.filter((p) => p.part >= 5);
+    const listeningTotal = listeningParts.reduce((sum, p) => sum + p.count, 0);
+    const readingTotal = readingParts.reduce((sum, p) => sum + p.count, 0);
+
     const renderCurrentPart = () => {
+        const props = { exam };
         switch (currentPart) {
             case 1:
-                return <Part1Test />;
+                return <Part1Test {...props} />;
             case 2:
-                return <Part2Test />;
+                return <Part2Test {...props} />;
             case 3:
-                return <Part3Test />;
+                return <Part3Test {...props} />;
             case 4:
-                return <Part4Test />;
+                return <Part4Test {...props} />;
             case 5:
-                return <Part5Test />;
+                return <Part5Test {...props} />;
             case 6:
-                return <Part6Test />;
+                return <Part6Test {...props} />;
             case 7:
-                return <Part7Test />;
+                return <Part7Test {...props} />;
             default:
                 return null;
         }
     };
 
+    if (loading) {
+        return (
+            <div className="text-center py-5 min-vh-100 d-flex flex-column ">
+                <i className="fas fa-spinner fa-spin fa-2x"></i>
+            </div>
+        );
+    }
+
+    if (!exam) {
+        return (
+            <div className="text-center py-5 min-vh-100 d-flex flex-column ">
+                <p className="text-muted">Không tìm thấy bài thi!</p>
+            </div>
+        );
+    }
+
     return (
         <>
-
-            <h3 className='text-center my-3'>Đề thi Toeic 1</h3>
+            <h3 className="text-center my-3">{exam.ten_bai_thi}</h3>
             <div className="container-fluid mb-5 main-content">
+                {/* Buttons chọn part */}
                 {partInfos.map(({ part }) => (
                     <button
                         key={part}
@@ -59,167 +121,85 @@ function Test() {
                         {`PART ${part}`}
                     </button>
                 ))}
-                <div className="row g-4">
-                    <div className="col-lg-9">
-                        {renderCurrentPart()}
-                    </div>
 
+                <div className="row g-4">
+                    {/* Nội dung câu hỏi */}
+                    <div className="col-lg-9">{renderCurrentPart()}</div>
+
+                    {/* Thanh điều hướng câu hỏi */}
                     <div className="col-lg-3">
                         <div className="shadow p-4 my-4" style={{ borderRadius: '10px' }}>
+                            {/* Timer placeholder */}
                             <div className={`${cx('timer-container')} mb-4`}>
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h5 class="mb-0">Thời gian còn lại</h5>
-                                    
+                                <div className="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 className="mb-0">Thời gian còn lại</h5>
                                 </div>
-                                <div class={`${cx('timer')} text-center`}>1:59:45</div>
-                                
-                            </div>
-
-                            <div class={`${cx('question-nav')} mb-4`}>
-                                <h5 class="mb-3">Listening (100 câu)</h5>
-                                <div class="mb-2">
-                                    <strong>Part 1: Questions 1-6</strong>
-                                </div>
-                                <div class="mb-3">
-                                    <span class={`${cx('question-number')} active`}>1</span>
-                                    <span class={`${cx('question-number')}`}>2</span>
-                                    <span class={`${cx('question-number')}`}>3</span>
-                                    <span class={`${cx('question-number')}`}>4</span>
-                                    <span class={`${cx('question-number')}`}>5</span>
-                                    <span class={`${cx('question-number')}`}>6</span>
-                                </div>
-
-                                <div class="mb-2">
-                                    <strong>Part 2: Questions 7-31</strong>
-                                </div>
-                                <div class="mb-3">
-                                    <span class={`${cx('question-number')}`}>7</span>
-                                    <span class={`${cx('question-number')}`}>8</span>
-                                    <span class={`${cx('question-number')}`}>9</span>
-                                    <span class={`${cx('question-number')}`}>10</span>
-                                    <span class={`${cx('question-number')}`}>11</span>
-                                    <span class={`${cx('question-number')}`}>12</span>
-                                    <span class={`${cx('question-number')}`}>13</span>
-                                    <span class={`${cx('question-number')}`}>14</span>
-                                    <span class={`${cx('question-number')}`}>15</span>
-                                    <span class={`${cx('question-number')}`}>16</span>
-                                    <span class={`${cx('question-number')}`}>17</span>
-                                    <span class={`${cx('question-number')}`}>18</span>
-                                    <span class={`${cx('question-number')}`}>19</span>
-                                    <span class={`${cx('question-number')}`}>20</span>
-                                    <span class={`${cx('question-number')}`}>21</span>
-                                    <span class={`${cx('question-number')}`}>22</span>
-                                    <span class={`${cx('question-number')}`}>23</span>
-                                    <span class={`${cx('question-number')}`}>24</span>
-                                    <span class={`${cx('question-number')}`}>25</span>
-                                    <span class={`${cx('question-number')}`}>26</span>
-                                    <span class={`${cx('question-number')}`}>27</span>
-                                    <span class={`${cx('question-number')}`}>28</span>
-                                    <span class={`${cx('question-number')}`}>29</span>
-                                    <span class={`${cx('question-number')}`}>30</span>
-                                    <span class={`${cx('question-number')}`}>31</span>
-                                </div>
-
-                                <div class="mb-2">
-                                    <strong>Part 3: Questions 32-70</strong>
-                                </div>
-                                <div class="mb-3">
-                                    <span class={`${cx('question-number')}`}>32</span>
-                                    <span class={`${cx('question-number')}`}>33</span>
-                                    <span class={`${cx('question-number')}`}>34</span>
-                                    <span class={`${cx('question-number')}`}>35</span>
-                                    <span class={`${cx('question-number')}`}>36</span>
-                                    <span class={`${cx('question-number')}`}>37</span>
-                                    <span class={`${cx('question-number')}`}>38</span>
-                                    <span class={`${cx('question-number')}`}>39</span>
-                                    <span class={`${cx('question-number')}`}>40</span>
-                                    <span class={`${cx('question-number')}`}>...</span>
-                                </div>
-
-                                <div class="mb-2">
-                                    <strong>Part 4: Questions 71-100</strong>
-                                </div>
-                                <div class="mb-3">
-                                    <span class={`${cx('question-number')}`}>71</span>
-                                    <span class={`${cx('question-number')}`}>72</span>
-                                    <span class={`${cx('question-number')}`}>73</span>
-                                    <span class={`${cx('question-number')}`}>74</span>
-                                    <span class={`${cx('question-number')}`}>75</span>
-                                    <span class={`${cx('question-number')}`}>76</span>
-                                </div>
-
-                                <hr />
-
-                                <h5 class="mb-3">Reading (100 câu)</h5>
-                                <div class="mb-2">
-                                    <strong>Part 5: Questions 101-130</strong>
-                                </div>
-                                <div class="mb-3">
-                                    <span class={`${cx('question-number')}`}>101</span>
-                                    <span class={`${cx('question-number')}`}>102</span>
-                                    <span class={`${cx('question-number')}`}>103</span>
-                                    <span class={`${cx('question-number')}`}>104</span>
-                                    <span class={`${cx('question-number')}`}>105</span>
-                                    <span class={`${cx('question-number')}`}>...</span>
-                                </div>
-
-                                <div class="mb-2">
-                                    <strong>Part 6: Questions 131-146</strong>
-                                </div>
-                                <div class="mb-3">
-                                    <span class={`${cx('question-number')}`}>131</span>
-                                    <span class={`${cx('question-number')}`}>132</span>
-                                    <span class={`${cx('question-number')}`}>133</span>
-                                    <span class={`${cx('question-number')}`}>134</span>
-                                    <span class={`${cx('question-number')}`}>135</span>
-                                    <span class={`${cx('question-number')}`}>...</span>
-                                </div>
-
-                                <div class="mb-2">
-                                    <strong>Part 7: Questions 147-200</strong>
-                                </div>
-                                <div class="mb-3">
-                                    <span class={`${cx('question-number')}`}>147</span>
-                                    <span class={`${cx('question-number')}`}>148</span>
-                                    <span class={`${cx('question-number')}`}>149</span>
-                                    <span class={`${cx('question-number')}`}>150</span>
-                                    <span class={`${cx('question-number')}`}>...</span>
-                                </div>
-
-                                <div class="mt-4">
-                                    <div class="d-flex align-items-center mb-2">
-                                        <span class={`${cx('question-number')} me-2`}></span>
-                                        <small>Chưa trả lời</small>
-                                    </div>
-                                    <div class="d-flex align-items-center mb-2">
-                                        <span class={`${cx('question-number')} active me-2`}></span>
-                                        <small>Câu hiện tại</small>
-                                    </div>
-                                    <div class="d-flex align-items-center mb-2">
-                                        <span class={`${cx('question-number')} answered me-2`}></span>
-                                        <small>Đã trả lời</small>
-                                    </div>
-                                    <div class="d-flex align-items-center">
-                                        <span class={`${cx('question-number')} flagged me-2`}></span>
-                                        <small>Đánh dấu xem lại</small>
-                                    </div>
+                                <div className={`${cx('timer')} text-center`}>
+                                    {exam.thoi_gian_bai_thi || exam.thoi_gian_thi || '--'} phút
                                 </div>
                             </div>
 
-                            <div class="d-grid gap-2">
-                                <button
-                                    class="btn btn-success"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#submitTestModal"
-                                >
-                                    <i class="fas fa-check-circle me-2"></i>Nộp bài
+                            <div className={`${cx('question-nav')} mb-4`}>
+                                {/* Listening */}
+                                {listeningParts.length > 0 && (
+                                    <>
+                                        <h5 className="mb-3">Listening ({listeningTotal} câu)</h5>
+                                        {listeningParts.map((p) => (
+                                            <div key={`part-${p.part}`} className="mb-3">
+                                                <div className="mb-2">
+                                                    <strong>
+                                                        Part {p.part}: Questions {p.start}-{p.end}
+                                                    </strong>
+                                                </div>
+                                                <div className="mb-2">
+                                                    {Array.from({ length: p.count }).map((_, idx) => (
+                                                        <span
+                                                            key={p.start + idx}
+                                                            className={cx('question-number')}
+                                                        >
+                                                            {p.start + idx}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        ))}
+                                        <hr />
+                                    </>
+                                )}
+
+                                {/* Reading */}
+                                {readingParts.length > 0 && (
+                                    <>
+                                        <h5 className="mb-3">Reading ({readingTotal} câu)</h5>
+                                        {readingParts.map((p) => (
+                                            <div key={`part-${p.part}`} className="mb-3">
+                                                <div className="mb-2">
+                                                    <strong>
+                                                        Part {p.part}: Questions {p.start}-{p.end}
+                                                    </strong>
+                                                </div>
+                                                <div className="mb-2">
+                                                    {Array.from({ length: p.count }).map((_, idx) => (
+                                                        <span
+                                                            key={p.start + idx}
+                                                            className={cx('question-number')}
+                                                        >
+                                                            {p.start + idx}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </>
+                                )}
+                            </div>
+
+                            <div className="d-grid gap-2">
+                                <button className="btn btn-success" data-bs-toggle="modal" data-bs-target="#submitTestModal">
+                                    <i className="fas fa-check-circle me-2"></i>Nộp bài
                                 </button>
-                                <button
-                                    class="btn btn-outline-danger"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#exitTestModal"
-                                >
-                                    <i class="fas fa-times-circle me-2"></i>Thoát bài thi
+                                <button className="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exitTestModal">
+                                    <i className="fas fa-times-circle me-2"></i>Thoát bài thi
                                 </button>
                             </div>
                         </div>

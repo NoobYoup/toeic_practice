@@ -75,12 +75,17 @@ const deleteExam = (examId) => {
 };
 
 const getDraftExam = (examId) => {
-    const token = localStorage.getItem('admin_token');
+    // Ưu tiên token quản trị nếu có, nếu không thì lấy token phía người dùng (nếu được lưu)
+    const adminToken = localStorage.getItem('admin_token');
+    const userToken = localStorage.getItem('user_token');
+    const token = adminToken || userToken || '';
+
+    const headers = token ? {
+        Authorization: `Bearer ${token}`,
+    } : {};
 
     return axios.get(`${API}/exams/draft/${examId}`, {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
+        headers,
     });
 };
 

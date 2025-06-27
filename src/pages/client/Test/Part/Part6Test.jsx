@@ -1,157 +1,126 @@
-import classNames from 'classnames/bind';
-import styles from '../Test.module.scss';
+import { useMemo } from 'react';
+import PropTypes from 'prop-types';
 
-const cx = classNames.bind(styles);
+function Part6Test({ exam }) {
+    // Lấy danh sách câu hỏi Part 6
+    const partQuestions = useMemo(() => {
+        if (!exam) return [];
+        return (exam.cau_hoi_cua_bai_thi || [])
+            .filter((item) => item.cau_hoi.id_phan === 6)
+            .map((item) => item.cau_hoi);
+    }, [exam]);
 
-function Part6Test() {
+    // Nhóm câu hỏi theo id_doan_van
+    const groupedQuestions = useMemo(() => {
+        return partQuestions.reduce((groups, question) => {
+            const passageId = question.id_doan_van || 'no-passage';
+            if (!groups[passageId]) {
+                groups[passageId] = {
+                    passage: question.doan_van,
+                    questions: [],
+                };
+            }
+            groups[passageId].questions.push(question);
+            return groups;
+        }, {});
+    }, [partQuestions]);
+
+    if (!exam) {
+        return (
+            <div className="text-center">
+                <i className="fas fa-spinner fa-spin fa-2x" />
+            </div>
+        );
+    }
+
+    const questionGroups = Object.values(groupedQuestions);
+
+    // Tính số thứ tự bắt đầu cho Part 6
+    let startNumber = 1;
+    if (Array.isArray(exam.cau_hoi_cua_bai_thi)) {
+        const countsBefore = {};
+        exam.cau_hoi_cua_bai_thi.forEach((item) => {
+            const pId = item.cau_hoi.id_phan;
+            countsBefore[pId] = (countsBefore[pId] || 0) + 1;
+        });
+        for (let p = 1; p < 6; p += 1) {
+            startNumber += countsBefore[p] || 0;
+        }
+    }
+
     return (
-        <>
-            <div className={`${cx('test-container')} p-4 shadow my-4`}>
-                <div className="row g-4">
-                    <div className="col-lg-8 bg-light p-4 rounded-3">
-                        <p className=' '>
-                            Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece
-                            of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock,
-                            a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure
-                            Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the
-                            word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from
-                            sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and
-                            Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very
-                            popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit
-                            amet..", comes from a line in section 1.10.32. The standard chunk of Lorem Ipsum used since
-                            the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from "de
-                            Finibus Bonorum et Malorum" by Cicero are also reproduced in their exact original form,
-                            accompanied by English versions from the 1914 translation by H. Rackham.
-                        </p>
-                    </div>
-                    <div className="col-lg-4">
-                        <h5>Câu 1</h5>
-                        <div className={cx('question-section', 'mt-3')}>
-                            <div className={cx('answer-options')}>
-                                <div className={`${cx('answer-option')} d-flex align-items-center`}>
-                                    <input type="radio" name="question1" id="q1-a" className="me-3" />
-                                    <label htmlFor="q1-a" className="flex-grow-1 mb-0">
-                                        A.
-                                    </label>
-                                </div>
-                                <div className={`${cx('answer-option')} d-flex align-items-center`}>
-                                    <input type="radio" name="question1" id="q1-b" className="me-3" />
-                                    <label htmlFor="q1-b" className="flex-grow-1 mb-0">
-                                        B.
-                                    </label>
-                                </div>
-                                <div className={`${cx('answer-option')} d-flex align-items-center`}>
-                                    <input type="radio" name="question1" id="q1-c" className="me-3" />
-                                    <label htmlFor="q1-c" className="flex-grow-1 mb-0">
-                                        C.
-                                    </label>
-                                </div>
-                                <div className={`${cx('answer-option')} d-flex align-items-center`}>
-                                    <input type="radio" name="question1" id="q1-d" className="me-3" />
-                                    <label htmlFor="q1-d" className="flex-grow-1 mb-0">
-                                        D.
-                                    </label>
-                                </div>
+        <div className="vstack gap-5 my-4">
+            {questionGroups.map((group, groupIdx) => (
+                <div
+                    className="card border-0 shadow"
+                    style={{ borderRadius: '10px' }}
+                    key={group.passage?.id_doan_van || `group-${groupIdx}`}
+                >
+                    <div className="card-body">
+                        <div className="row p-2">
+                            <div className="col-lg-8 bg-secondary-subtle rounded-3 p-4">
+                                    {group.passage && (
+                                        <div className="mb-4">
+                                            {group.passage.tieu_de && <h6 className="mb-2">{group.passage.tieu_de}</h6>}
+                                            {group.passage.noi_dung && (
+                                                <div dangerouslySetInnerHTML={{ __html: group.passage.noi_dung }} />
+                                            )}
+                                        </div>
+                                    )}
                             </div>
-                        </div>
-                        <h5>Câu 1</h5>
-                        <div className={cx('question-section', 'mt-3')}>
-                            <div className={cx('answer-options')}>
-                                <div className={`${cx('answer-option')} d-flex align-items-center`}>
-                                    <input type="radio" name="question1" id="q1-a" className="me-3" />
-                                    <label htmlFor="q1-a" className="flex-grow-1 mb-0">
-                                        A.
-                                    </label>
-                                </div>
-                                <div className={`${cx('answer-option')} d-flex align-items-center`}>
-                                    <input type="radio" name="question1" id="q1-b" className="me-3" />
-                                    <label htmlFor="q1-b" className="flex-grow-1 mb-0">
-                                        B.
-                                    </label>
-                                </div>
-                                <div className={`${cx('answer-option')} d-flex align-items-center`}>
-                                    <input type="radio" name="question1" id="q1-c" className="me-3" />
-                                    <label htmlFor="q1-c" className="flex-grow-1 mb-0">
-                                        C.
-                                    </label>
-                                </div>
-                                <div className={`${cx('answer-option')} d-flex align-items-center`}>
-                                    <input type="radio" name="question1" id="q1-d" className="me-3" />
-                                    <label htmlFor="q1-d" className="flex-grow-1 mb-0">
-                                        D.
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <h5>Câu 1</h5>
-                        <div className={cx('question-section', 'mt-3')}>
-                            <div className={cx('answer-options')}>
-                                <div className={`${cx('answer-option')} d-flex align-items-center`}>
-                                    <input type="radio" name="question1" id="q1-a" className="me-3" />
-                                    <label htmlFor="q1-a" className="flex-grow-1 mb-0">
-                                        A.
-                                    </label>
-                                </div>
-                                <div className={`${cx('answer-option')} d-flex align-items-center`}>
-                                    <input type="radio" name="question1" id="q1-b" className="me-3" />
-                                    <label htmlFor="q1-b" className="flex-grow-1 mb-0">
-                                        B.
-                                    </label>
-                                </div>
-                                <div className={`${cx('answer-option')} d-flex align-items-center`}>
-                                    <input type="radio" name="question1" id="q1-c" className="me-3" />
-                                    <label htmlFor="q1-c" className="flex-grow-1 mb-0">
-                                        C.
-                                    </label>
-                                </div>
-                                <div className={`${cx('answer-option')} d-flex align-items-center`}>
-                                    <input type="radio" name="question1" id="q1-d" className="me-3" />
-                                    <label htmlFor="q1-d" className="flex-grow-1 mb-0">
-                                        D.
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <h5>Câu 1</h5>
-                        <div className={cx('question-section', 'mt-3')}>
-                            <div className={cx('answer-options')}>
-                                <div className={`${cx('answer-option')} d-flex align-items-center`}>
-                                    <input type="radio" name="question1" id="q1-a" className="me-3" />
-                                    <label htmlFor="q1-a" className="flex-grow-1 mb-0">
-                                        A.
-                                    </label>
-                                </div>
-                                <div className={`${cx('answer-option')} d-flex align-items-center`}>
-                                    <input type="radio" name="question1" id="q1-b" className="me-3" />
-                                    <label htmlFor="q1-b" className="flex-grow-1 mb-0">
-                                        B.
-                                    </label>
-                                </div>
-                                <div className={`${cx('answer-option')} d-flex align-items-center`}>
-                                    <input type="radio" name="question1" id="q1-c" className="me-3" />
-                                    <label htmlFor="q1-c" className="flex-grow-1 mb-0">
-                                        C.
-                                    </label>
-                                </div>
-                                <div className={`${cx('answer-option')} d-flex align-items-center`}>
-                                    <input type="radio" name="question1" id="q1-d" className="me-3" />
-                                    <label htmlFor="q1-d" className="flex-grow-1 mb-0">
-                                        D.
-                                    </label>
-                                </div>
+                            {/* Đoạn văn */}
+                            <div className="col-lg-4">
+                                {/* Câu hỏi thuộc đoạn văn */}
+                                {group.questions.map((question) => {
+                                    const indexInPart = partQuestions.findIndex(
+                                        (q) => q.id_cau_hoi === question.id_cau_hoi,
+                                    );
+                                    const globalNumber = startNumber + indexInPart;
+                                    return (
+                                        <div key={question.id_cau_hoi} className="mb-4">
+                                            <h6 className="mb-2">Câu {globalNumber}:</h6>
+                                            {question.noi_dung && (
+                                                <p
+                                                    className="fw-semibold"
+                                                    dangerouslySetInnerHTML={{ __html: question.noi_dung }}
+                                                ></p>
+                                            )}
+                                            <ul className="list-group">
+                                                {question.lua_chon.map((choice) => (
+                                                    <li
+                                                        key={choice.ky_tu_lua_chon}
+                                                        className="list-group-item border-0"
+                                                    >
+                                                        <label className="d-flex align-items-center mb-0 w-100">
+                                                            <input
+                                                                type="radio"
+                                                                className="form-check-input me-2"
+                                                                name={`question_${question.id_cau_hoi}`}
+                                                                value={choice.ky_tu_lua_chon}
+                                                            />
+                                                            <span
+                                                                dangerouslySetInnerHTML={{
+                                                                    __html: `${choice.ky_tu_lua_chon}) ${choice.noi_dung}`,
+                                                                }}
+                                                            ></span>
+                                                        </label>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div>
-                <button className="btn btn-primary d-block ms-auto">
-                    Câu tiếp theo<i className="fas fa-arrow-right ms-2"></i>
-                </button>
-            </div>
-        </>
+            ))}
+        </div>
     );
 }
+
+Part6Test.propTypes = {
+    exam: PropTypes.object,
+};
 
 export default Part6Test;
