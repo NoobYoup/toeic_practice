@@ -8,7 +8,7 @@ function Part7Test() {
         <>
             <div className={`${cx('test-container')} p-4 shadow my-4`}>
                 <div className="row g-4">
-                    <div className="col-lg-9 bg-light p-4 rounded-3">
+                    <div className="col-lg-8 bg-light p-4 rounded-3">
                         <p className=' '>
                             Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece
                             of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock,
@@ -24,7 +24,7 @@ function Part7Test() {
                             accompanied by English versions from the 1914 translation by H. Rackham.
                         </p>
                     </div>
-                    <div className="col-lg-3">
+                    <div className="col-lg-4">
                         <h5>Câu 1</h5>
                         <div className={cx('question-section', 'mt-3')}>
                             <div className={cx('answer-options')}>
