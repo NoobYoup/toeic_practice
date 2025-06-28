@@ -250,6 +250,78 @@ function Test() {
                     </div>
                 </div>
             </div>
+
+            {/* Submit Test Confirmation Modal */}
+            <div
+                className="modal fade"
+                id="submitTestModal"
+                tabIndex="-1"
+                aria-labelledby="submitTestModalLabel"
+                aria-hidden="true"
+            >
+                <div className="modal-dialog modal-dialog-top">
+                    <div className="modal-content">
+                        <div className="modal-header border-0">
+                            <h5 className="modal-title" id="submitTestModalLabel">
+                                Xác nhận nộp bài
+                            </h5>
+                            <button
+                                type="button"
+                                className="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"
+                            ></button>
+                        </div>
+                        <div className="modal-body">
+                            Bạn chắc chắn muốn nộp bài? Sau khi nộp bạn sẽ không thể thay đổi câu trả lời.
+                        </div>
+                        <div className="modal-footer border-0">
+                            <button type="button" className="btn btn-primary">
+                                Nộp bài
+                            </button>
+                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
+                                Hủy
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Exit Test Confirmation Modal */}
+            <div
+                className="modal fade"
+                id="exitTestModal"
+                tabIndex="-1"
+                aria-labelledby="exitTestModalLabel"
+                aria-hidden="true"
+            >
+                <div className="modal-dialog modal-dialog-top">
+                    <div className="modal-content">
+                        <div className="modal-header border-0">
+                            <h5 className="modal-title" id="exitTestModalLabel">
+                                Xác nhận thoát bài thi
+                            </h5>
+                            <button
+                                type="button"
+                                className="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"
+                            ></button>
+                        </div>
+                        <div className="modal-body">
+                            Bạn chắc chắn muốn thoát? Tất cả tiến trình làm bài hiện tại sẽ bị mất.
+                        </div>
+                        <div className="modal-footer border-0">
+                            <button type="button" className="btn btn-danger">
+                                Thoát
+                            </button>
+                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
+                                Hủy
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </>
     );
 }
