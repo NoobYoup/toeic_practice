@@ -1,7 +1,9 @@
-import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 
 import MainLayout from './layouts/MainLayout.jsx';
+import PrivateRoute from '@/routes/PrivateRoute.jsx';
+import AdminPrivateRoute from '@/middlewares/AdminPrivateRoute.jsx';
 
 import Home from './pages/client/Home/Home.jsx';
 import Blog from './pages/client/Blog';
@@ -21,7 +23,6 @@ import History from './pages/client/History/History.jsx';
 import SettingUser from './pages/client/History';
 
 import Login from './pages/admin/Login';
-import AdminPrivateRoute from '@/middlewares/AdminPrivateRoute.jsx';
 import AdminLayout from './layouts/AdminLayout.jsx';
 
 import Setting from './pages/admin/Setting';
@@ -51,13 +52,12 @@ import CreateParagraph from './pages/admin/Test/Paragraph/Component/CreateParagr
 import EditParagraph from './pages/admin/Test/Paragraph/Component/EditParagraph.jsx';
 import DetailParagraph from './pages/admin/Test/Paragraph/Component/DetailParagraph.jsx';
 
-
 function App() {
     return (
         <>
             <BrowserRouter>
                 <Routes>
-                    {/* Client Routes */}
+                    {/* Public Client Routes */}
                     <Route element={<MainLayout />}>
                         <Route path="/" element={<Home />} />
                         <Route path="/blog" element={<Blog />} />
@@ -68,22 +68,27 @@ function App() {
                         <Route path="/list-test" element={<ListTest />} />
                         <Route path="/detail-test/:id" element={<DetailTest />} />
                         <Route path="/course" element={<Course />} />
-                        <Route path="/history" element={<History />} />
-                        <Route path="/setting" element={<SettingUser />} />
+                    </Route>
 
-                        <Route path="/my-account" element={<Account />} />
+                    {/* Private Client Routes (yêu cầu user_token) */}
+                    <Route element={<PrivateRoute />}>
+                        <Route element={<MainLayout />}>
+                            <Route path="/history" element={<History />} />
+                            <Route path="/setting" element={<SettingUser />} />
 
-                        <Route path="/my-account/edit" element={<EditAccount />}>
-                            <Route path="/my-account/edit/information" element={<Information />} />
-                            <Route path="/my-account/edit/security" element={<Security />} />
-                            <Route index element={<Navigate to="/my-account/edit/information" replace />} />
+                            <Route path="/my-account" element={<Account />} />
+
+                            <Route path="/my-account/edit" element={<EditAccount />}>
+                                <Route path="information" element={<Information />} />
+                                <Route path="security" element={<Security />} />
+                                <Route index element={<Navigate to="information" replace />} />
+                            </Route>
                         </Route>
                     </Route>
 
                     {/* Admin Login Public */}
                     <Route path="/admin" element={<Login />} />
 
-                    {/* Admin Protected Routes */}
                     <Route path="/admin" element={<AdminPrivateRoute />}>
                         <Route element={<AdminLayout />}>
                             <Route path="/admin/dashboard" element={<Dashboard />} />
@@ -109,7 +114,6 @@ function App() {
                                 <Route path="question/create-question" element={<CreateQuestionBank />} />
                                 <Route path="question/edit-question/:id" element={<EditQuestionBank />} />
                                 <Route path="question/detail-question/:id" element={<DetailQuestionBank />} />
-                                    
 
                                 <Route path="paragraph" element={<Paragraph />} />
                                 <Route path="paragraph/create" element={<CreateParagraph />} />

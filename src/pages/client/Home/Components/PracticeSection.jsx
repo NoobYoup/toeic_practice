@@ -27,11 +27,10 @@ function PracticeSection() {
                 } else if (response.data.totalPages) {
                     setTotalPages(response.data.totalPages);
                 }
-
-                setLoading(false);
             } catch (error) {
                 console.log(error);
             }
+            setLoading(false);
         };
         fetchExams();
     }, [page]);

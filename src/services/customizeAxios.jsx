@@ -30,6 +30,16 @@ instance.interceptors.response.use(
             // Something happened in setting up the request that triggered an Error
             console.log('Error', error.message);
         }
+        if (error.response?.status === 401) {
+            // xác định khu vực admin hay client
+            if (window.location.pathname.startsWith('/admin')) {
+                localStorage.removeItem('admin_token');
+                window.location.href = '/admin';
+            } else {
+                localStorage.removeItem('user_token');
+                window.location.href = '/login';
+            }
+        }
         return res;
 
         // return Promise.reject(error);

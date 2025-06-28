@@ -19,14 +19,11 @@ function ListTest() {
             setLoading(true);
             try {
                 const response = await getAllExam(page);
-
-                // Gán danh sách đề thi
                 setExams(response.data.data);
-
-                setLoading(false);
             } catch (error) {
                 console.log(error);
             }
+            setLoading(false);
         };
         fetchExams();
     }, [page]);
