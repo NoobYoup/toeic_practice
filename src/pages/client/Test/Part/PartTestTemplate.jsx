@@ -36,7 +36,12 @@ function PartTestTemplate({ partId, exam }) {
             {questions.map((q, idx) => {
                 const number = startNumber + idx;
                 return (
-                    <div className="card border-0 shadow" style={{ borderRadius: '10px' }} key={q.id_cau_hoi}>
+                    <div
+                        id={`question-${number}`}
+                        className="card border-0 shadow"
+                        style={{ borderRadius: '10px' }}
+                        key={q.id_cau_hoi}
+                    >
                         <div className="card-body">
                             <h6 className="card-title mb-3">Câu {number}:</h6>
 

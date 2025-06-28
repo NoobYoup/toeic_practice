@@ -51,12 +51,17 @@ function Part4Test({ exam }) {
     return (
         <div className="vstack gap-5 my-4">
             {questionGroups.map((group, groupIdx) => (
-                <div className="card border-0 shadow" style={{ borderRadius: '10px' }} key={group.audio?.id_phuong_tien_am_thanh || `group-${groupIdx}`}>
+                <div
+                    className="card border-0 shadow"
+                    style={{ borderRadius: '10px' }}
+                    key={group.audio?.id_phuong_tien_am_thanh || `group-${groupIdx}`}
+                >
                     <div className="card-body">
                         {/* Audio */}
                         {group.audio?.url_phuong_tien && (
                             <audio controls style={{ width: '100%' }} className="mb-4">
-                                <source src={group.audio.url_phuong_tien} />Trình duyệt của bạn không hỗ trợ audio.
+                                <source src={group.audio.url_phuong_tien} />
+                                Trình duyệt của bạn không hỗ trợ audio.
                             </audio>
                         )}
 
@@ -65,7 +70,7 @@ function Part4Test({ exam }) {
                             const indexInPart = partQuestions.findIndex((q) => q.id_cau_hoi === question.id_cau_hoi);
                             const globalNumber = startNumber + indexInPart;
                             return (
-                                <div key={question.id_cau_hoi} className="mb-4">
+                                <div id={`question-${globalNumber}`} key={question.id_cau_hoi} className="mb-4">
                                     <h6 className="mb-2">Câu {globalNumber}:</h6>
                                     {question.noi_dung && (
                                         <p

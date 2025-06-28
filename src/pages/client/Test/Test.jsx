@@ -20,6 +20,7 @@ function Test() {
     const [exam, setExam] = useState(null);
     const [loading, setLoading] = useState(true);
     const [currentPart, setCurrentPart] = useState(1);
+    const [scrollTarget, setScrollTarget] = useState(null);
 
     /* ------------------------------------------------------------ */
     /* FETCH EXAM                                                   */
@@ -68,6 +69,23 @@ function Test() {
     const readingParts = partInfos.filter((p) => p.part >= 5);
     const listeningTotal = listeningParts.reduce((sum, p) => sum + p.count, 0);
     const readingTotal = readingParts.reduce((sum, p) => sum + p.count, 0);
+
+    const handleJumpToQuestion = (part, number) => {
+        if (currentPart !== part) {
+            setCurrentPart(part);
+        }
+        setScrollTarget(number);
+    };
+
+    useEffect(() => {
+        if (scrollTarget != null) {
+            const el = document.getElementById(`question-${scrollTarget}`);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            setScrollTarget(null);
+        }
+    }, [currentPart, scrollTarget]);
 
     const renderCurrentPart = () => {
         const props = { exam };
@@ -153,12 +171,18 @@ function Test() {
                                                 </div>
                                                 <div className="mb-2">
                                                     {Array.from({ length: p.count }).map((_, idx) => (
-                                                        <span
+                                                        <button
+                                                            type="button"
                                                             key={p.start + idx}
-                                                            className={cx('question-number')}
+                                                            className={cx(
+                                                                'question-number',
+                                                                'border-0',
+                                                                'bg-transparent',
+                                                            )}
+                                                            onClick={() => handleJumpToQuestion(p.part, p.start + idx)}
                                                         >
                                                             {p.start + idx}
-                                                        </span>
+                                                        </button>
                                                     ))}
                                                 </div>
                                             </div>
@@ -180,12 +204,18 @@ function Test() {
                                                 </div>
                                                 <div className="mb-2">
                                                     {Array.from({ length: p.count }).map((_, idx) => (
-                                                        <span
+                                                        <button
+                                                            type="button"
                                                             key={p.start + idx}
-                                                            className={cx('question-number')}
+                                                            className={cx(
+                                                                'question-number',
+                                                                'border-0',
+                                                                'bg-transparent',
+                                                            )}
+                                                            onClick={() => handleJumpToQuestion(p.part, p.start + idx)}
                                                         >
                                                             {p.start + idx}
-                                                        </span>
+                                                        </button>
                                                     ))}
                                                 </div>
                                             </div>
@@ -195,10 +225,18 @@ function Test() {
                             </div>
 
                             <div className="d-grid gap-2">
-                                <button className="btn btn-success" data-bs-toggle="modal" data-bs-target="#submitTestModal">
+                                <button
+                                    className="btn btn-success"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#submitTestModal"
+                                >
                                     <i className="fas fa-check-circle me-2"></i>Nộp bài
                                 </button>
-                                <button className="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exitTestModal">
+                                <button
+                                    className="btn btn-outline-danger"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#exitTestModal"
+                                >
                                     <i className="fas fa-times-circle me-2"></i>Thoát bài thi
                                 </button>
                             </div>

@@ -51,8 +51,12 @@ function Part3Test({ exam }) {
     return (
         <div className="vstack gap-5 my-4">
             {questionGroups.map((group, groupIndex) => (
-                <div className="card border-0 shadow" style={{ borderRadius: '10px' }} key={group.audio?.id_phuong_tien_am_thanh || `group-${groupIndex}`}>
-                    <div className="card-body" >
+                <div
+                    className="card border-0 shadow"
+                    style={{ borderRadius: '10px' }}
+                    key={group.audio?.id_phuong_tien_am_thanh || `group-${groupIndex}`}
+                >
+                    <div className="card-body">
                         {/* Audio */}
                         {group.audio?.url_phuong_tien && (
                             <audio controls className="mb-4" style={{ width: '100%' }}>
@@ -66,7 +70,7 @@ function Part3Test({ exam }) {
                             const indexInPart = partQuestions.findIndex((q) => q.id_cau_hoi === question.id_cau_hoi);
                             const globalNumber = startNumber + indexInPart;
                             return (
-                                <div key={question.id_cau_hoi} className="mb-4">
+                                <div id={`question-${globalNumber}`} key={question.id_cau_hoi} className="mb-4">
                                     <h6 className="mb-2">Câu {globalNumber}:</h6>
 
                                     {/* Nội dung câu hỏi */}

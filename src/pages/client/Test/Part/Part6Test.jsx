@@ -59,14 +59,14 @@ function Part6Test({ exam }) {
                     <div className="card-body">
                         <div className="row p-2">
                             <div className="col-lg-8 bg-secondary-subtle rounded-3 p-4">
-                                    {group.passage && (
-                                        <div className="mb-4">
-                                            {group.passage.tieu_de && <h6 className="mb-2">{group.passage.tieu_de}</h6>}
-                                            {group.passage.noi_dung && (
-                                                <div dangerouslySetInnerHTML={{ __html: group.passage.noi_dung }} />
-                                            )}
-                                        </div>
-                                    )}
+                                {group.passage && (
+                                    <div className="mb-4">
+                                        {group.passage.tieu_de && <h6 className="mb-2">{group.passage.tieu_de}</h6>}
+                                        {group.passage.noi_dung && (
+                                            <div dangerouslySetInnerHTML={{ __html: group.passage.noi_dung }} />
+                                        )}
+                                    </div>
+                                )}
                             </div>
                             {/* Đoạn văn */}
                             <div className="col-lg-4">
@@ -77,7 +77,7 @@ function Part6Test({ exam }) {
                                     );
                                     const globalNumber = startNumber + indexInPart;
                                     return (
-                                        <div key={question.id_cau_hoi} className="mb-4">
+                                        <div id={`question-${globalNumber}`} key={question.id_cau_hoi} className="mb-4">
                                             <h6 className="mb-2">Câu {globalNumber}:</h6>
                                             {question.noi_dung && (
                                                 <p

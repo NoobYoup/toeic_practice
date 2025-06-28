@@ -126,7 +126,7 @@ function Part7Test({ exam }) {
                                     );
                                     const globalNumber = startNumber + indexInPart;
                                     return (
-                                        <div key={question.id_cau_hoi} className="mb-4">
+                                        <div id={`question-${globalNumber}`} key={question.id_cau_hoi} className="mb-4">
                                             <h6 className="mb-2">Câu {globalNumber}:</h6>
 
                                             {/* Hình ảnh câu hỏi nếu có */}
