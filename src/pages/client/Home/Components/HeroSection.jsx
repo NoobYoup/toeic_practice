@@ -1,8 +1,19 @@
 import { Link } from 'react-router-dom';
 import { DEFAULT_BACKGROUND } from '@/constants/default';
 import './HeroSection.scss';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import EntranceExamModal from '@/components/client/Modal/EntranceExamModal';
 
 function HeroSection() {
+    const [showExamModal, setShowExamModal] = useState(false);
+    const navigate = useNavigate();
+
+    const handleStartExam = () => {
+        setShowExamModal(false);
+        navigate('/test');
+    };
+
     return (
         <section className="hero-section">
             <div className="container">
@@ -14,9 +25,13 @@ function HeroSection() {
                             sát thực tế.
                         </p>
                         <div className="d-flex flex-wrap">
-                            <Link to="/test" className="btn btn-light btn-lg me-3 mb-3">
+                            <button
+                                type="button"
+                                className="btn btn-light btn-lg me-3 mb-3"
+                                onClick={() => setShowExamModal(true)}
+                            >
                                 Thi thử miễn phí
-                            </Link>
+                            </button>
                         </div>
                     </div>
                     <div className="col-lg-6 mt-5 mt-lg-0 text-center">
@@ -28,6 +43,11 @@ function HeroSection() {
                     </div>
                 </div>
             </div>
+            <EntranceExamModal
+                isOpen={showExamModal}
+                onClose={() => setShowExamModal(false)}
+                onStart={handleStartExam}
+            />
         </section>
     );
 }

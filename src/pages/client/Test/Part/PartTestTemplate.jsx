@@ -37,7 +37,7 @@ function PartTestTemplate({ partId, exam }) {
                 const number = startNumber + idx;
                 return (
                     <div className="card border-0 shadow" style={{ borderRadius: '10px' }} key={q.id_cau_hoi}>
-                        <div className="card-body" >
+                        <div className="card-body">
                             <h6 className="card-title mb-3">Câu {number}:</h6>
 
                             {/* Hình ảnh nếu có */}
@@ -59,16 +59,13 @@ function PartTestTemplate({ partId, exam }) {
 
                             {/* Nội dung câu hỏi */}
                             {q.noi_dung && (
-                                <p
-                                    className="fw-semibold"
-                                    dangerouslySetInnerHTML={{ __html: q.noi_dung }}
-                                ></p>
+                                <p className="fw-semibold" dangerouslySetInnerHTML={{ __html: q.noi_dung }}></p>
                             )}
 
                             {/* Danh sách đáp án */}
                             <ul className="list-group">
                                 {q.lua_chon.map((choice) => (
-                                    <li key={choice.ky_tu_lua_chon} className="list-group-item border-0" >
+                                    <li key={choice.ky_tu_lua_chon} className="list-group-item border-0">
                                         <label className="d-flex align-items-center mb-0 w-100">
                                             <input
                                                 type="radio"
@@ -78,7 +75,10 @@ function PartTestTemplate({ partId, exam }) {
                                             />
                                             <span
                                                 dangerouslySetInnerHTML={{
-                                                    __html: `${choice.ky_tu_lua_chon}) ${choice.noi_dung}`,
+                                                    __html:
+                                                        partId === 1 || partId === 2
+                                                            ? choice.ky_tu_lua_chon
+                                                            : `${choice.ky_tu_lua_chon}. ${choice.noi_dung}`,
                                                 }}
                                             ></span>
                                         </label>

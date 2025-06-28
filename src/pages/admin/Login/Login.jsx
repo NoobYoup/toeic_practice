@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import './Login.scss';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { login } from '@/services/authService.jsx';
+import { useEffect } from 'react';
+import { toast } from 'react-toastify';
 
 function Login() {
     const [form, setForm] = useState({ identifier: '', mat_khau: '' });
@@ -10,6 +12,14 @@ function Login() {
     const [showPassword, setShowPassword] = useState(false);
 
     const navigate = useNavigate();
+    const location = useLocation();
+
+    useEffect(() => {
+        const msg = location.state?.toastMsg;
+        if (msg) {
+            toast.warn(msg);
+        }
+    }, [location.state]);
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
