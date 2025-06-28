@@ -1,6 +1,8 @@
 import { NavLink } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
+import { DEFAULT_AVATAR } from '@/constants/default';
+
 import './Sidebar.scss';
 
 function Sidebar() {
@@ -70,7 +72,7 @@ function Sidebar() {
                         aria-expanded="false"
                     >
                         <img
-                            src="/public/images/logo_black.png"
+                            src={DEFAULT_AVATAR}
                             alt="Admin"
                             width="32"
                             height="32"

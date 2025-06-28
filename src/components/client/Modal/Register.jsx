@@ -1,14 +1,22 @@
 import { useEffect, useState, useRef } from 'react';
 import { register } from '@/services/authService';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'react-toastify';
 
 function Register({ isOpen, onSwitch, onClose }) {
-    const [form, setForm] = useState({ email: '', ten_dang_nhap: '', mat_khau: '' });
+    const [form, setForm] = useState({ email: '', ten_dang_nhap: '', mat_khau: '', mat_khau_xac_nhan: '' });
     const [errors, setErrors] = useState({});
     const [loadingAPI, setLoadingAPI] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
-
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const modalRef = useRef(null);
+
+    // Clear error messages every time this modal is reopened
+    useEffect(() => {
+        if (isOpen) {
+            setErrors({});
+        }
+    }, [isOpen]);
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -17,11 +25,23 @@ function Register({ isOpen, onSwitch, onClose }) {
 
     const handleRegister = async (e) => {
         e.preventDefault();
+
+        // Client-side validation: confirm password must match
+        if (form.mat_khau !== form.mat_khau_xac_nhan) {
+            setErrors((prev) => ({
+                ...prev,
+                mat_khau_xac_nhan: 'Mật khẩu xác nhận không khớp',
+            }));
+            return;
+        }
+
         setLoadingAPI(true);
         try {
             setErrors({});
             await register(form);
-            onClose();
+            // onClose();
+            onSwitch('login');
+            toast.success('Đăng ký thành công');
         } catch (err) {
             const apiErrors = err.response?.data?.errors;
             if (Array.isArray(apiErrors)) {
@@ -31,7 +51,8 @@ function Register({ isOpen, onSwitch, onClose }) {
                 });
                 setErrors(newErrors);
             } else {
-                setErrors({ general: 'Đăng ký thất bại. Vui lòng thử lại.' });
+                // setErrors({ general: 'Đăng ký thất bại. Vui lòng thử lại.' });
+                toast.error('Đăng ký thất bại. Vui lòng thử lại.');
             }
         }
         setLoadingAPI(false);
@@ -72,10 +93,8 @@ function Register({ isOpen, onSwitch, onClose }) {
                         transition={{ duration: 0.3 }}
                     >
                         <div className="modal-content border-0" ref={modalRef}>
-                            <div className="modal-header border-0">
-                                <h2 className="modal-title">Đăng Ký</h2>
-                                <button type="button" className="btn-close" onClick={onClose}></button>
-                            </div>
+                            <button type="button" className="btn-close ms-auto" onClick={onClose}></button>
+                            <h2 className="text-center">Đăng ký</h2>
 
                             <div className="modal-body">
                                 {errors.general && <div className="alert alert-danger">{errors.general}</div>}
@@ -136,6 +155,27 @@ function Register({ isOpen, onSwitch, onClose }) {
                                         </div>
                                         {errors.mat_khau &&
                                             errors.mat_khau.split('\n').map((e, i) => (
+                                                <div className="text-danger small" key={i}>
+                                                    * {e}
+                                                </div>
+                                            ))}
+                                    </div>
+
+                                    <div className="mb-3">
+                                        <label className="form-label">Xác nhận mật khẩu</label>
+                                        <div className="input-password">
+                                            <input
+                                                type={showConfirmPassword === true ? 'text' : 'password'}
+                                                name="mat_khau_xac_nhan"
+                                                className={`form-control ${errors.mat_khau_xac_nhan ? 'is-invalid' : ''}`}
+                                                placeholder="Nhập lại mật khẩu"
+                                                value={form.mat_khau_xac_nhan}
+                                                onChange={handleChange}
+                                            />
+                                            <i className={showConfirmPassword === true ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash'} onClick={() => setShowConfirmPassword(!showConfirmPassword)}></i>
+                                        </div>
+                                        {errors.mat_khau_xac_nhan &&
+                                            errors.mat_khau_xac_nhan.split('\n').map((e, i) => (
                                                 <div className="text-danger small" key={i}>
                                                     * {e}
                                                 </div>

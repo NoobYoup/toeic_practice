@@ -24,6 +24,19 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
+/* Ẩn nút show/hide password mặc định của trình duyệt Edge */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
+/* (Tuỳ chọn) Ẩn các nút tự động điền trên Safari/Chrome nếu cần */
+input[type="password"]::-webkit-credentials-auto-fill-button,
+input[type="password"]::-webkit-contacts-auto-fill-button {
+  visibility: hidden;
+  display: none !important;
+}
+
 // /* Scrollbar CSS */
 // html *::-webkit-scrollbar {
 //     border-radius: 0;

@@ -4,6 +4,7 @@ import { jwtDecode } from 'jwt-decode';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'react-toastify';
 
 const API_GOOGLE = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
@@ -26,12 +27,14 @@ function Login({ setIsLogin, onSwitch, onClose, isOpen }) {
         try {
             setErrors({});
             const res = await login(form);
+            console.log(res);
             localStorage.setItem('user_token', res.data.token);
             const decoded = jwtDecode(res.data.token);
             console.log(decoded);
             setIsLogin(true);
             onClose();
-            window.location.reload();
+            // window.location.reload();
+            toast.success('Đăng nhập thành công');
         } catch (err) {
             const apiErrors = err.response?.data?.errors;
             const generalMsg = err.response?.data?.message;
@@ -45,9 +48,11 @@ function Login({ setIsLogin, onSwitch, onClose, isOpen }) {
                 });
                 setErrors(newErrors);
             } else if (generalMsg) {
-                setErrors({ general: generalMsg });
+                // setErrors({ general: generalMsg });
+                toast.error(generalMsg);
             } else {
-                setErrors({ general: 'Đăng nhập thất bại.' });
+                // setErrors({ general: 'Đăng nhập thất bại.' });
+                toast.error('Đăng nhập thất bại.');
             }
         }
         setLoadingAPI(false);
@@ -62,10 +67,11 @@ function Login({ setIsLogin, onSwitch, onClose, isOpen }) {
                 setIsLogin(true);
                 onClose();
                 navigate('/');
+                toast.success('Đăng nhập thành công');
             }
         } catch (error) {
             console.log(error);
-            setErrors({ general: 'Đăng nhập Google thất bại.' });
+            setErrors({ general: 'Đăng nhập Google thất bại.' });   
         }
     };
 
@@ -73,6 +79,13 @@ function Login({ setIsLogin, onSwitch, onClose, isOpen }) {
         const token = localStorage.getItem('user_token');
         setIsLogin(!!token);
     }, [setIsLogin]);
+
+    // Clear error messages every time this modal is reopened
+    useEffect(() => {
+        if (isOpen) {
+            setErrors({});
+        }
+    }, [isOpen]);
 
     const handleClickOutside = (e) => {
         if (modalRef.current && !modalRef.current.contains(e.target)) {

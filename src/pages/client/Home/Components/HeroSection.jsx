@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { DEFAULT_BACKGROUND } from '@/constants/default';
 import './HeroSection.scss';
 
 function HeroSection() {
@@ -20,7 +21,7 @@ function HeroSection() {
                     </div>
                     <div className="col-lg-6 mt-5 mt-lg-0 text-center">
                         <img
-                            src="/public/images/background_desktop.jpg"
+                            src={DEFAULT_BACKGROUND}
                             alt="TOEIC Test Preparation"
                             className="img-fluid rounded shadow"
                         />

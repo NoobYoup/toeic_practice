@@ -1,12 +1,22 @@
 import { useState, useEffect, useRef } from 'react';
 import { forgotPassword } from '@/services/authService.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'react-toastify';
 
 function ForgotPassword({ isOpen, onSwitch, onClose, email, setEmail }) {
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
     const [loadingAPI, setLoadingAPI] = useState(false);
     const modalRef = useRef(null);
+
+    // Clear form and messages every time this modal is opened
+    useEffect(() => {
+        if (isOpen) {
+            setMessage('');
+            setError('');
+            if (setEmail) setEmail('');
+        }
+    }, [isOpen, setEmail]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -20,7 +30,8 @@ function ForgotPassword({ isOpen, onSwitch, onClose, email, setEmail }) {
             onSwitch('otp'); // Switch to OTP modal on success
         } catch (err) {
             const msg = err.response?.data?.message || 'Không thể gửi mã OTP. Vui lòng thử lại.';
-            setError(msg);
+            toast.error(msg);
+            // setError(msg);
         }
         setLoadingAPI(false);
     };
@@ -70,7 +81,7 @@ function ForgotPassword({ isOpen, onSwitch, onClose, email, setEmail }) {
                                         Email
                                     </label>
                                     <input
-                                        type="email"
+                                        type="text"
                                         className="form-control"
                                         id="email"
                                         placeholder="Nhập email của bạn"
