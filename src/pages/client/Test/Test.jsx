@@ -146,99 +146,105 @@ function Test() {
 
                     {/* Thanh điều hướng câu hỏi */}
                     <div className="col-lg-3">
-                        <div className="shadow p-4 my-4" style={{ borderRadius: '10px' }}>
-                            {/* Timer placeholder */}
-                            <div className={`${cx('timer-container')} mb-4`}>
-                                <div className="d-flex justify-content-between align-items-center mb-3">
-                                    <h5 className="mb-0">Thời gian còn lại</h5>
+                        <div className={cx('sidebar-container')}>
+                            <div className="shadow p-4 my-4" style={{ borderRadius: '10px' }}>
+                                {/* Timer placeholder */}
+                                <div className={`${cx('timer-container')} mb-4`}>
+                                    <div className="d-flex justify-content-between align-items-center mb-3">
+                                        <h5 className="mb-0">Thời gian còn lại</h5>
+                                    </div>
+                                    <div className={`${cx('timer')} text-center`}>
+                                        {exam.thoi_gian_bai_thi || exam.thoi_gian_thi || '--'} phút
+                                    </div>
                                 </div>
-                                <div className={`${cx('timer')} text-center`}>
-                                    {exam.thoi_gian_bai_thi || exam.thoi_gian_thi || '--'} phút
+
+                                <div className="d-grid gap-2 mb-4">
+                                    <button
+                                        className="btn btn-success"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#submitTestModal"
+                                    >
+                                        <i className="fas fa-check-circle me-2"></i>Nộp bài
+                                    </button>
+                                    <button
+                                        className="btn btn-outline-danger"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#exitTestModal"
+                                    >
+                                        <i className="fas fa-times-circle me-2"></i>Thoát bài thi
+                                    </button>
                                 </div>
-                            </div>
 
-                            <div className={`${cx('question-nav')} mb-4`}>
-                                {/* Listening */}
-                                {listeningParts.length > 0 && (
-                                    <>
-                                        <h5 className="mb-3">Listening ({listeningTotal} câu)</h5>
-                                        {listeningParts.map((p) => (
-                                            <div key={`part-${p.part}`} className="mb-3">
-                                                <div className="mb-2">
-                                                    <strong>
-                                                        Part {p.part}: Questions {p.start}-{p.end}
-                                                    </strong>
+                                <div className={`${cx('question-nav')}`}>
+                                    {/* Listening */}
+                                    {listeningParts.length > 0 && (
+                                        <>
+                                            <h5 className="mb-3">Listening ({listeningTotal} câu)</h5>
+                                            {listeningParts.map((p) => (
+                                                <div key={`part-${p.part}`} className="mb-3">
+                                                    <div className="mb-2">
+                                                        <strong>
+                                                            Part {p.part}: Questions {p.start}-{p.end}
+                                                        </strong>
+                                                    </div>
+                                                    <div className="mb-2">
+                                                        {Array.from({ length: p.count }).map((_, idx) => (
+                                                            <button
+                                                                type="button"
+                                                                key={p.start + idx}
+                                                                className={cx(
+                                                                    'question-number',
+                                                                    'border-0',
+                                                                    'bg-transparent',
+                                                                )}
+                                                                onClick={() =>
+                                                                    handleJumpToQuestion(p.part, p.start + idx)
+                                                                }
+                                                            >
+                                                                {p.start + idx}
+                                                            </button>
+                                                        ))}
+                                                    </div>
                                                 </div>
-                                                <div className="mb-2">
-                                                    {Array.from({ length: p.count }).map((_, idx) => (
-                                                        <button
-                                                            type="button"
-                                                            key={p.start + idx}
-                                                            className={cx(
-                                                                'question-number',
-                                                                'border-0',
-                                                                'bg-transparent',
-                                                            )}
-                                                            onClick={() => handleJumpToQuestion(p.part, p.start + idx)}
-                                                        >
-                                                            {p.start + idx}
-                                                        </button>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        ))}
-                                        <hr />
-                                    </>
-                                )}
+                                            ))}
+                                            <hr />
+                                        </>
+                                    )}
 
-                                {/* Reading */}
-                                {readingParts.length > 0 && (
-                                    <>
-                                        <h5 className="mb-3">Reading ({readingTotal} câu)</h5>
-                                        {readingParts.map((p) => (
-                                            <div key={`part-${p.part}`} className="mb-3">
-                                                <div className="mb-2">
-                                                    <strong>
-                                                        Part {p.part}: Questions {p.start}-{p.end}
-                                                    </strong>
+                                    {/* Reading */}
+                                    {readingParts.length > 0 && (
+                                        <>
+                                            <h5 className="mb-3">Reading ({readingTotal} câu)</h5>
+                                            {readingParts.map((p) => (
+                                                <div key={`part-${p.part}`} className="mb-3">
+                                                    <div className="mb-2">
+                                                        <strong>
+                                                            Part {p.part}: Questions {p.start}-{p.end}
+                                                        </strong>
+                                                    </div>
+                                                    <div className="mb-2">
+                                                        {Array.from({ length: p.count }).map((_, idx) => (
+                                                            <button
+                                                                type="button"
+                                                                key={p.start + idx}
+                                                                className={cx(
+                                                                    'question-number',
+                                                                    'border-0',
+                                                                    'bg-transparent',
+                                                                )}
+                                                                onClick={() =>
+                                                                    handleJumpToQuestion(p.part, p.start + idx)
+                                                                }
+                                                            >
+                                                                {p.start + idx}
+                                                            </button>
+                                                        ))}
+                                                    </div>
                                                 </div>
-                                                <div className="mb-2">
-                                                    {Array.from({ length: p.count }).map((_, idx) => (
-                                                        <button
-                                                            type="button"
-                                                            key={p.start + idx}
-                                                            className={cx(
-                                                                'question-number',
-                                                                'border-0',
-                                                                'bg-transparent',
-                                                            )}
-                                                            onClick={() => handleJumpToQuestion(p.part, p.start + idx)}
-                                                        >
-                                                            {p.start + idx}
-                                                        </button>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </>
-                                )}
-                            </div>
-
-                            <div className="d-grid gap-2">
-                                <button
-                                    className="btn btn-success"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#submitTestModal"
-                                >
-                                    <i className="fas fa-check-circle me-2"></i>Nộp bài
-                                </button>
-                                <button
-                                    className="btn btn-outline-danger"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#exitTestModal"
-                                >
-                                    <i className="fas fa-times-circle me-2"></i>Thoát bài thi
-                                </button>
+                                            ))}
+                                        </>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>
