@@ -64,7 +64,7 @@ function App() {
                         <Route path="/blog/detail-blog" element={<DetailBlog />} />
                         <Route path="/dictionary" element={<Dictionary />} />
                         <Route path="/grammar" element={<Grammar />} />
-                        <Route path="/test" element={<Test />} />
+                        <Route path="/test/:id" element={<Test />} />
                         <Route path="/list-test" element={<ListTest />} />
                         <Route path="/detail-test/:id" element={<DetailTest />} />
                         <Route path="/course" element={<Course />} />

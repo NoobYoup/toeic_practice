@@ -148,7 +148,7 @@ function DetailTest() {
                                             <hr className="my-4" />
                                         </div>
                                         <div className="mt-auto">
-                                            <Link to="/test" state={{ examId: exam?.id_bai_thi }} className="btn btn-primary w-100 btn-lg">
+                                            <Link to={`/test/${exam?.id_bai_thi}`} state={{ examId: exam?.id_bai_thi }} className="btn btn-primary w-100 btn-lg">
                                                 Bắt đầu làm bài
                                             </Link>
                                         </div>
