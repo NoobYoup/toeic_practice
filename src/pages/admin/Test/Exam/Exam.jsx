@@ -150,8 +150,6 @@ function Exam() {
                         <div className="text-center">
                             <i className="fas fa-spinner fa-spin fa-2x"></i>
                         </div>
-                    ) : error ? (
-                        <div className="alert alert-danger">{error?.response?.data?.message || 'Có lỗi xảy ra!'}</div>
                     ) : (
                         <div className="table-responsive">
                             <table className="table table-hover">
@@ -179,61 +177,59 @@ function Exam() {
                                         </tr>
                                     ) : (
                                         exams.map((exam) => (
-                                        <tr key={exam.id_bai_thi}>
-                                            <td>{exam.id_bai_thi}</td>
-                                            <td>{exam.ten_bai_thi}</td>
-                                            <td>{exam.mo_ta}</td>
-                                            <td>{exam.diem_toi_da}</td>
+                                            <tr key={exam.id_bai_thi}>
+                                                <td>{exam.id_bai_thi}</td>
+                                                <td>{exam.ten_bai_thi}</td>
+                                                <td>{exam.mo_ta}</td>
+                                                <td>{exam.diem_toi_da}</td>
 
-                                            <td>
-                                                {exam.nam_xuat_ban}
-                                            </td>
+                                                <td>{exam.nam_xuat_ban}</td>
 
-                                            <td>{exam.la_bai_thi_dau_vao ? 'Có' : 'Không'}</td>
+                                                <td>{exam.la_bai_thi_dau_vao ? 'Có' : 'Không'}</td>
 
-                                            <td>{exam.trang_thai === 'da_xuat_ban' ? 'Đã xuất bản' : 'Nháp'}</td>
-                                            <td>
-                                                {currentUser
-                                                    ? currentUser.vai_tro === 'quan_tri_vien'
-                                                        ? 'Quản trị viên'
-                                                        : 'Giáo viên'
-                                                    : ''}
-                                            </td>
-                                            <td>
-                                                {format(new Date(exam.thoi_gian_tao), 'dd/MM/yyyy HH:mm', {
-                                                    locale: vi,
-                                                })}
-                                            </td>
-                                            <td>
-                                                {format(new Date(exam.thoi_gian_cap_nhat), 'dd/MM/yyyy HH:mm', {
-                                                    locale: vi,
-                                                })}
-                                            </td>
-                                            <td>
-                                                <div className="btn-group">
-                                                    <Link
-                                                        to={`detail-exam/${exam.id_bai_thi}`}
-                                                        // onClick={() => localStorage.setItem('examId', exam.id_bai_thi)}
-                                                        className="btn btn-sm btn-outline-info"
-                                                    >
-                                                        <i className="fas fa-eye"></i>
-                                                    </Link>
-                                                    <Link
-                                                        to={`edit-exam/${exam.id_bai_thi}`}
-                                                        className="btn btn-sm btn-outline-primary"
-                                                    >
-                                                        <i className="fas fa-edit"></i>
-                                                    </Link>
-                                                    <button
-                                                        onClick={() => handleDeleteExam(exam.id_bai_thi)}
-                                                        type="button"
-                                                        className="btn btn-sm btn-outline-danger"
-                                                    >
-                                                        <i className="fas fa-trash-alt"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                                <td>{exam.trang_thai === 'da_xuat_ban' ? 'Đã xuất bản' : 'Nháp'}</td>
+                                                <td>
+                                                    {currentUser
+                                                        ? currentUser.vai_tro === 'quan_tri_vien'
+                                                            ? 'Quản trị viên'
+                                                            : 'Giáo viên'
+                                                        : ''}
+                                                </td>
+                                                <td>
+                                                    {format(new Date(exam.thoi_gian_tao), 'dd/MM/yyyy HH:mm', {
+                                                        locale: vi,
+                                                    })}
+                                                </td>
+                                                <td>
+                                                    {format(new Date(exam.thoi_gian_cap_nhat), 'dd/MM/yyyy HH:mm', {
+                                                        locale: vi,
+                                                    })}
+                                                </td>
+                                                <td>
+                                                    <div className="btn-group">
+                                                        <Link
+                                                            to={`detail-exam/${exam.id_bai_thi}`}
+                                                            // onClick={() => localStorage.setItem('examId', exam.id_bai_thi)}
+                                                            className="btn btn-sm btn-outline-info"
+                                                        >
+                                                            <i className="fas fa-eye"></i>
+                                                        </Link>
+                                                        <Link
+                                                            to={`edit-exam/${exam.id_bai_thi}`}
+                                                            className="btn btn-sm btn-outline-primary"
+                                                        >
+                                                            <i className="fas fa-edit"></i>
+                                                        </Link>
+                                                        <button
+                                                            onClick={() => handleDeleteExam(exam.id_bai_thi)}
+                                                            type="button"
+                                                            className="btn btn-sm btn-outline-danger"
+                                                        >
+                                                            <i className="fas fa-trash-alt"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
                                         ))
                                     )}
                                 </tbody>

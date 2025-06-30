@@ -108,8 +108,6 @@ function Paragraph() {
                             <div className="text-center my-4">
                                 <i className="fas fa-spinner fa-spin fa-2x"></i>
                             </div>
-                        ) : error ? (
-                            <div className="alert alert-danger">{error}</div>
                         ) : (
                             <table className="table table-hover">
                                 <thead>
@@ -135,7 +133,11 @@ function Paragraph() {
                                         passages.map((passage) => (
                                             <tr key={passage.id_doan_van}>
                                                 <td>{passage.id_doan_van}</td>
-                                                <td>{passage.tieu_de && passage.tieu_de.length > 30 ? passage.tieu_de.slice(0, 30) + '...' : passage.tieu_de || 'Không'}</td>
+                                                <td>
+                                                    {passage.tieu_de && passage.tieu_de.length > 30
+                                                        ? passage.tieu_de.slice(0, 30) + '...'
+                                                        : passage.tieu_de || 'Không'}
+                                                </td>
                                                 <td>
                                                     <div className="passage-excerpt">
                                                         {passage.noi_dung && passage.noi_dung.length > 10
@@ -143,10 +145,24 @@ function Paragraph() {
                                                             : passage.noi_dung || 'Không'}
                                                     </div>
                                                 </td>
-                                                <td>{passage.loai_doan_van === 'single' ? 'Single' : passage.loai_doan_van === 'double' ? 'Double' : 'Triple'}</td>
+                                                <td>
+                                                    {passage.loai_doan_van === 'single'
+                                                        ? 'Single'
+                                                        : passage.loai_doan_van === 'double'
+                                                        ? 'Double'
+                                                        : 'Triple'}
+                                                </td>
                                                 <td>{passage.id_phan}</td>
-                                                <td>{format(new Date(passage.thoi_gian_tao), 'dd/MM/yyyy HH:mm', { locale: vi })}</td>
-                                                <td>{format(new Date(passage.thoi_gian_cap_nhat), 'dd/MM/yyyy HH:mm', { locale: vi })}</td>
+                                                <td>
+                                                    {format(new Date(passage.thoi_gian_tao), 'dd/MM/yyyy HH:mm', {
+                                                        locale: vi,
+                                                    })}
+                                                </td>
+                                                <td>
+                                                    {format(new Date(passage.thoi_gian_cap_nhat), 'dd/MM/yyyy HH:mm', {
+                                                        locale: vi,
+                                                    })}
+                                                </td>
 
                                                 <td>
                                                     {/* <Link

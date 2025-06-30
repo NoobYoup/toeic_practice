@@ -1,5 +1,6 @@
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import Select from 'react-select';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
@@ -11,6 +12,7 @@ function CreateExam() {
     const [thoiGianBaiThi, setThoiGianBaiThi] = useState('');
     const [namXuatBan, setNamXuatBan] = useState('');
     const [laBaiThiDauVao, setLaBaiThiDauVao] = useState(false);
+    const [loaiBaiThi, setLoaiBaiThi] = useState('');
 
     const [content, setContent] = useState('');
     const [showChooseModal, setShowChooseModal] = useState(false);
@@ -20,6 +22,12 @@ function CreateExam() {
     const [loading, setLoading] = useState(false);
     const [examId, setExamId] = useState(null);
     const navigate = useNavigate();
+
+    // Danh sách loại bài thi
+    const examTypeOptions = [
+        { value: 'tu_do', label: 'Tự do' },
+        { value: 'chuan', label: 'Chuẩn' },
+    ];
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -31,6 +39,7 @@ function CreateExam() {
                 thoi_gian_bai_thi: Number(thoiGianBaiThi),
                 la_bai_thi_dau_vao: laBaiThiDauVao,
                 nam_xuat_ban: Number(namXuatBan),
+                loai_bai_thi: loaiBaiThi,
             };
             const res = await createExam(payload);
             console.log(res.data.data);
@@ -126,14 +135,30 @@ function CreateExam() {
                             </div>
 
                             <div className="col-md-3">
-                                    <label className="form-check-label">Bài thi đầu vào</label>
-                                <div className="form-check form-switch">
-                                    <input
-                                        className="form-check-input"
-                                        type="checkbox"
-                                        checked={laBaiThiDauVao}
-                                        onChange={(e) => setLaBaiThiDauVao(e.target.checked)}
+                                <div className="form-group">
+                                    <label htmlFor="examType" className="form-label">
+                                        Loại bài thi
+                                    </label>
+                                    <Select
+                                        options={examTypeOptions}
+                                        value={examTypeOptions.find((opt) => opt.value === loaiBaiThi)}
+                                        onChange={(selected) => setLoaiBaiThi(selected.value)}
+                                        placeholder="Chọn loại bài thi"
                                     />
+                                </div>
+                            </div>
+
+                            <div className="col-md-3 mt-3">
+                                <div className="form-group">
+                                    <label className="form-check-label">Bài thi đầu vào</label>
+                                    <div className="form-check form-switch">
+                                        <input
+                                            className="form-check-input"
+                                            type="checkbox"
+                                            checked={laBaiThiDauVao}
+                                            onChange={(e) => setLaBaiThiDauVao(e.target.checked)}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -156,9 +181,9 @@ function CreateExam() {
                         </div>
 
                         <div className="text-end">
-                            <button type="submit" className="btn btn-primary" disabled={loading}>
+                            <button type="submit" className="btn btn-primary" disabled={loading || examId !== null}>
                                 {loading && <i className="fas fa-spinner fa-spin me-2"></i>}
-                                Tạo nháp
+                                {examId ? 'Đã tạo nháp' : 'Tạo nháp'}
                             </button>
                         </div>
                     </form>

@@ -54,8 +54,10 @@ function Login() {
                 setErrors(newErrors);
             } else if (generalMsg) {
                 setErrors({ general: generalMsg });
+                // toast.warn(generalMsg);
             } else {
-                setErrors({ general: 'Đăng nhập thất bại.' });
+                // setErrors({ general: 'Đăng nhập thất bại.' });
+                toast.warn('Đăng nhập thất bại.');
             }
         }
         setLoadingAPI(false);

@@ -110,7 +110,7 @@ function Question() {
             fetchQuestions();
         } catch (error) {
             console.error(error);
-            toast.error(error.response?.data?.message );
+            toast.error(error.response?.data?.message);
         }
     };
 
@@ -195,7 +195,9 @@ function Question() {
                             name="muc_do_kho"
                             options={optionsMucDo}
                             onChange={handleSelectChange}
-                            value={optionsMucDo.find((opt) => opt.value === (filters.muc_do_kho ?? '')) || optionsMucDo[0]}
+                            value={
+                                optionsMucDo.find((opt) => opt.value === (filters.muc_do_kho ?? '')) || optionsMucDo[0]
+                            }
                         />
                     </div>
                     <div className="col-md-3">
@@ -203,7 +205,10 @@ function Question() {
                             name="trang_thai"
                             options={optionsTrangThai}
                             onChange={handleSelectChange}
-                            value={optionsTrangThai.find((opt) => opt.value === (filters.trang_thai ?? '')) || optionsTrangThai[0]}
+                            value={
+                                optionsTrangThai.find((opt) => opt.value === (filters.trang_thai ?? '')) ||
+                                optionsTrangThai[0]
+                            }
                         />
                     </div>
                     <div className="col-md-3 px-0">
@@ -267,12 +272,14 @@ function Question() {
                                                             </span>
                                                         )}
                                                     </td>
-                                                    <td>{question.phan.ten_phan && question.phan.ten_phan.length > 15 ? question.phan.ten_phan.slice(0, 15) + '...' : question.phan.ten_phan}</td>
+                                                    <td>
+                                                        {question.phan.ten_phan && question.phan.ten_phan.length > 15
+                                                            ? question.phan.ten_phan.slice(0, 15) + '...'
+                                                            : question.phan.ten_phan}
+                                                    </td>
                                                     <td>
                                                         <div className="d-flex align-items-center">
-                                                            {question.id_doan_van
-                                                                ? question.id_doan_van
-                                                                : 'Không'}
+                                                            {question.id_doan_van ? question.id_doan_van : 'Không'}
                                                         </div>
                                                     </td>
                                                     <td>
@@ -304,7 +311,11 @@ function Question() {
                                                             : 'Khó'}
                                                     </td>
                                                     <td>
-                                                        {question.nguon_goc === 'thu_cong' ? 'Thủ công' : question.nguon_goc === 'nhap_excel' ? 'Nhập excel' : ''}
+                                                        {question.nguon_goc === 'thu_cong'
+                                                            ? 'Thủ công'
+                                                            : question.nguon_goc === 'nhap_excel'
+                                                            ? 'Nhập excel'
+                                                            : ''}
                                                     </td>
 
                                                     <td>
@@ -354,7 +365,7 @@ function Question() {
                                             ))
                                         ) : (
                                             <tr>
-                                                <td colSpan="13" className="text-center">
+                                                <td colSpan="13" className="text-center text-muted">
                                                     Không có dữ liệu
                                                 </td>
                                             </tr>

@@ -19,6 +19,7 @@ function ListTest() {
             setLoading(true);
             try {
                 const response = await getAllExam(page);
+                console.log(response.data.data);
                 setExams(response.data.data);
             } catch (error) {
                 console.log(error);
