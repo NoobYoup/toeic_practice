@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import Select from 'react-select';
-import { getAllExam } from '@/services/examService.jsx';
+import { getAllExamPublic } from '@/services/examService.jsx';
 
 import styles from './ListTest.module.scss';
 import classNames from 'classnames/bind';
@@ -18,7 +18,7 @@ function ListTest() {
         const fetchExams = async () => {
             setLoading(true);
             try {
-                const response = await getAllExam(page);
+                const response = await getAllExamPublic(page);
                 console.log(response.data.data);
                 setExams(response.data.data);
             } catch (error) {

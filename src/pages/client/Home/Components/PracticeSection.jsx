@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { getAllExam } from '@/services/examService.jsx';
+import { getAllExamPublic } from '@/services/examService.jsx';
 import { useState, useEffect } from 'react';
 
 function PracticeSection() {
@@ -14,7 +14,7 @@ function PracticeSection() {
         const fetchExams = async () => {
             setLoading(true);
             try {
-                const response = await getAllExam(page);
+                const response = await getAllExamPublic(page);
 
                 // Gán danh sách đề thi
                 setExams(response.data.data);

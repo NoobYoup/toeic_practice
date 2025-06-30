@@ -47,21 +47,29 @@ const createExam = (examData) => {
 const addQuestionToExam = (examId, questionIds) => {
     const token = localStorage.getItem('admin_token');
 
-    return axios.post(`${API}/exams/questions/add-questions/${examId}`, { ds_cau_hoi: questionIds }, {
-        headers: {
-            Authorization: `Bearer ${token}`,
+    return axios.post(
+        `${API}/exams/questions/add-questions/${examId}`,
+        { ds_cau_hoi: questionIds },
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
         },
-    });
+    );
 };
 
 const approveExam = (examId) => {
     const token = localStorage.getItem('admin_token');
 
-    return axios.post(`${API}/exams/approve/${examId}`, {}, {
-        headers: {
-            Authorization: `Bearer ${token}`,
+    return axios.post(
+        `${API}/exams/approve/${examId}`,
+        {},
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
         },
-    });
+    );
 };
 
 const deleteExam = (examId) => {
@@ -80,9 +88,11 @@ const getDraftExam = (examId) => {
     const userToken = localStorage.getItem('user_token');
     const token = adminToken || userToken || '';
 
-    const headers = token ? {
-        Authorization: `Bearer ${token}`,
-    } : {};
+    const headers = token
+        ? {
+              Authorization: `Bearer ${token}`,
+          }
+        : {};
 
     return axios.get(`${API}/exams/draft/${examId}`, {
         headers,
@@ -98,4 +108,24 @@ const editExam = (examId, examData) => {
         },
     });
 };
-export { getAllExam, getAllQuestionExam, createExam, addQuestionToExam, approveExam, deleteExam, getDraftExam, editExam };
+
+const getAllExamPublic = (page = 1, filters = {}) => {
+    return axios.get(`${API}/exams/get-all-exam-public`, {
+        params: {
+            page,
+            ...filters,
+        },
+    });
+};
+
+export {
+    getAllExam,
+    getAllQuestionExam,
+    createExam,
+    addQuestionToExam,
+    approveExam,
+    deleteExam,
+    getDraftExam,
+    editExam,
+    getAllExamPublic,
+};

@@ -3,7 +3,7 @@ import { login, loginGoogle } from '@/services/authService.jsx';
 import { jwtDecode } from 'jwt-decode';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion as Motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
 
 const API_GOOGLE = import.meta.env.VITE_GOOGLE_CLIENT_ID;
@@ -28,13 +28,20 @@ function Login({ setIsLogin, onSwitch, onClose, isOpen }) {
             setErrors({});
             const res = await login(form);
             console.log(res);
+
+            // Kiểm tra vai trò, nếu là quản trị viên thì không cho đăng nhập ở client
+            if (res.data.vai_tro === 'quan_tri_vien') {
+                toast.error('Bạn không có quyền truy cập tại đây');
+                setLoadingAPI(false);
+                return;
+            }
+
             localStorage.setItem('user_token', res.data.token);
             const decoded = jwtDecode(res.data.token);
             console.log(decoded);
             setIsLogin(true);
             onClose();
-            // window.location.reload();
-            toast.success('Đăng nhập thành công');
+            toast.success(res.data.message);
         } catch (err) {
             const apiErrors = err.response?.data?.errors;
             const generalMsg = err.response?.data?.message;
@@ -52,7 +59,7 @@ function Login({ setIsLogin, onSwitch, onClose, isOpen }) {
                 toast.error(generalMsg);
             } else {
                 // setErrors({ general: 'Đăng nhập thất bại.' });
-                toast.error('Đăng nhập thất bại.');
+                toast.error(err.response?.data?.message);
             }
         }
         setLoadingAPI(false);
@@ -67,11 +74,12 @@ function Login({ setIsLogin, onSwitch, onClose, isOpen }) {
                 setIsLogin(true);
                 onClose();
                 navigate('/');
-                toast.success('Đăng nhập thành công');
+                // toast.success('Đăng nhập thành công');
+                toast.success(res.data.message);
             }
         } catch (error) {
             console.log(error);
-            setErrors({ general: 'Đăng nhập Google thất bại.' });   
+            setErrors({ general: 'Đăng nhập Google thất bại.' });
         }
     };
 
@@ -105,7 +113,7 @@ function Login({ setIsLogin, onSwitch, onClose, isOpen }) {
     return (
         <AnimatePresence>
             {isOpen && (
-                <motion.div
+                <Motion.div
                     className="modal d-block"
                     key="login-modal"
                     initial={{ opacity: 0 }}
@@ -114,7 +122,7 @@ function Login({ setIsLogin, onSwitch, onClose, isOpen }) {
                     transition={{ duration: 0.2 }}
                     style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
                 >
-                    <motion.div
+                    <Motion.div
                         className="modal-dialog login-container"
                         role="document"
                         initial={{ y: '-30px', opacity: 0 }}
@@ -199,8 +207,8 @@ function Login({ setIsLogin, onSwitch, onClose, isOpen }) {
                                 </a>
                             </div>
                         </div>
-                    </motion.div>
-                </motion.div>
+                    </Motion.div>
+                </Motion.div>
             )}
         </AnimatePresence>
     );
