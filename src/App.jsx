@@ -64,7 +64,6 @@ function App() {
                         <Route path="/blog/detail-blog" element={<DetailBlog />} />
                         <Route path="/dictionary" element={<Dictionary />} />
                         <Route path="/grammar" element={<Grammar />} />
-                        <Route path="/test/:id" element={<Test />} />
                         <Route path="/list-test" element={<ListTest />} />
                         <Route path="/detail-test/:id" element={<DetailTest />} />
                         <Route path="/course" element={<Course />} />
@@ -73,6 +72,8 @@ function App() {
                     {/* Private Client Routes (yêu cầu user_token) */}
                     <Route element={<PrivateRoute />}>
                         <Route element={<MainLayout />}>
+                            {/* Làm bài thi yêu cầu đăng nhập */}
+                            <Route path="/test/:id" element={<Test />} />
                             <Route path="/history" element={<History />} />
                             <Route path="/setting" element={<SettingUser />} />
 
