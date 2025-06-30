@@ -118,6 +118,10 @@ const getAllExamPublic = (page = 1, filters = {}) => {
     });
 };
 
+const getDetailExamPublic = (examId) => {
+    return axios.get(`${API}/exams/detail-exam-public/${examId}`);
+};
+
 export {
     getAllExam,
     getAllQuestionExam,
@@ -128,4 +132,5 @@ export {
     getDraftExam,
     editExam,
     getAllExamPublic,
+    getDetailExamPublic,
 };

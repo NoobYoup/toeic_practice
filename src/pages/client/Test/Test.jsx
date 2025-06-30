@@ -2,7 +2,7 @@ import styles from './Test.module.scss';
 import classNames from 'classnames/bind';
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { getDraftExam } from '@/services/examService';
+import { getDetailExamPublic } from '@/services/examService';
 import Part1Test from './Part/Part1Test.jsx';
 import Part2Test from './Part/Part2Test.jsx';
 import Part3Test from './Part/Part3Test.jsx';
@@ -33,7 +33,7 @@ function Test() {
         const fetchExam = async () => {
             setLoading(true);
             try {
-                const res = await getDraftExam(examId);
+                const res = await getDetailExamPublic(examId);
                 setExam(res.data.data);
             } catch (err) {
                 // eslint-disable-next-line no-console

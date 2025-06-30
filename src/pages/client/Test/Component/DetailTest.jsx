@@ -2,7 +2,7 @@ import classNames from 'classnames/bind';
 import styles from './DetailTest.module.scss';
 import { useParams, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { getDraftExam } from '@/services/examService';
+import { getDetailExamPublic } from '@/services/examService';
 
 const cx = classNames.bind(styles);
 
@@ -16,7 +16,7 @@ function DetailTest() {
         const fetchExam = async () => {
             setLoading(true);
             try {
-                const res = await getDraftExam(id);
+                const res = await getDetailExamPublic(id);
                 console.log(res.data.data);
                 setExam(res.data.data);
             } catch (err) {
@@ -148,7 +148,11 @@ function DetailTest() {
                                             <hr className="my-4" />
                                         </div>
                                         <div className="mt-auto">
-                                            <Link to={`/test/${exam?.id_bai_thi}`} state={{ examId: exam?.id_bai_thi }} className="btn btn-primary w-100 btn-lg">
+                                            <Link
+                                                to={`/test/${exam?.id_bai_thi}`}
+                                                state={{ examId: exam?.id_bai_thi }}
+                                                className="btn btn-primary w-100 btn-lg"
+                                            >
                                                 Bắt đầu làm bài
                                             </Link>
                                         </div>

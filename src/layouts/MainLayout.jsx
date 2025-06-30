@@ -12,7 +12,7 @@ function MainLayout() {
     useEffect(() => {
         const msg = location.state?.toastMsg;
         if (msg) {
-            toast.warn(msg);
+            toast.warn(msg, { toastId: msg });
         }
     }, [location.state]);
 
