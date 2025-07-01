@@ -1,8 +1,9 @@
 import classNames from 'classnames/bind';
 import styles from './DetailTest.module.scss';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { getDetailExamPublic } from '@/services/examService';
+import Login from '@/components/client/Modal/Login.jsx';
 
 const cx = classNames.bind(styles);
 
@@ -11,6 +12,10 @@ function DetailTest() {
 
     const [exam, setExam] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [currentModal, setCurrentModal] = useState(null);
+    const [isLogin, setIsLogin] = useState(!!localStorage.getItem('user_token'));
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchExam = async () => {
@@ -26,6 +31,26 @@ function DetailTest() {
         };
         fetchExam();
     }, [id]);
+
+    const handleStartTest = () => {
+        const token = localStorage.getItem('user_token');
+        if (!token) {
+            setCurrentModal('login');
+        } else {
+            navigate(`/test/${exam.id_bai_thi}`, { state: { examId: exam.id_bai_thi } });
+        }
+    };
+
+    // tự động chuyển trang sau khi login
+    useEffect(() => {
+        if (isLogin && exam) {
+            // 1) Nếu muốn vào trang làm bài:
+            navigate(`/test/${exam.id_bai_thi}`, { state: { examId: exam.id_bai_thi } });
+
+            // 2) Hoặc chỉ cần refresh lại chính trang hiện tại:
+            // window.location.reload();
+        }
+    }, [isLogin, exam, navigate]);
 
     return (
         <>
@@ -148,13 +173,9 @@ function DetailTest() {
                                             <hr className="my-4" />
                                         </div>
                                         <div className="mt-auto">
-                                            <Link
-                                                to={`/test/${exam?.id_bai_thi}`}
-                                                state={{ examId: exam?.id_bai_thi }}
-                                                className="btn btn-primary w-100 btn-lg"
-                                            >
+                                            <button className="btn btn-primary w-100 btn-lg" onClick={handleStartTest}>
                                                 Bắt đầu làm bài
-                                            </Link>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -236,6 +257,15 @@ function DetailTest() {
                     </div>
                 </div>
             </div>
+
+            {/* Auth Modals */}
+            <Login
+                key="login"
+                isOpen={currentModal === 'login'}
+                onSwitch={setCurrentModal}
+                onClose={() => setCurrentModal(null)}
+                setIsLogin={setIsLogin}
+            />
         </>
     );
 }
