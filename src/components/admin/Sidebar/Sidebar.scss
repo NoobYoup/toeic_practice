@@ -2,6 +2,7 @@
     min-height: 100vh;
     background-color: #212529;
 }
+
 .sidebar .nav-link {
     color: rgba(255, 255, 255, 0.8);
     padding: 10px 20px;
@@ -15,4 +16,24 @@
 }
 .sidebar .nav-link i {
     margin-right: 10px;
+}
+
+@media (max-width: 991.98px) {
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 250px;
+        height: 100%;
+        background-color: #212529;
+        overflow-y: auto;
+        transform: translateX(-100%) !important;
+        transition: transform 0.3s ease-in-out;
+        z-index: 1050;
+        display: block; /* ensure visible when open */
+    }
+
+    .sidebar.open {
+        transform: translateX(0) !important;
+    }
 }

@@ -185,6 +185,8 @@ function Test() {
             console.log(res);
             // TODO: điều hướng sang trang kết quả, vd: navigate(`/result/${res.data.data.id}`)
         } catch (err) {
+            console.log(err);
+
             setSubmitError(err.response?.data?.message || 'Có lỗi xảy ra khi nộp bài');
         }
         setIsSubmitting(false);
