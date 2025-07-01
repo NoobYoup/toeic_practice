@@ -14,6 +14,7 @@ function DetailTest() {
     const [loading, setLoading] = useState(true);
     const [currentModal, setCurrentModal] = useState(null);
     const [isLogin, setIsLogin] = useState(!!localStorage.getItem('user_token'));
+    const [startRequested, setStartRequested] = useState(false);
 
     const navigate = useNavigate();
 
@@ -36,21 +37,19 @@ function DetailTest() {
         const token = localStorage.getItem('user_token');
         if (!token) {
             setCurrentModal('login');
+            setStartRequested(true); // gắn cờ
         } else {
             navigate(`/test/${exam.id_bai_thi}`, { state: { examId: exam.id_bai_thi } });
         }
     };
 
-    // tự động chuyển trang sau khi login
+    // Tự động điều hướng sau khi đã đăng nhập và người dùng có yêu cầu làm bài
     useEffect(() => {
-        if (isLogin && exam) {
-            // 1) Nếu muốn vào trang làm bài:
+        if (startRequested && isLogin && exam) {
             navigate(`/test/${exam.id_bai_thi}`, { state: { examId: exam.id_bai_thi } });
-
-            // 2) Hoặc chỉ cần refresh lại chính trang hiện tại:
-            // window.location.reload();
+            setStartRequested(false); // gắn cờ
         }
-    }, [isLogin, exam, navigate]);
+    }, [startRequested, isLogin, exam, navigate]);
 
     return (
         <>
