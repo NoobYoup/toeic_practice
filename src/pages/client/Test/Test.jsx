@@ -1,8 +1,10 @@
 import styles from './Test.module.scss';
 import classNames from 'classnames/bind';
 import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { getDetailExamPublic } from '@/services/examService';
+import { submitResult } from '@/services/resultService';
+import { jwtDecode } from 'jwt-decode';
 import Part1Test from './Part/Part1Test.jsx';
 import Part2Test from './Part/Part2Test.jsx';
 import Part3Test from './Part/Part3Test.jsx';
@@ -10,17 +12,21 @@ import Part4Test from './Part/Part4Test.jsx';
 import Part5Test from './Part/Part5Test.jsx';
 import Part6Test from './Part/Part6Test.jsx';
 import Part7Test from './Part/Part7Test.jsx';
+import { toast } from 'react-toastify';
 
 const cx = classNames.bind(styles);
 
 function Test() {
     const location = useLocation();
     const { examId } = location.state || {};
-
+    const navigate = useNavigate();
     const [exam, setExam] = useState(null);
     const [loading, setLoading] = useState(true);
     const [currentPart, setCurrentPart] = useState(1);
     const [scrollTarget, setScrollTarget] = useState(null);
+    const [remainingSeconds, setRemainingSeconds] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState(null);
 
     /* ------------------------------------------------------------ */
     /* FETCH EXAM                                                   */
@@ -43,6 +49,39 @@ function Test() {
         };
         fetchExam();
     }, [examId]);
+
+    /* ------------------------------------------------------------ */
+    /* COUNTDOWN TIMER                                              */
+    /* ------------------------------------------------------------ */
+    useEffect(() => {
+        if (!exam) return;
+        const durationMinutes = exam.thoi_gian_bai_thi || exam.thoi_gian_thi;
+        if (!durationMinutes) return;
+
+        setRemainingSeconds(durationMinutes * 60);
+
+        const intervalId = setInterval(() => {
+            setRemainingSeconds((prev) => {
+                if (prev === null) return prev;
+                if (prev <= 1) {
+                    clearInterval(intervalId);
+                    handleSubmit(); // tự động nộp bài khi hết thời gian
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(intervalId);
+    }, [exam]);
+
+    const formatTime = (seconds) => {
+        const m = Math.floor(seconds / 60)
+            .toString()
+            .padStart(2, '0');
+        const s = (seconds % 60).toString().padStart(2, '0');
+        return `${m}:${s}`;
+    };
 
     /* ------------------------------------------------------------ */
     /* TÍNH THÔNG TIN MỖI PART                                      */
@@ -109,6 +148,90 @@ function Test() {
         }
     };
 
+    const buildAnswerPayload = () => {
+        const checked = document.querySelectorAll('input[type="radio"]:checked');
+        const answers = Array.from(checked).map((el) => {
+            const idStr = el.name.split('_')[1];
+            return { id_cau_hoi: Number(idStr), ky_tu_lua_chon: el.value };
+        });
+        return answers;
+    };
+
+    const handleSubmit = async () => {
+        if (!exam) return;
+
+        const token = localStorage.getItem('user_token');
+        if (!token) {
+            setSubmitError('Bạn cần đăng nhập lại.');
+            return;
+        }
+
+        const decoded = jwtDecode(token);
+        const userId = decoded.id_nguoi_dung;
+
+        const payload = {
+            id_nguoi_dung: userId,
+            id_bai_thi: exam.id_bai_thi,
+            answers: buildAnswerPayload(),
+        };
+
+        console.log(payload);
+
+        setIsSubmitting(true);
+        setSubmitError(null);
+
+        try {
+            const res = await submitResult(payload);
+            console.log(res);
+            // TODO: điều hướng sang trang kết quả, vd: navigate(`/result/${res.data.data.id}`)
+        } catch (err) {
+            setSubmitError(err.response?.data?.message || 'Có lỗi xảy ra khi nộp bài');
+        }
+        setIsSubmitting(false);
+        toast.error(submitError);
+    };
+
+    const handleExit = () => {
+        // TODO: xử lý khi thoát bài thi
+        navigate('/list-test');
+        window.location.reload();
+    };
+
+    useEffect(() => {
+        // Warn user if they try to refresh or navigate back after selecting answers
+        const handleBeforeUnload = (e) => {
+            const answers = buildAnswerPayload();
+            if (answers.length > 0) {
+                e.preventDefault();
+                // Chrome requires returnValue to be set
+                e.returnValue = '';
+            }
+        };
+
+        const handlePopState = () => {
+            const answers = buildAnswerPayload();
+            if (answers.length > 0) {
+                const confirmLeave = window.confirm(
+                    'Bạn đã chọn đáp án nhưng chưa nộp bài. Bạn có chắc chắn muốn rời khỏi trang?',
+                );
+                if (!confirmLeave) {
+                    // Push the current state back so the user stays on the page
+                    window.history.pushState(null, null, window.location.href);
+                }
+            }
+        };
+
+        // Push an extra history entry so we can detect the first back action
+        window.history.pushState(null, null, window.location.href);
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        window.addEventListener('popstate', handlePopState);
+
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+            window.removeEventListener('popstate', handlePopState);
+        };
+    }, []);
+
     if (loading) {
         return (
             <div className="text-center py-5 min-vh-100 d-flex flex-column ">
@@ -154,17 +277,18 @@ function Test() {
                                         <h5 className="mb-0">Thời gian còn lại</h5>
                                     </div>
                                     <div className={`${cx('timer')} text-center`}>
-                                        {exam.thoi_gian_bai_thi || exam.thoi_gian_thi || '--'} phút
+                                        {remainingSeconds !== null ? formatTime(remainingSeconds) : '--:--'}
                                     </div>
                                 </div>
 
                                 <div className="d-grid gap-2 mb-4">
+                                    {/* {submitError && <p className="text-danger small mb-0 me-auto">{submitError}</p>} */}
                                     <button
                                         className="btn btn-success"
                                         data-bs-toggle="modal"
                                         data-bs-target="#submitTestModal"
                                     >
-                                        <i className="fas fa-check-circle me-2"></i>Nộp bài
+                                        Nộp bài
                                     </button>
                                     <button
                                         className="btn btn-outline-danger"
@@ -276,7 +400,13 @@ function Test() {
                             Bạn chắc chắn muốn nộp bài? Sau khi nộp bạn sẽ không thể thay đổi câu trả lời.
                         </div>
                         <div className="modal-footer border-0">
-                            <button type="button" className="btn btn-primary">
+                            <button
+                                type="button"
+                                className="btn btn-primary"
+                                onClick={handleSubmit}
+                                disabled={isSubmitting}
+                            >
+                                {isSubmitting && <i className="fas fa-spinner fa-spin me-2"></i>}
                                 Nộp bài
                             </button>
                             <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
@@ -309,10 +439,10 @@ function Test() {
                             ></button>
                         </div>
                         <div className="modal-body">
-                            Bạn chắc chắn muốn thoát? Tất cả tiến trình làm bài hiện tại sẽ bị mất.
+                            Bạn chắc chắn muốn thoát? Tất cả kết quả làm bài hiện tại sẽ không được lưu lại.
                         </div>
                         <div className="modal-footer border-0">
-                            <button type="button" className="btn btn-danger">
+                            <button type="button" className="btn btn-danger" onClick={handleExit}>
                                 Thoát
                             </button>
                             <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
