@@ -174,3 +174,12 @@
 .modal.no-animate {
     transition: none !important;
 }
+
+.navbar-toggler {
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.navbar-toggler:focus {
+    box-shadow: none !important;
+}

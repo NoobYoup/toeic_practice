@@ -1,7 +1,9 @@
 function Archive() {
     return (
         <>
-            <h1>Archive page</h1>
+            <div className="container min-vh-100">
+                <h1>Archive page</h1>
+            </div>
         </>
     );
 }

@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { Link, NavLink } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
 import './Header.scss';
 import { AnimatePresence } from 'framer-motion';
 
@@ -17,34 +17,65 @@ function Header() {
     const [isLogin, setIsLogin] = useState(false);
     const [email, setEmail] = useState('');
     const [currentModal, setCurrentModal] = useState(null);
-    const [profile, setProfile] = useState(null);
+    const cachedProfile = localStorage.getItem('user_profile');
+    const [profile, setProfile] = useState(cachedProfile ? JSON.parse(cachedProfile) : null);
+    // Refs for navbar collapse and toggler button
+    const navRef = useRef(null);
+    const togglerRef = useRef(null);
 
     const closeModal = () => setCurrentModal(null);
 
     const token = localStorage.getItem('user_token');
 
-    useEffect(() => {
-        const fetchUser = async () => {
-            if (!token) return;
+    // Hàm gọi API lấy thông tin người dùng
+    const fetchUser = async () => {
+        if (!token) return;
 
-            try {
-                const res = await getProfile(token);
-                setProfile(res.data.data);
-                setIsLogin(true);
-            } catch (err) {
-                console.log(err);
-                setIsLogin(false);
-                localStorage.removeItem('user_token');
+        try {
+            const res = await getProfile(token);
+            const newProfile = res.data.data;
+            // Chỉ cập nhật state nếu dữ liệu thực sự thay đổi để tránh flicker
+            if (
+                !profile ||
+                profile.ho_so?.url_hinh_dai_dien !== newProfile.ho_so?.url_hinh_dai_dien ||
+                profile.ho_so?.ho_ten !== newProfile.ho_so?.ho_ten
+            ) {
+                setProfile(newProfile);
+                localStorage.setItem('user_profile', JSON.stringify(newProfile));
+            }
+            setIsLogin(true);
+        } catch (err) {
+            console.log(err);
+            setIsLogin(false);
+            localStorage.removeItem('user_token');
+            localStorage.removeItem('user_profile');
+        }
+    };
+
+    // Lần đầu tải component hoặc khi token thay đổi
+    useEffect(() => {
+        fetchUser();
+    }, [token]);
+
+    // Lắng nghe sự kiện profileUpdated để cập nhật header khi người dùng thay đổi thông tin
+    useEffect(() => {
+        const handleProfileUpdated = () => {
+            const cached = localStorage.getItem('user_profile');
+            if (cached) {
+                const data = JSON.parse(cached);
+                setProfile(data);
             }
         };
 
-        fetchUser();
+        window.addEventListener('profileUpdated', handleProfileUpdated);
+        return () => window.removeEventListener('profileUpdated', handleProfileUpdated);
     }, [token]);
 
     const handleLogout = () => {
         localStorage.removeItem('user_token');
         setIsLogin(false);
         setProfile(null);
+        localStorage.removeItem('user_profile');
         window.location.reload();
     };
 
@@ -60,6 +91,43 @@ function Header() {
         };
     }, [currentModal]);
 
+    // Close navbar collapse when clicking on a nav link (in mobile/tablet view)
+    useEffect(() => {
+        const navElement = navRef.current;
+        if (!navElement) return;
+
+        const handleNavLinkClick = (event) => {
+            const link = event.target.closest('a');
+            // Only act when a link inside the collapse is clicked and the menu is open
+            if (link && navElement.classList.contains('show') && togglerRef.current) {
+                togglerRef.current.click(); // trigger bootstrap collapse toggle
+            }
+        };
+
+        navElement.addEventListener('click', handleNavLinkClick);
+        return () => navElement.removeEventListener('click', handleNavLinkClick);
+    }, []);
+
+    // Close navbar collapse when clicking outside the menu (mobile/tablet view)
+    useEffect(() => {
+        const handleOutsideClick = (event) => {
+            const navElement = navRef.current;
+            if (!navElement || !togglerRef.current) return;
+
+            // If the menu is shown and the click target is outside both the menu and the toggler button
+            if (
+                navElement.classList.contains('show') &&
+                !navElement.contains(event.target) &&
+                !togglerRef.current.contains(event.target)
+            ) {
+                togglerRef.current.click();
+            }
+        };
+
+        document.addEventListener('click', handleOutsideClick);
+        return () => document.removeEventListener('click', handleOutsideClick);
+    }, []);
+
     return (
         <>
             {/* Navbar */}
@@ -73,36 +141,37 @@ function Header() {
                         type="button"
                         data-bs-toggle="collapse"
                         data-bs-target="#navbarNav"
+                        ref={togglerRef}
                     >
                         <span className="navbar-toggler-icon"></span>
                     </button>
-                    <div className="collapse navbar-collapse" id="navbarNav">
+                    <div className="collapse navbar-collapse" id="navbarNav" ref={navRef}>
                         <ul className="navbar-nav ms-auto">
                             <li className="nav-item">
-                                <Link className="nav-link active" to="/">
+                                <NavLink className="nav-link" to="/">
                                     Trang chủ
-                                </Link>
+                                </NavLink>
                             </li>
 
                             <li className="nav-item">
-                                <Link className="nav-link" to="/list-test">
+                                <NavLink className="nav-link" to="/list-test">
                                     Bài thi thử
-                                </Link>
+                                </NavLink>
                             </li>
-                            <li className="nav-item">
-                                <Link className="nav-link" to="/dictionary">
+                            <li className="nav-item d-none ">
+                                <NavLink className="nav-link" to="/dictionary">
                                     Từ vựng
-                                </Link>
+                                </NavLink>
                             </li>
                             <li className="nav-item">
-                                <Link className="nav-link" to="/grammar">
+                                <NavLink className="nav-link" to="/grammar">
                                     Ngữ pháp
-                                </Link>
+                                </NavLink>
                             </li>
                             <li className="nav-item">
-                                <Link className="nav-link" to="/blog">
+                                <NavLink className="nav-link" to="/blog">
                                     Blog
-                                </Link>
+                                </NavLink>
                             </li>
                         </ul>
 

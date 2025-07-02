@@ -1,7 +1,9 @@
 function Setting() {
     return (
         <>
-            <h1>Setting</h1>
+            <div className="container min-vh-100">
+                <h1>Setting</h1>
+            </div>
         </>
     );
 }

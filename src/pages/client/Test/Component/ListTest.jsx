@@ -66,18 +66,7 @@ function ListTest() {
                 <div className="my-3">
                     <div className="card border-0 shadow-sm mb-4">
                         <div className="row g-3 p-3">
-                            <div className="col-3">
-                                <Select
-                                    options={[
-                                        { label: 'Tất cả độ khó', value: '' },
-                                        { label: 'Dễ', value: 'easy' },
-                                        { label: 'Trung bình', value: 'medium' },
-                                        { label: 'Khó', value: 'hard' },
-                                    ]}
-                                    defaultValue={{ label: 'Tất cả độ khó', value: '' }}
-                                />
-                            </div>
-                            <div className="col-3">
+                            <div className="col-6 col-md-3">
                                 <Select
                                     options={[
                                         { label: 'Tất cả năm xuất bản', value: '' },
@@ -151,11 +140,7 @@ function ListTest() {
                                                             </div>
                                                             <div className="col-6 d-flex align-items-center">
                                                                 <i className="far fa-calendar-alt text-muted me-2"></i>
-                                                                <span className="text-muted">
-                                                                    {exam.nam_xuat_ban
-                                                                        ? new Date(exam.nam_xuat_ban).getFullYear()
-                                                                        : '--'}
-                                                                </span>
+                                                                <span className="text-muted">{exam.nam_xuat_ban}</span>
                                                             </div>
                                                         </div>
                                                     </div>

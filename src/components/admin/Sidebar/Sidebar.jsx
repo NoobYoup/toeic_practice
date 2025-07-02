@@ -42,10 +42,16 @@ function Sidebar() {
                             <i className="fas fa-users"></i> Quản lý Người Dùng{' '}
                         </NavLink>
                     </li>
-                    <li className="nav-item d-none">
-                        <NavLink to="/admin/paragraph" className="nav-link">
+                    <li className="nav-item">
+                        <NavLink to="" className="nav-link">
                             {' '}
-                            <i className="fa-solid fa-paragraph"></i> Quản lý Đoạn Văn{' '}
+                            <i className="fa-solid fa-chart-line"></i> Kết quả bài làm{' '}
+                        </NavLink>
+                    </li>
+                    <li className="nav-item">
+                        <NavLink to="" className="nav-link">
+                            {' '}
+                            <i className="fa-solid fa-chart-line"></i> Quản lý bài viết{' '}
                         </NavLink>
                     </li>
                     <li className="nav-item">
@@ -71,13 +77,7 @@ function Sidebar() {
                         data-bs-toggle="dropdown"
                         aria-expanded="false"
                     >
-                        <img
-                            src={DEFAULT_AVATAR}
-                            alt="Admin"
-                            width="32"
-                            height="32"
-                            className="rounded-circle me-2"
-                        />
+                        <img src={DEFAULT_AVATAR} alt="Admin" width="32" height="32" className="rounded-circle me-2" />
                         <strong>Admin</strong>
                     </a>
                     <ul className="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">

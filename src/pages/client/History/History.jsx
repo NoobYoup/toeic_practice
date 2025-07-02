@@ -1,7 +1,9 @@
 function History() {
     return (
         <>
-            <h1>History</h1>
+            <div className="container min-vh-100">
+                <h1>History</h1>
+            </div>
         </>
     );
 }

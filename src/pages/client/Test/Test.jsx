@@ -183,10 +183,11 @@ function Test() {
         try {
             const res = await submitResult(payload);
             console.log(res);
-            // TODO: điều hướng sang trang kết quả, vd: navigate(`/result/${res.data.data.id}`)
+            // xử lý khi nộp bài thi
+            toast.success(res.message);
+            navigate('/list-test');
         } catch (err) {
             console.log(err);
-
             setSubmitError(err.response?.data?.message || 'Có lỗi xảy ra khi nộp bài');
         }
         setIsSubmitting(false);
@@ -194,7 +195,7 @@ function Test() {
     };
 
     const handleExit = () => {
-        // TODO: xử lý khi thoát bài thi
+        // xử lý khi thoát bài thi
         navigate('/list-test');
         window.location.reload();
     };
@@ -286,10 +287,12 @@ function Test() {
                                 <div className="d-grid gap-2 mb-4">
                                     {/* {submitError && <p className="text-danger small mb-0 me-auto">{submitError}</p>} */}
                                     <button
+                                        type="button"
                                         className="btn btn-success"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#submitTestModal"
+                                        onClick={handleSubmit}
+                                        disabled={isSubmitting}
                                     >
+                                        {isSubmitting && <i className="fas fa-spinner fa-spin me-2"></i>}
                                         Nộp bài
                                     </button>
                                     <button
@@ -378,7 +381,7 @@ function Test() {
             </div>
 
             {/* Submit Test Confirmation Modal */}
-            <div
+            {/* <div
                 className="modal fade"
                 id="submitTestModal"
                 tabIndex="-1"
@@ -405,6 +408,7 @@ function Test() {
                             <button
                                 type="button"
                                 className="btn btn-primary"
+                                data-bs-dismiss="modal"
                                 onClick={handleSubmit}
                                 disabled={isSubmitting}
                             >
@@ -417,7 +421,7 @@ function Test() {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> */}
 
             {/* Exit Test Confirmation Modal */}
             <div
@@ -444,7 +448,12 @@ function Test() {
                             Bạn chắc chắn muốn thoát? Tất cả kết quả làm bài hiện tại sẽ không được lưu lại.
                         </div>
                         <div className="modal-footer border-0">
-                            <button type="button" className="btn btn-danger" onClick={handleExit}>
+                            <button
+                                type="button"
+                                className="btn btn-danger"
+                                data-bs-dismiss="modal"
+                                onClick={handleExit}
+                            >
                                 Thoát
                             </button>
                             <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">

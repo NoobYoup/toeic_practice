@@ -24,7 +24,6 @@ function Information() {
     const [previewUrl, setPreviewUrl] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [success, setSuccess] = useState(null);
 
     const token = localStorage.getItem('user_token');
 
@@ -95,7 +94,7 @@ function Information() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
-        setSuccess(null);
+
         setLoading(true);
 
         let res;
@@ -103,7 +102,6 @@ function Information() {
             res = await updateProfile(formData, selectedFile, token);
             console.log('API Response:', res.data);
 
-            setSuccess('Cập nhật hồ sơ thành công!');
             setProfile((prev) => ({
                 ...prev,
                 ten_dang_nhap: formData.ten_dang_nhap,
@@ -114,40 +112,22 @@ function Information() {
                     ngay_sinh: formData.ngay_sinh,
                     so_dien_thoai: formData.so_dien_thoai,
                     gioi_thieu: formData.gioi_thieu,
-                    url_hinh_dai_dien: res.data.data.user?.ho_so?.url_hinh_dai_dien || prev.ho_so?.url_hinh_dai_dien,
+                    hinh_dai_dien: res.data.data.user?.ho_so?.url_hinh_dai_dien || prev.ho_so?.url_hinh_dai_dien,
                 },
             }));
-            setPreviewUrl(res.data.data.user?.ho_so?.url_hinh_dai_dien || '');
+            setPreviewUrl(res.data.data.user?.ho_so?.url_hinh_dai_dien);
             setSelectedFile(null);
             if (fileInputRef.current) {
                 fileInputRef.current.value = '';
             }
-            setTimeout(() => navigate('/my-account'), 2000);
+            window.location.reload();
+            // setTimeout(() => navigate('/my-account'), 2000);
         } catch (err) {
             console.error('Error updating profile:', err);
-            // toast.error(res.data.message);
-            // let errorMessage = 'Không thể cập nhật hồ sơ';
-            // if (err.response) {
-            //     if (err.response.status === 401) {
-            //         errorMessage = 'Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.';
-            //         setTimeout(() => navigate('/admin'), 2000);
-            //     } else if (err.response.data?.message) {
-            //         errorMessage = err.response.data.message;
-            //     }
-            // }
-            // setError(errorMessage);
+            toast.error(err.response.data.message);
         }
         setLoading(false);
     };
-
-    if (loading) {
-        return (
-            <div className="text-center">
-                <i className="fas fa-spinner fa-spin fa-2x"></i>
-                <p>Đang tải...</p>
-            </div>
-        );
-    }
 
     if (error && !profile) {
         return (
@@ -194,18 +174,6 @@ function Information() {
 
             <div className={`${cx('edit-section')} shadow`}>
                 <h4 className="section-title mb-4">Thông tin cơ bản</h4>
-                {success && (
-                    <div className="alert alert-success" role="alert">
-                        <i className="fas fa-check-circle me-2"></i>
-                        {success}
-                    </div>
-                )}
-                {error && (
-                    <div className="alert alert-danger" role="alert">
-                        <i className="fas fa-exclamation-circle me-2"></i>
-                        {error}
-                    </div>
-                )}
                 <form onSubmit={handleSubmit}>
                     <div className="row">
                         <div className="col-md-6 form-group mb-4">
@@ -314,11 +282,11 @@ function Information() {
                         <div className="d-flex justify-content-between align-items-center">
                             <div>
                                 <button type="submit" className="btn btn-primary me-3" disabled={loading}>
-                                    <i className="fas fa-save me-2"></i>
-                                    {loading ? 'Đang lưu...' : 'Lưu thay đổi'}
+                                    {loading && <i className="fas fa-spinner fa-spin me-2"></i>}
+                                    Lưu thay đổi
                                 </button>
                                 <Link to="/my-account" className="btn btn-outline-secondary">
-                                    <i className="fas fa-times me-2"></i>Hủy bỏ
+                                    Hủy bỏ
                                 </Link>
                             </div>
                         </div>

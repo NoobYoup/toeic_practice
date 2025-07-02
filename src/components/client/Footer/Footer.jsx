@@ -103,7 +103,7 @@ function Footer() {
                         <p className="mb-0">
                             Thiết kế bởi{' '}
                             <a href="#" className="text-white">
-                                Your Company
+                                Youp
                             </a>
                         </p>
                     </div>

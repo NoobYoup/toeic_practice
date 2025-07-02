@@ -51,7 +51,7 @@ const editUser = (id, userData, file) => {
         console.log(`FormData: ${key} =`, value);
     }
 
-    return axios.put(`${API}/users/edit/${id}`, formData, {
+    return axios.patch(`${API}/users/edit/${id}`, formData, {
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' },
     });
 };
@@ -68,13 +68,13 @@ const updateProfile = (userData, file, token) => {
         formData.append(key, userData[key]);
     });
     if (file) {
-        formData.append('url_hinh_dai_dien', file);
+        formData.append('hinh_dai_dien', file);
         console.log('File appended:', file.name, file.type, file.size);
     }
     for (let [key, value] of formData.entries()) {
         console.log(`FormData: ${key} =`, value);
     }
-    return axios.put(`${API}/users/update-profile`, formData, {
+    return axios.patch(`${API}/users/update-profile`, formData, {
         headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'multipart/form-data',

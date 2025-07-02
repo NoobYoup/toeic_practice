@@ -20,7 +20,8 @@ import ListTest from './pages/client/Test/Component/ListTest.jsx';
 import DetailTest from './pages/client/Test/Component/DetailTest.jsx';
 import Course from './pages/client/Course/Course.jsx';
 import History from './pages/client/History/History.jsx';
-import SettingUser from './pages/client/History';
+import Archive from './pages/client/Archive/Archive.jsx';
+import SettingUser from './pages/client/Setting/Setting.jsx';
 
 import Login from './pages/admin/Login';
 import AdminLayout from './layouts/AdminLayout.jsx';
@@ -75,6 +76,7 @@ function App() {
                             {/* Làm bài thi yêu cầu đăng nhập */}
                             <Route path="/test/:id" element={<Test />} />
                             <Route path="/history" element={<History />} />
+                            <Route path="/archive" element={<Archive />} />
                             <Route path="/setting" element={<SettingUser />} />
 
                             <Route path="/my-account" element={<Account />} />
