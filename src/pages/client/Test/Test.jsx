@@ -1,6 +1,6 @@
 import styles from './Test.module.scss';
 import classNames from 'classnames/bind';
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getDetailExamPublic } from '@/services/examService';
 import { submitResult } from '@/services/resultService';
@@ -28,7 +28,6 @@ function Test() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState(null);
     const [answers, setAnswers] = useState({});
-    const answersRef = useRef(answers);
 
     /* ------------------------------------------------------------ */
     /* FETCH EXAM                                                   */
@@ -184,7 +183,7 @@ function Test() {
     };
 
     const buildAnswerPayload = () => {
-        return Object.entries(answersRef.current).map(([idStr, letter]) => ({
+        return Object.entries(answers).map(([idStr, letter]) => ({
             id_cau_hoi: Number(idStr),
             ky_tu_lua_chon: letter,
         }));
@@ -226,52 +225,6 @@ function Test() {
         setIsSubmitting(false);
         toast.error(submitError);
     };
-
-    const handleExit = () => {
-        // xử lý khi thoát bài thi
-        navigate('/list-test');
-        window.location.reload();
-    };
-
-    useEffect(() => {
-        // Warn user if they try to refresh or navigate back after selecting answers
-        const handleBeforeUnload = (e) => {
-            const ansList = Object.entries(answersRef.current);
-            if (ansList.length > 0) {
-                e.preventDefault();
-                // Chrome requires returnValue to be set
-                e.returnValue = '';
-            }
-        };
-
-        const handlePopState = () => {
-            const ansList = Object.entries(answersRef.current);
-            if (ansList.length > 0) {
-                const confirmLeave = window.confirm(
-                    'Bạn đã chọn đáp án nhưng chưa nộp bài. Bạn có chắc chắn muốn rời khỏi trang?',
-                );
-                if (!confirmLeave) {
-                    // Push the current state back so the user stays on the page
-                    window.history.pushState(null, null, window.location.href);
-                }
-            }
-        };
-
-        // Push an extra history entry so we can detect the first back action
-        window.history.pushState(null, null, window.location.href);
-        window.addEventListener('beforeunload', handleBeforeUnload);
-        window.addEventListener('popstate', handlePopState);
-
-        return () => {
-            window.removeEventListener('beforeunload', handleBeforeUnload);
-            window.removeEventListener('popstate', handlePopState);
-        };
-    }, []);
-
-    // keep ref in sync
-    useEffect(() => {
-        answersRef.current = answers;
-    }, [answers]);
 
     if (loading) {
         return (
@@ -323,7 +276,6 @@ function Test() {
                                 </div>
 
                                 <div className="d-grid gap-2 mb-4">
-                                    {/* {submitError && <p className="text-danger small mb-0 me-auto">{submitError}</p>} */}
                                     <button
                                         type="button"
                                         className="btn btn-success"
@@ -333,13 +285,6 @@ function Test() {
                                         {isSubmitting && <i className="fas fa-spinner fa-spin me-2"></i>}
                                         Nộp bài
                                     </button>
-                                    {/* <button
-                                        className="btn btn-outline-danger"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#exitTestModal"
-                                    >
-                                        <i className="fas fa-times-circle me-2"></i>Thoát bài thi
-                                    </button> */}
                                 </div>
 
                                 <div className={`${cx('question-nav')}`}>
@@ -419,90 +364,6 @@ function Test() {
                     </div>
                 </div>
             </div>
-
-            {/* Submit Test Confirmation Modal */}
-            {/* <div
-                className="modal fade"
-                id="submitTestModal"
-                tabIndex="-1"
-                aria-labelledby="submitTestModalLabel"
-                aria-hidden="true"
-            >
-                <div className="modal-dialog modal-dialog-top">
-                    <div className="modal-content">
-                        <div className="modal-header border-0">
-                            <h5 className="modal-title" id="submitTestModalLabel">
-                                Xác nhận nộp bài
-                            </h5>
-                            <button
-                                type="button"
-                                className="btn-close"
-                                data-bs-dismiss="modal"
-                                aria-label="Close"
-                            ></button>
-                        </div>
-                        <div className="modal-body">
-                            Bạn chắc chắn muốn nộp bài? Sau khi nộp bạn sẽ không thể thay đổi câu trả lời.
-                        </div>
-                        <div className="modal-footer border-0">
-                            <button
-                                type="button"
-                                className="btn btn-primary"
-                                data-bs-dismiss="modal"
-                                onClick={handleSubmit}
-                                disabled={isSubmitting}
-                            >
-                                {isSubmitting && <i className="fas fa-spinner fa-spin me-2"></i>}
-                                Nộp bài
-                            </button>
-                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
-                                Hủy
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div> */}
-
-            {/* Exit Test Confirmation Modal */}
-            {/* <div
-                className="modal fade"
-                id="exitTestModal"
-                tabIndex="-1"
-                aria-labelledby="exitTestModalLabel"
-                aria-hidden="true"
-            >
-                <div className="modal-dialog modal-dialog-top">
-                    <div className="modal-content">
-                        <div className="modal-header border-0">
-                            <h5 className="modal-title" id="exitTestModalLabel">
-                                Xác nhận thoát bài thi
-                            </h5>
-                            <button
-                                type="button"
-                                className="btn-close"
-                                data-bs-dismiss="modal"
-                                aria-label="Close"
-                            ></button>
-                        </div>
-                        <div className="modal-body">
-                            Bạn chắc chắn muốn thoát? Tất cả kết quả làm bài hiện tại sẽ không được lưu lại.
-                        </div>
-                        <div className="modal-footer border-0">
-                            <button
-                                type="button"
-                                className="btn btn-danger"
-                                data-bs-dismiss="modal"
-                                onClick={handleExit}
-                            >
-                                Thoát
-                            </button>
-                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
-                                Hủy
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div> */}
         </>
     );
 }
