@@ -43,13 +43,13 @@ function Sidebar() {
                         </NavLink>
                     </li>
                     <li className="nav-item">
-                        <NavLink to="" className="nav-link">
+                        <NavLink to="/admin/result" className="nav-link">
                             {' '}
                             <i className="fa-solid fa-chart-line"></i> Kết quả bài làm{' '}
                         </NavLink>
                     </li>
                     <li className="nav-item">
-                        <NavLink to="" className="nav-link">
+                        <NavLink to="/admin/blog" className="nav-link">
                             {' '}
                             <i className="fa-solid fa-chart-line"></i> Quản lý bài viết{' '}
                         </NavLink>

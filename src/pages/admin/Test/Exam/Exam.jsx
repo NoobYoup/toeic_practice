@@ -29,7 +29,7 @@ function Exam() {
         setLoading(true);
         try {
             const res = await getAllExam(currentPage, filters);
-
+            console.log(res.data.data);
             setExams(res.data.data);
             setPagination((prev) => ({
                 ...prev,
@@ -54,7 +54,7 @@ function Exam() {
                 { value: '', label: 'Tất cả năm xuất bản' },
                 ...res.data.dsNamXuatBan.map(({ nam_xuat_ban }) => ({
                     value: nam_xuat_ban,
-                    label: format(new Date(nam_xuat_ban), 'yyyy', { locale: vi }),
+                    label: nam_xuat_ban,
                 })),
             ]);
         } catch (error) {
@@ -158,9 +158,11 @@ function Exam() {
                                         <th>ID</th>
                                         <th>Tên bài thi</th>
                                         <th>Mô tả</th>
-                                        <th>Điểm tối đa</th>
+                                        <th>Mức độ điểm</th>
+                                        <th>Số câu hỏi</th>
                                         <th>Năm xuất bản</th>
                                         <th>Bài thi đầu vào</th>
+                                        <th>Loại bài thi</th>
                                         <th>Trạng thái</th>
                                         <th>Người tạo</th>
                                         <th>Thời gian tạo</th>
@@ -181,12 +183,11 @@ function Exam() {
                                                 <td>{exam.id_bai_thi}</td>
                                                 <td>{exam.ten_bai_thi}</td>
                                                 <td>{exam.mo_ta}</td>
-                                                <td>{exam.diem_toi_da}</td>
-
+                                                <td>{exam.muc_do_diem}</td>
+                                                <td>{exam.so_luong_cau_hoi}</td>
                                                 <td>{exam.nam_xuat_ban}</td>
-
                                                 <td>{exam.la_bai_thi_dau_vao ? 'Có' : 'Không'}</td>
-
+                                                <td>{exam.loai_bai_thi === 'tu_do' ? 'Tự do' : 'Chuẩn'}</td>
                                                 <td>{exam.trang_thai === 'da_xuat_ban' ? 'Đã xuất bản' : 'Nháp'}</td>
                                                 <td>
                                                     {currentUser
