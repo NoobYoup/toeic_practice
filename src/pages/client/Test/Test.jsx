@@ -1,6 +1,6 @@
 import styles from './Test.module.scss';
 import classNames from 'classnames/bind';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getDetailExamPublic } from '@/services/examService';
 import { submitResult } from '@/services/resultService';
@@ -110,6 +110,31 @@ function Test() {
     const readingParts = partInfos.filter((p) => p.part >= 5);
     const listeningTotal = listeningParts.reduce((sum, p) => sum + p.count, 0);
     const readingTotal = readingParts.reduce((sum, p) => sum + p.count, 0);
+
+    /* ------------------------------------------------------------ */
+    /* MAP GLOBAL QUESTION NUMBER -> QUESTION ID                    */
+    /* ------------------------------------------------------------ */
+
+    const numberToQuestionId = useMemo(() => {
+        if (!exam || !Array.isArray(exam.cau_hoi_cua_bai_thi)) return {};
+        const byPart = {};
+        exam.cau_hoi_cua_bai_thi.forEach((item) => {
+            const part = item.cau_hoi.id_phan;
+            if (!byPart[part]) byPart[part] = [];
+            byPart[part].push(item.cau_hoi);
+        });
+        const map = {};
+        let num = 1;
+        for (let part = 1; part <= 7; part += 1) {
+            if (byPart[part]) {
+                byPart[part].forEach((q) => {
+                    map[num] = q.id_cau_hoi;
+                    num += 1;
+                });
+            }
+        }
+        return map;
+    }, [exam]);
 
     const handleJumpToQuestion = (part, number) => {
         if (currentPart !== part) {
@@ -308,13 +333,13 @@ function Test() {
                                         {isSubmitting && <i className="fas fa-spinner fa-spin me-2"></i>}
                                         Nộp bài
                                     </button>
-                                    <button
+                                    {/* <button
                                         className="btn btn-outline-danger"
                                         data-bs-toggle="modal"
                                         data-bs-target="#exitTestModal"
                                     >
                                         <i className="fas fa-times-circle me-2"></i>Thoát bài thi
-                                    </button>
+                                    </button> */}
                                 </div>
 
                                 <div className={`${cx('question-nav')}`}>
@@ -330,22 +355,23 @@ function Test() {
                                                         </strong>
                                                     </div>
                                                     <div className="mb-2">
-                                                        {Array.from({ length: p.count }).map((_, idx) => (
-                                                            <button
-                                                                type="button"
-                                                                key={p.start + idx}
-                                                                className={cx(
-                                                                    'question-number',
-                                                                    'border-0',
-                                                                    'bg-transparent',
-                                                                )}
-                                                                onClick={() =>
-                                                                    handleJumpToQuestion(p.part, p.start + idx)
-                                                                }
-                                                            >
-                                                                {p.start + idx}
-                                                            </button>
-                                                        ))}
+                                                        {Array.from({ length: p.count }).map((_, idx) => {
+                                                            const number = p.start + idx;
+                                                            const qId = numberToQuestionId[number];
+                                                            const answered = !!answers[qId];
+                                                            return (
+                                                                <button
+                                                                    type="button"
+                                                                    key={number}
+                                                                    className={cx('question-number', 'border-0', {
+                                                                        answered: answered,
+                                                                    })}
+                                                                    onClick={() => handleJumpToQuestion(p.part, number)}
+                                                                >
+                                                                    {number}
+                                                                </button>
+                                                            );
+                                                        })}
                                                     </div>
                                                 </div>
                                             ))}
@@ -365,22 +391,23 @@ function Test() {
                                                         </strong>
                                                     </div>
                                                     <div className="mb-2">
-                                                        {Array.from({ length: p.count }).map((_, idx) => (
-                                                            <button
-                                                                type="button"
-                                                                key={p.start + idx}
-                                                                className={cx(
-                                                                    'question-number',
-                                                                    'border-0',
-                                                                    'bg-transparent',
-                                                                )}
-                                                                onClick={() =>
-                                                                    handleJumpToQuestion(p.part, p.start + idx)
-                                                                }
-                                                            >
-                                                                {p.start + idx}
-                                                            </button>
-                                                        ))}
+                                                        {Array.from({ length: p.count }).map((_, idx) => {
+                                                            const number = p.start + idx;
+                                                            const qId = numberToQuestionId[number];
+                                                            const answered = !!answers[qId];
+                                                            return (
+                                                                <button
+                                                                    type="button"
+                                                                    key={number}
+                                                                    className={cx('question-number', 'border-0', {
+                                                                        answered: answered,
+                                                                    })}
+                                                                    onClick={() => handleJumpToQuestion(p.part, number)}
+                                                                >
+                                                                    {number}
+                                                                </button>
+                                                            );
+                                                        })}
                                                     </div>
                                                 </div>
                                             ))}
@@ -437,7 +464,7 @@ function Test() {
             </div> */}
 
             {/* Exit Test Confirmation Modal */}
-            <div
+            {/* <div
                 className="modal fade"
                 id="exitTestModal"
                 tabIndex="-1"
@@ -475,7 +502,7 @@ function Test() {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> */}
         </>
     );
 }
