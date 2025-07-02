@@ -1,6 +1,6 @@
 import styles from './Test.module.scss';
 import classNames from 'classnames/bind';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getDetailExamPublic } from '@/services/examService';
 import { submitResult } from '@/services/resultService';
@@ -27,6 +27,8 @@ function Test() {
     const [remainingSeconds, setRemainingSeconds] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState(null);
+    const [answers, setAnswers] = useState({});
+    const answersRef = useRef(answers);
 
     /* ------------------------------------------------------------ */
     /* FETCH EXAM                                                   */
@@ -126,8 +128,16 @@ function Test() {
         }
     }, [currentPart, scrollTarget]);
 
+    /* ------------------------------------------------------------ */
+    /* HANDLE ANSWER SELECTION                                     */
+    /* ------------------------------------------------------------ */
+
+    const handleAnswerSelect = (questionId, choiceLetter) => {
+        setAnswers((prev) => ({ ...prev, [questionId]: choiceLetter }));
+    };
+
     const renderCurrentPart = () => {
-        const props = { exam };
+        const props = { exam, selectedAnswers: answers, onSelectAnswer: handleAnswerSelect };
         switch (currentPart) {
             case 1:
                 return <Part1Test {...props} />;
@@ -149,12 +159,10 @@ function Test() {
     };
 
     const buildAnswerPayload = () => {
-        const checked = document.querySelectorAll('input[type="radio"]:checked');
-        const answers = Array.from(checked).map((el) => {
-            const idStr = el.name.split('_')[1];
-            return { id_cau_hoi: Number(idStr), ky_tu_lua_chon: el.value };
-        });
-        return answers;
+        return Object.entries(answersRef.current).map(([idStr, letter]) => ({
+            id_cau_hoi: Number(idStr),
+            ky_tu_lua_chon: letter,
+        }));
     };
 
     const handleSubmit = async () => {
@@ -175,7 +183,7 @@ function Test() {
             answers: buildAnswerPayload(),
         };
 
-        console.log(payload);
+        console.log('kết quả nộp bài thi', payload);
 
         setIsSubmitting(true);
         setSubmitError(null);
@@ -184,7 +192,7 @@ function Test() {
             const res = await submitResult(payload);
             console.log(res);
             // xử lý khi nộp bài thi
-            toast.success(res.message);
+            toast.success(res.data.message);
             navigate('/list-test');
         } catch (err) {
             console.log(err);
@@ -203,8 +211,8 @@ function Test() {
     useEffect(() => {
         // Warn user if they try to refresh or navigate back after selecting answers
         const handleBeforeUnload = (e) => {
-            const answers = buildAnswerPayload();
-            if (answers.length > 0) {
+            const ansList = Object.entries(answersRef.current);
+            if (ansList.length > 0) {
                 e.preventDefault();
                 // Chrome requires returnValue to be set
                 e.returnValue = '';
@@ -212,8 +220,8 @@ function Test() {
         };
 
         const handlePopState = () => {
-            const answers = buildAnswerPayload();
-            if (answers.length > 0) {
+            const ansList = Object.entries(answersRef.current);
+            if (ansList.length > 0) {
                 const confirmLeave = window.confirm(
                     'Bạn đã chọn đáp án nhưng chưa nộp bài. Bạn có chắc chắn muốn rời khỏi trang?',
                 );
@@ -234,6 +242,11 @@ function Test() {
             window.removeEventListener('popstate', handlePopState);
         };
     }, []);
+
+    // keep ref in sync
+    useEffect(() => {
+        answersRef.current = answers;
+    }, [answers]);
 
     if (loading) {
         return (

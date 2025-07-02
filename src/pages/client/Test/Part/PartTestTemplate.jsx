@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 
-function PartTestTemplate({ partId, exam }) {
+function PartTestTemplate({ partId, exam, selectedAnswers = {}, onSelectAnswer = () => {} }) {
     if (!exam) {
         return (
             <div className="text-center">
@@ -77,6 +77,8 @@ function PartTestTemplate({ partId, exam }) {
                                                 name={`question_${q.id_cau_hoi}`}
                                                 value={choice.ky_tu_lua_chon}
                                                 className="form-check-input me-2"
+                                                checked={selectedAnswers[q.id_cau_hoi] === choice.ky_tu_lua_chon}
+                                                onChange={() => onSelectAnswer(q.id_cau_hoi, choice.ky_tu_lua_chon)}
                                             />
                                             <span
                                                 dangerouslySetInnerHTML={{
@@ -101,6 +103,8 @@ function PartTestTemplate({ partId, exam }) {
 PartTestTemplate.propTypes = {
     partId: PropTypes.number.isRequired,
     exam: PropTypes.object,
+    selectedAnswers: PropTypes.object,
+    onSelectAnswer: PropTypes.func,
 };
 
 export default PartTestTemplate;

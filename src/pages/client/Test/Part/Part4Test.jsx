@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import PropTypes from 'prop-types';
 
-function Part4Test({ exam }) {
+function Part4Test({ exam, selectedAnswers = {}, onSelectAnswer = () => {} }) {
     // Lấy danh sách câu hỏi thuộc Part 4
     const partQuestions = useMemo(() => {
         if (!exam) return [];
@@ -87,6 +87,13 @@ function Part4Test({ exam }) {
                                                         className="form-check-input me-2"
                                                         name={`question_${question.id_cau_hoi}`}
                                                         value={choice.ky_tu_lua_chon}
+                                                        checked={
+                                                            selectedAnswers[question.id_cau_hoi] ===
+                                                            choice.ky_tu_lua_chon
+                                                        }
+                                                        onChange={() =>
+                                                            onSelectAnswer(question.id_cau_hoi, choice.ky_tu_lua_chon)
+                                                        }
                                                     />
                                                     <span
                                                         dangerouslySetInnerHTML={{
@@ -109,6 +116,8 @@ function Part4Test({ exam }) {
 
 Part4Test.propTypes = {
     exam: PropTypes.object,
+    selectedAnswers: PropTypes.object,
+    onSelectAnswer: PropTypes.func,
 };
 
 export default Part4Test;
