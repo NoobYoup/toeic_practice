@@ -18,6 +18,7 @@ import Grammar from './pages/client/Grammar';
 import Test from './pages/client/Test';
 import ListTest from './pages/client/Test/Component/ListTest.jsx';
 import DetailTest from './pages/client/Test/Component/DetailTest.jsx';
+import ResultTest from './pages/client/Test/Component/ResultTest.jsx';
 import Course from './pages/client/Course/Course.jsx';
 import History from './pages/client/History/History.jsx';
 import Archive from './pages/client/Archive/Archive.jsx';
@@ -77,6 +78,7 @@ function App() {
                         <Route element={<MainLayout />}>
                             {/* Làm bài thi yêu cầu đăng nhập */}
                             <Route path="/test/:id" element={<Test />} />
+                            <Route path="/result-test/:id" element={<ResultTest />} />
                             <Route path="/history" element={<History />} />
                             <Route path="/archive" element={<Archive />} />
                             <Route path="/setting" element={<SettingUser />} />

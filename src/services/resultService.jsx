@@ -12,4 +12,14 @@ const submitResult = (data) => {
     });
 };
 
-export { submitResult };
+const getDetailResult = (id) => {
+    const token = localStorage.getItem('user_token');
+
+    return axios.get(`${API}/results/detail/${id}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+export { submitResult, getDetailResult };

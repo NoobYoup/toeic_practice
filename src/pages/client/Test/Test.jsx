@@ -217,7 +217,8 @@ function Test() {
             console.log(res);
             // xử lý khi nộp bài thi
             toast.success(res.data.message);
-            navigate('/list-test');
+            console.log('id_ket_qua', res.data.data.id_bai_lam_nguoi_dung);
+            navigate(`/result-test/${res.data.data.id_bai_lam_nguoi_dung}`, { state: { result: res.data.data } });
         } catch (err) {
             console.log(err);
             setSubmitError(err.response?.data?.message || 'Có lỗi xảy ra khi nộp bài');
