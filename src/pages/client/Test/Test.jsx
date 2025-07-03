@@ -26,7 +26,6 @@ function Test() {
     const [scrollTarget, setScrollTarget] = useState(null);
     const [remainingSeconds, setRemainingSeconds] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [submitError, setSubmitError] = useState(null);
     const [answers, setAnswers] = useState({});
 
     /* ------------------------------------------------------------ */
@@ -183,10 +182,15 @@ function Test() {
     };
 
     const buildAnswerPayload = () => {
-        return Object.entries(answers).map(([idStr, letter]) => ({
-            id_cau_hoi: Number(idStr),
-            ky_tu_lua_chon: letter,
-        }));
+        // Build payload for ALL questions, even those without a selected answer
+        if (!exam || !Array.isArray(exam.cau_hoi_cua_bai_thi)) return [];
+        return exam.cau_hoi_cua_bai_thi.map((item) => {
+            const qId = item.cau_hoi.id_cau_hoi;
+            return {
+                id_cau_hoi: qId,
+                ky_tu_lua_chon: answers[qId] || '', // empty string if user did not choose
+            };
+        });
     };
 
     const handleSubmit = async () => {
@@ -194,7 +198,7 @@ function Test() {
 
         const token = localStorage.getItem('user_token');
         if (!token) {
-            setSubmitError('Bạn cần đăng nhập lại.');
+            toast.error('Bạn cần đăng nhập lại.');
             return;
         }
 
@@ -210,7 +214,6 @@ function Test() {
         console.log('kết quả nộp bài thi', payload);
 
         setIsSubmitting(true);
-        setSubmitError(null);
 
         try {
             const res = await submitResult(payload);
@@ -221,10 +224,10 @@ function Test() {
             navigate(`/result-test/${res.data.data.id_bai_lam_nguoi_dung}`, { state: { result: res.data.data } });
         } catch (err) {
             console.log(err);
-            setSubmitError(err.response?.data?.message || 'Có lỗi xảy ra khi nộp bài');
+            const msg = err.response?.data?.message || 'Có lỗi xảy ra khi nộp bài';
+            toast.error(msg);
         }
         setIsSubmitting(false);
-        toast.error(submitError);
     };
 
     if (loading) {

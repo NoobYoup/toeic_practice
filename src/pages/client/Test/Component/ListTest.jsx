@@ -10,6 +10,7 @@ function ListTest() {
     const [exams, setExams] = useState([]);
     const [loading, setLoading] = useState(true);
     const [page] = useState(1);
+    const [publicationYears, setPublicationYears] = useState([]);
     // const [totalPages] = useState(1); // chưa sử dụng tới
 
     // Hiện tại chưa cần bộ lọc nên bỏ qua
@@ -19,8 +20,16 @@ function ListTest() {
             setLoading(true);
             try {
                 const response = await getAllExamPublic(page);
-                console.log(response.data.data);
+                console.log('API Response:', response.data);
                 setExams(response.data.data);
+                
+                // Extract unique years from dsNamXuatBan if available
+                if (response.data.dsNamXuatBan && Array.isArray(response.data.dsNamXuatBan)) {
+                    const years = response.data.dsNamXuatBan
+                        .map(item => item.nam_xuat_ban)
+                        .sort((a, b) => b - a); // Sort in descending order (newest first)
+                    setPublicationYears(years);
+                }
             } catch (error) {
                 console.log(error);
             }
@@ -70,11 +79,16 @@ function ListTest() {
                                 <Select
                                     options={[
                                         { label: 'Tất cả năm xuất bản', value: '' },
-                                        { label: '2024', value: '2024' },
-                                        { label: '2023', value: '2023' },
-                                        { label: '2022', value: '2022' },
+                                        ...publicationYears.map(year => ({
+                                            label: year.toString(),
+                                            value: year.toString()
+                                        }))
                                     ]}
                                     defaultValue={{ label: 'Tất cả năm xuất bản', value: '' }}
+                                    placeholder="Chọn năm xuất bản"
+                                    isSearchable={false}
+                                    className="basic-single"
+                                    classNamePrefix="select"
                                 />
                             </div>
                         </div>

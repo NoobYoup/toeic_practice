@@ -111,7 +111,6 @@
     border-color: var(--danger-color);
     background-color: rgba(239, 68, 68, 0.1);
     color: var(--danger-color);
-    text-decoration: line-through;
 }
 
 .section-title {
@@ -137,7 +136,7 @@
 }
 
 .results-header {
-    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
     color: white;
     padding: 2rem 0;
     margin-bottom: 2rem;
@@ -211,5 +210,62 @@
 @keyframes progress {
     to {
         stroke-dashoffset: calc(283 - (283 * var(--progress)) / 100);
+    }
+}
+
+// Bọc toàn bộ sidebar (timer + question-nav + nút nộp bài)
+.sidebar-container {
+    /* cao tối đa còn lại của viewport */
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
+
+    /* Giữ cố định khi cuộn trang */
+    position: sticky;
+    top: 5rem; // bằng khoảng cách padding/margin bạn muốn
+    padding-right: 4px; // chừa chỗ cho scrollbar tuỳ chỉnh
+}
+
+/* ----- CUSTOM SCROLLBAR (WebKit) ----- */
+.sidebar-container::-webkit-scrollbar {
+    width: 6px;
+}
+.sidebar-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+.sidebar-container::-webkit-scrollbar-thumb {
+    background: #ced4da;
+    border-radius: 4px;
+}
+.sidebar-container:hover::-webkit-scrollbar-thumb {
+    background: #adb5bd;
+}
+
+/* ----- LAYOUT CÁC SỐ CÂU HỎI ----- */
+.question-nav {
+    /* đã có border-radius & bg; thêm padding/gap rõ ràng */
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.question-nav .question-number {
+    flex: 0 0 auto;
+    /* kích thước đã ổn (2.5rem) */
+}
+
+/* ----- RESPONSIVE ----- */
+@media (max-width: 767.98px) {
+    .sidebar-container {
+        position: static; // bỏ sticky trên mobile
+        max-height: none;
+        overflow-y: visible;
+        margin-bottom: 1rem;
+    }
+
+    .question-nav .question-number {
+        width: 2rem;
+        height: 2rem;
+        font-size: 0.875rem;
     }
 }

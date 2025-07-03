@@ -5,12 +5,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { getAllQuestionExam, addQuestionToExam } from '@/services/examService';
 import { toast } from 'react-toastify';
 
-
-
-
 /**
  * Modal chọn câu hỏi (sử dụng trong tạo đề thi)
- * 
+ *
  * Props:
  *  - isOpen: boolean   : điều khiển bật / tắt modal
  *  - onClose: () => void : hàm đóng modal
@@ -95,9 +92,7 @@ function ChooseQuestion({ isOpen, onClose, onSelect, examId, initialSelectedIds 
 
     const handleCheckbox = (question) => {
         const id = question.id_cau_hoi;
-        setSelectedIds((prev) =>
-            prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],
-        );
+        setSelectedIds((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
         setSelectedData((prev) => {
             if (prev.find((q) => q.id_cau_hoi === id)) {
                 return prev.filter((q) => q.id_cau_hoi !== id);
@@ -177,7 +172,10 @@ function ChooseQuestion({ isOpen, onClose, onSelect, examId, initialSelectedIds 
                                         name="id_phan"
                                         options={optionsPhan}
                                         onChange={handleSelectChange}
-                                        value={optionsPhan.find((opt) => opt.value === (filters.id_phan ?? '')) || optionsPhan[0]}
+                                        value={
+                                            optionsPhan.find((opt) => opt.value === (filters.id_phan ?? '')) ||
+                                            optionsPhan[0]
+                                        }
                                     />
                                 </div>
                                 <div className="col-md-3">
@@ -185,7 +183,10 @@ function ChooseQuestion({ isOpen, onClose, onSelect, examId, initialSelectedIds 
                                         name="muc_do_kho"
                                         options={optionsMucDo}
                                         onChange={handleSelectChange}
-                                        value={optionsMucDo.find((opt) => opt.value === (filters.muc_do_kho ?? '')) || optionsMucDo[0]}
+                                        value={
+                                            optionsMucDo.find((opt) => opt.value === (filters.muc_do_kho ?? '')) ||
+                                            optionsMucDo[0]
+                                        }
                                     />
                                 </div>
                                 <div className="col-md-3">
@@ -193,7 +194,10 @@ function ChooseQuestion({ isOpen, onClose, onSelect, examId, initialSelectedIds 
                                         name="trang_thai"
                                         options={optionsTrangThai}
                                         onChange={handleSelectChange}
-                                        value={optionsTrangThai.find((opt) => opt.value === (filters.trang_thai ?? '')) || optionsTrangThai[0]}
+                                        value={
+                                            optionsTrangThai.find((opt) => opt.value === (filters.trang_thai ?? '')) ||
+                                            optionsTrangThai[0]
+                                        }
                                     />
                                 </div>
                                 <div className="col-md-3">
@@ -215,27 +219,42 @@ function ChooseQuestion({ isOpen, onClose, onSelect, examId, initialSelectedIds 
                                                     <input
                                                         type="checkbox"
                                                         checked={
-                                                            questions.length > 0 && questions.every((q) => selectedIds.includes(q.id_cau_hoi))
+                                                            questions.length > 0 &&
+                                                            questions.every((q) => selectedIds.includes(q.id_cau_hoi))
                                                         }
                                                         onChange={(e) => {
                                                             const currentPageIds = questions.map((q) => q.id_cau_hoi);
                                                             if (e.target.checked) {
-                                                                const currentPageObjects = questions.filter((q) => currentPageIds.includes(q.id_cau_hoi));
+                                                                const currentPageObjects = questions.filter((q) =>
+                                                                    currentPageIds.includes(q.id_cau_hoi),
+                                                                );
                                                                 setSelectedData((prev) => {
                                                                     const merged = [...prev];
                                                                     currentPageObjects.forEach((q) => {
-                                                                        if (!merged.find((i) => i.id_cau_hoi === q.id_cau_hoi)) {
+                                                                        if (
+                                                                            !merged.find(
+                                                                                (i) => i.id_cau_hoi === q.id_cau_hoi,
+                                                                            )
+                                                                        ) {
                                                                             merged.push(q);
                                                                         }
                                                                     });
                                                                     return merged;
                                                                 });
                                                                 // Merge current page ids to selectedIds (no duplicates)
-                                                                setSelectedIds((prev) => Array.from(new Set([...prev, ...currentPageIds])));
+                                                                setSelectedIds((prev) =>
+                                                                    Array.from(new Set([...prev, ...currentPageIds])),
+                                                                );
                                                             } else {
                                                                 // Remove only current page ids from selectedIds
-                                                                setSelectedIds((prev) => prev.filter((id) => !currentPageIds.includes(id)));
-                                                                setSelectedData((prev) => prev.filter((q) => !currentPageIds.includes(q.id_cau_hoi)));
+                                                                setSelectedIds((prev) =>
+                                                                    prev.filter((id) => !currentPageIds.includes(id)),
+                                                                );
+                                                                setSelectedData((prev) =>
+                                                                    prev.filter(
+                                                                        (q) => !currentPageIds.includes(q.id_cau_hoi),
+                                                                    ),
+                                                                );
                                                             }
                                                         }}
                                                     />
@@ -243,6 +262,7 @@ function ChooseQuestion({ isOpen, onClose, onSelect, examId, initialSelectedIds 
                                                 <th>ID</th>
                                                 <th>Loại</th>
                                                 <th>Phần</th>
+                                                <th>ID Đoạn văn</th>
                                                 <th>ID Âm thanh</th>
                                                 <th>ID Hình ảnh</th>
                                                 <th>Nội dung câu hỏi</th>
@@ -263,9 +283,12 @@ function ChooseQuestion({ isOpen, onClose, onSelect, examId, initialSelectedIds 
                                                         </td>
                                                         <td>{question.id_cau_hoi}</td>
                                                         <td>
-                                                            {question.phan.loai_phan === 'listening' ? 'Listening' : 'Reading'}
+                                                            {question.phan.loai_phan === 'listening'
+                                                                ? 'Listening'
+                                                                : 'Reading'}
                                                         </td>
                                                         <td>{question.phan.ten_phan}</td>
+                                                        <td>{question.id_doan_van || 'Không có'}</td>
                                                         <td>
                                                             {question.id_phuong_tien_am_thanh
                                                                 ? question.id_phuong_tien_am_thanh
@@ -278,7 +301,9 @@ function ChooseQuestion({ isOpen, onClose, onSelect, examId, initialSelectedIds 
                                                         </td>
                                                         <td style={{ maxWidth: '250px' }}>
                                                             <div className="text-truncate" style={{ maxWidth: '100%' }}>
-                                                                {question.noi_dung ? question.noi_dung : 'Không có nội dung'}
+                                                                {question.noi_dung
+                                                                    ? question.noi_dung
+                                                                    : 'Không có nội dung'}
                                                             </div>
                                                         </td>
                                                         <td>
@@ -289,7 +314,9 @@ function ChooseQuestion({ isOpen, onClose, onSelect, examId, initialSelectedIds 
                                                                 : 'Khó'}
                                                         </td>
                                                         <td>
-                                                            {question.trang_thai === 'da_xuat_ban' ? 'Đã xuất bản' : 'Lưu trữ'}
+                                                            {question.trang_thai === 'da_xuat_ban'
+                                                                ? 'Đã xuất bản'
+                                                                : 'Lưu trữ'}
                                                         </td>
                                                     </tr>
                                                 ))
@@ -330,8 +357,18 @@ function ChooseQuestion({ isOpen, onClose, onSelect, examId, initialSelectedIds 
                             <button className="btn btn-secondary" onClick={onClose}>
                                 Hủy
                             </button>
-                            <button className="btn btn-primary" onClick={handleConfirm} disabled={selectedIds.length === 0 || adding}>
-                                {adding ? (<><i className="fas fa-spinner fa-spin me-2"></i>Đang thêm...</>) : `Thêm (${selectedIds.length})`}
+                            <button
+                                className="btn btn-primary"
+                                onClick={handleConfirm}
+                                disabled={selectedIds.length === 0 || adding}
+                            >
+                                {adding ? (
+                                    <>
+                                        <i className="fas fa-spinner fa-spin me-2"></i>Đang thêm...
+                                    </>
+                                ) : (
+                                    `Thêm (${selectedIds.length})`
+                                )}
                             </button>
                         </div>
                     </motion.div>
