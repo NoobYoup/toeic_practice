@@ -196,8 +196,8 @@ function PracticeSection() {
                                       ))}
                                 <Link
                                     to={`/list-test`}
-                                    className="btn btn-outline-primary mt-3"
-                                    style={{ margin: '0 auto', width: '15%' }}
+                                    className="btn btn-outline-primary mt-3 w-lg-25 w-50"
+                                    style={{ margin: '0 auto' }}
                                 >
                                     Xem thêm
                                 </Link>

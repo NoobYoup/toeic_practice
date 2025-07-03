@@ -3,7 +3,9 @@ import styles from './DetailTest.module.scss';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { getDetailExamPublic } from '@/services/examService';
-import Login from '@/components/client/Modal/Login.jsx';
+import Login from '@/components/client/Modal/Login';
+import Register from '@/components/client/Modal/Register';
+import ForgotPassword from '@/components/client/Modal/ForgotPassword';
 
 const cx = classNames.bind(styles);
 
@@ -261,9 +263,24 @@ function DetailTest() {
             <Login
                 key="login"
                 isOpen={currentModal === 'login'}
-                onSwitch={setCurrentModal}
+                onSwitch={(modal) => setCurrentModal(modal)}
                 onClose={() => setCurrentModal(null)}
                 setIsLogin={setIsLogin}
+            />
+
+            <Register
+                key="register"
+                isOpen={currentModal === 'register'}
+                onSwitch={(modal) => setCurrentModal(modal)}
+                onClose={() => setCurrentModal(null)}
+                setIsLogin={setIsLogin}
+            />
+
+            <ForgotPassword
+                key="forgot"
+                isOpen={currentModal === 'forgot'}
+                onSwitch={(modal) => setCurrentModal(modal)}
+                onClose={() => setCurrentModal(null)}
             />
         </>
     );
