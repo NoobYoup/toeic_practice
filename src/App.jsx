@@ -29,6 +29,7 @@ import AdminLayout from './layouts/AdminLayout.jsx';
 
 import Setting from './pages/admin/Setting';
 import Result from './pages/admin/Result/Result.jsx';
+import DetailResult from './pages/admin/Result/Component/DetailResult.jsx';
 import BlogAdmin from './pages/admin/Blog/Blog.jsx';
 import User from './pages/admin/User';
 import EditUser from './pages/admin/User/Component/EditUser.jsx';
@@ -135,6 +136,7 @@ function App() {
                             <Route path="/admin/user/detail-user/:id" element={<DetailUser />} />
 
                             <Route path="/admin/result" element={<Result />} />
+                            <Route path="/admin/result/detail-result/:id" element={<DetailResult />} />
                             <Route path="/admin/blog" element={<BlogAdmin />} />
                         </Route>
                     </Route>

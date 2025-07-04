@@ -23,13 +23,20 @@ const submitResult = (data) => {
 };
 
 const getDetailResult = (id) => {
-    const token = localStorage.getItem('user_token');
+    const token = localStorage.getItem('user_token') || localStorage.getItem('admin_token');
 
-    return axios.get(`${API}/results/detail/${id}`, {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
+    if (!token) {
+        return Promise.reject(new Error('Không tìm thấy token đăng nhập'));
+    }
+
+    return axios
+        .get(`${API}/results/detail/${id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        })
+        .catch((error) => {
+            console.error('Lỗi khi lấy chi tiết kết quả:', error);
+            throw error; // Giữ nguyên lỗi để xử lý tiếp ở component
+        });
 };
 
 const getAllResultExam = () => {

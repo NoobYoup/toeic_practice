@@ -25,7 +25,7 @@ function Result() {
         } catch (err) {
             console.error(err);
             setError(err);
-            toast.error(err.response?.data?.message || 'Không thể tải dữ liệu');
+            // toast.error(err.response?.data?.message || 'Không thể tải dữ liệu');
         }
         setLoading(false);
     };
@@ -86,15 +86,27 @@ function Result() {
                                                 <td>{item.nguoi_dung_lam_bai?.ho_so?.ho_ten}</td>
                                                 <td>{item.nguoi_dung_lam_bai?.email}</td>
                                                 <td>{item.id_bai_thi}</td>
-                                                <td>{item.thoi_gian_bat_dau ? format(new Date(item.thoi_gian_bat_dau), 'dd/MM/yyyy HH:mm', { locale: vi }) : ''}</td>
-                                                <td>{item.thoi_gian_ket_thuc ? format(new Date(item.thoi_gian_ket_thuc), 'dd/MM/yyyy HH:mm', { locale: vi }) : ''}</td>
+                                                <td>
+                                                    {item.thoi_gian_bat_dau
+                                                        ? format(new Date(item.thoi_gian_bat_dau), 'dd/MM/yyyy HH:mm', {
+                                                              locale: vi,
+                                                          })
+                                                        : ''}
+                                                </td>
+                                                <td>
+                                                    {item.thoi_gian_ket_thuc
+                                                        ? format(
+                                                              new Date(item.thoi_gian_ket_thuc),
+                                                              'dd/MM/yyyy HH:mm',
+                                                              { locale: vi },
+                                                          )
+                                                        : ''}
+                                                </td>
                                                 <td>{item.diem_nghe}</td>
                                                 <td>{item.diem_doc}</td>
                                                 <td>{item.tong_diem}</td>
                                                 <td>{item.da_hoan_thanh ? 'Hoàn thành' : 'Chưa hoàn thành'}</td>
-                                                
-                                                
-                                                
+
                                                 <td>
                                                     <div className="btn-group">
                                                         <Link
@@ -104,7 +116,6 @@ function Result() {
                                                         >
                                                             <i className="fas fa-eye"></i>
                                                         </Link>
-                                                        
                                                     </div>
                                                 </td>
                                             </tr>
