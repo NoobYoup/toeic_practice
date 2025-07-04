@@ -20,6 +20,7 @@ function Result() {
         setLoading(true);
         try {
             const res = await getAllResultExam();
+            console.log(res);
             setResults(res.data?.data || []);
             setPagination((prev) => ({ ...prev, total: res.data?.data?.length || 0 }));
         } catch (err) {

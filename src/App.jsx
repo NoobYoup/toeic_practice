@@ -35,7 +35,13 @@ import User from './pages/admin/User';
 import EditUser from './pages/admin/User/Component/EditUser.jsx';
 import DetailUser from './pages/admin/User/Component/DetailUser.jsx';
 import Dashboard from './pages/admin/Dashboard/Dashboard.jsx';
-import Permission from './pages/admin/Permission/Permission.jsx';
+import TabPermission from './pages/admin/TabPermission/TabPermission.jsx';
+import Role from './pages/admin/TabPermission/Role/Role.jsx';
+import CreateRole from './pages/admin/TabPermission/Role/Component/CreateRole.jsx';
+import DetailRole from './pages/admin/TabPermission/Role/Component/DetailRole.jsx';
+import EditRole from './pages/admin/TabPermission/Role/Component/EditRole.jsx';
+import RolePermission from './pages/admin/TabPermission/RolePermission/RolePermission.jsx';
+import Permission from './pages/admin/TabPermission/Permission/Permission.jsx';
 import TestAdmin from './pages/admin/Test/Test.jsx';
 import Exam from './pages/admin/Test/Exam/Exam.jsx';
 import CreateExam from './pages/admin/Test/Exam/Component/CreateExam.jsx';
@@ -101,7 +107,16 @@ function App() {
                         <Route element={<AdminLayout />}>
                             <Route path="/admin/dashboard" element={<Dashboard />} />
                             <Route path="/admin/setting" element={<Setting />} />
-                            <Route path="/admin/permission" element={<Permission />} />
+                            <Route path="/admin/permission" element={<TabPermission />}>
+                                <Route path="role" element={<Role />} />
+                                <Route path="role/create-role" element={<CreateRole />} />
+                                <Route path="role/edit-role/:id" element={<EditRole />} />
+                                <Route path="role/detail-role/:id" element={<DetailRole />} />
+                                <Route path="role-permission" element={<RolePermission />} />
+                                <Route path="modified" element={<Permission />} />
+
+                                <Route index element={<Navigate to="role" replace />} />
+                            </Route>
 
                             <Route path="/admin/test" element={<TestAdmin />}>
                                 <Route path="exam" element={<Exam />} />

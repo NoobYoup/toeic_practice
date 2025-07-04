@@ -1,4 +1,3 @@
-import './Permission.module.scss';
 import styles from './Permission.module.scss';
 import classNames from 'classnames/bind';
 
