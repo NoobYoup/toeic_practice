@@ -3,7 +3,7 @@ import classNames from 'classnames/bind';
 import { useState, useEffect, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getDetailExamPublic } from '@/services/examService';
-import { submitResult } from '@/services/resultService';
+import { submitExamToResult } from '@/services/resultService';
 import { jwtDecode } from 'jwt-decode';
 import Part1Test from './Part/Part1Test.jsx';
 import Part2Test from './Part/Part2Test.jsx';
@@ -13,6 +13,7 @@ import Part5Test from './Part/Part5Test.jsx';
 import Part6Test from './Part/Part6Test.jsx';
 import Part7Test from './Part/Part7Test.jsx';
 import { toast } from 'react-toastify';
+import { chamDiemToeic } from '@/utils/toeicScoring';
 
 const cx = classNames.bind(styles);
 
@@ -40,6 +41,7 @@ function Test() {
             setLoading(true);
             try {
                 const res = await getDetailExamPublic(examId);
+                console.log(res);
                 setExam(res.data.data);
             } catch (err) {
                 // eslint-disable-next-line no-console
@@ -194,7 +196,7 @@ function Test() {
     };
 
     const handleSubmit = async () => {
-        if (!exam) return;
+        if (!exam || !Array.isArray(exam.cau_hoi_cua_bai_thi)) return;
 
         const token = localStorage.getItem('user_token');
         if (!token) {
@@ -205,28 +207,44 @@ function Test() {
         const decoded = jwtDecode(token);
         const userId = decoded.id_nguoi_dung;
 
+        // === B1: Chuẩn bị danh sách câu hỏi đầy đủ ===
+        const allQuestions = exam.cau_hoi_cua_bai_thi.map((item) => ({
+            id_cau_hoi: item.cau_hoi.id_cau_hoi,
+            dap_an_dung: item.cau_hoi.dap_an_dung,
+            phan: { loai_phan: item.cau_hoi.phan?.loai_phan || 'reading' },
+        }));
+
+        // === B2: Chuẩn bị câu trả lời người dùng ===
+        const userAnswers = allQuestions.map((q) => ({
+            id_cau_hoi: q.id_cau_hoi,
+            lua_chon_da_chon: answers[q.id_cau_hoi] || '',
+        }));
+
+        // === B3: Chấm điểm bằng hàm chamDiemToeic ===
+        const result = chamDiemToeic(allQuestions, userAnswers); // { diemNghe, diemDoc, tongDiem, chiTietCauTraLoi }
+
         const payload = {
             id_nguoi_dung: userId,
             id_bai_thi: exam.id_bai_thi,
-            answers: buildAnswerPayload(),
+            diem_nghe: result.diemNghe,
+            diem_doc: result.diemDoc,
+            tong_diem: result.tongDiem,
+            chi_tiet_cau_tra_loi: result.chiTietCauTraLoi, // [{id_cau_hoi, lua_chon_da_chon, la_dung, da_tra_loi}]
         };
-
-        console.log('kết quả nộp bài thi', payload);
 
         setIsSubmitting(true);
 
         try {
-            const res = await submitResult(payload);
-            console.log(res);
-            // xử lý khi nộp bài thi
-            toast.success(res.data.message);
-            console.log('id_ket_qua', res.data.data.id_bai_lam_nguoi_dung);
+            const res = await submitExamToResult(payload); // POST tới /api/results/submit-from-fe
+            toast.success('Nộp bài thành công! Kết quả của bạn đã được lưu.');
+
             navigate(`/result-test/${res.data.data.id_bai_lam_nguoi_dung}`, { state: { result: res.data.data } });
         } catch (err) {
-            console.log(err);
+            console.error(err);
             const msg = err.response?.data?.message || 'Có lỗi xảy ra khi nộp bài';
             toast.error(msg);
         }
+
         setIsSubmitting(false);
     };
 

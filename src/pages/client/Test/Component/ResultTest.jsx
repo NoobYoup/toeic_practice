@@ -220,7 +220,7 @@ function ResultTest() {
                                                             >
                                                                 <strong>{choice.ky_tu_lua_chon}.</strong>{' '}
                                                                 {choice.noi_dung}
-                                                                {isUserChoice && (
+                                                                {/* {isUserChoice && (
                                                                     <span className="badge bg-danger ms-2">
                                                                         Bạn chọn
                                                                     </span>
@@ -229,7 +229,7 @@ function ResultTest() {
                                                                     <span className="badge bg-success ms-2">
                                                                         Đáp án đúng
                                                                     </span>
-                                                                )}
+                                                                )} */}
                                                             </div>
                                                         );
                                                     })}
@@ -305,7 +305,7 @@ function ResultTest() {
                                                                         >
                                                                             <strong>{choice.ky_tu_lua_chon}.</strong>{' '}
                                                                             {choice.noi_dung}
-                                                                            {isUserChoice && (
+                                                                            {/* {isUserChoice && (
                                                                                 <span className="badge bg-danger ms-2">
                                                                                     Bạn chọn
                                                                                 </span>
@@ -314,7 +314,7 @@ function ResultTest() {
                                                                                 <span className="badge bg-success ms-2">
                                                                                     Đáp án đúng
                                                                                 </span>
-                                                                            )}
+                                                                            )} */}
                                                                         </div>
                                                                     );
                                                                 })}
@@ -488,7 +488,7 @@ function ResultTest() {
                                                                                         {choice.ky_tu_lua_chon}.
                                                                                     </strong>{' '}
                                                                                     {choice.noi_dung}
-                                                                                    {isUserChoice && (
+                                                                                    {/* {isUserChoice && (
                                                                                         <span className="badge bg-danger ms-2">
                                                                                             Bạn chọn
                                                                                         </span>
@@ -497,7 +497,7 @@ function ResultTest() {
                                                                                         <span className="badge bg-success ms-2">
                                                                                             Đáp án đúng
                                                                                         </span>
-                                                                                    )}
+                                                                                    )} */}
                                                                                 </div>
                                                                             );
                                                                         })}

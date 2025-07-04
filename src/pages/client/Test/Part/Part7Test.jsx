@@ -172,7 +172,7 @@ function Part7Test({ exam, selectedAnswers = {}, onSelectAnswer = () => {} }) {
                                                             />
                                                             <span
                                                                 dangerouslySetInnerHTML={{
-                                                                    __html: `${choice.ky_tu_lua_chon}) ${choice.noi_dung}`,
+                                                                    __html: `${choice.ky_tu_lua_chon}. ${choice.noi_dung}`,
                                                                 }}
                                                             ></span>
                                                         </label>

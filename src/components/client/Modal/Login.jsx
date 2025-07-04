@@ -203,7 +203,7 @@ function Login({ setIsLogin, onSwitch, onClose, isOpen }) {
                             <div className="text-center mt-3">
                                 Bạn chưa có tài khoản?
                                 <a href="#" className="text-primary" onClick={() => onSwitch('register')}>
-                                    Đăng Ký
+                                    <span className="ms-1">Đăng Ký</span>
                                 </a>
                             </div>
                         </div>
