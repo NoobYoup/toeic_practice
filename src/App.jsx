@@ -41,6 +41,8 @@ import CreateRole from './pages/admin/TabPermission/Role/Component/CreateRole.js
 import DetailRole from './pages/admin/TabPermission/Role/Component/DetailRole.jsx';
 import EditRole from './pages/admin/TabPermission/Role/Component/EditRole.jsx';
 import RolePermission from './pages/admin/TabPermission/RolePermission/RolePermission.jsx';
+import CreateRolePermission from './pages/admin/TabPermission/RolePermission/Component/CreateRolePermission.jsx';
+import EditRolePermission from './pages/admin/TabPermission/RolePermission/Component/EditRolePermission.jsx';
 import Permission from './pages/admin/TabPermission/Permission/Permission.jsx';
 import TestAdmin from './pages/admin/Test/Test.jsx';
 import Exam from './pages/admin/Test/Exam/Exam.jsx';
@@ -112,7 +114,17 @@ function App() {
                                 <Route path="role/create-role" element={<CreateRole />} />
                                 <Route path="role/edit-role/:id" element={<EditRole />} />
                                 <Route path="role/detail-role/:id" element={<DetailRole />} />
+
                                 <Route path="role-permission" element={<RolePermission />} />
+                                <Route
+                                    path="role-permission/create-role-permission"
+                                    element={<CreateRolePermission />}
+                                />
+                                <Route
+                                    path="role-permission/edit-role-permission/:id"
+                                    element={<EditRolePermission />}
+                                />
+
                                 <Route path="modified" element={<Permission />} />
 
                                 <Route index element={<Navigate to="role" replace />} />
