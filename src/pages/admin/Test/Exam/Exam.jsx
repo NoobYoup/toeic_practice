@@ -173,7 +173,7 @@ function Exam() {
                                 <tbody>
                                     {exams.length === 0 ? (
                                         <tr>
-                                            <td colSpan={11} className="text-center text-muted">
+                                            <td colSpan={13} className="text-center text-muted">
                                                 Không có dữ liệu
                                             </td>
                                         </tr>

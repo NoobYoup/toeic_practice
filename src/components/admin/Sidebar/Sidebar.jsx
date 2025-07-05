@@ -82,16 +82,6 @@ function Sidebar() {
                     </a>
                     <ul className="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
                         <li>
-                            <a className="dropdown-item" href="#">
-                                Hồ sơ
-                            </a>
-                        </li>
-                        <li>
-                            <a className="dropdown-item" href="#">
-                                Cài đặt
-                            </a>
-                        </li>
-                        <li>
                             <hr className="dropdown-divider" />
                         </li>
                         <li>

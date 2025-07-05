@@ -1,0 +1,15 @@
+.back-to-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    opacity: 0;
+    border-radius: 50%;
+    visibility: hidden;
+    transition: opacity 0.3s;
+    z-index: 1030; /* cao hơn header/sidebar */
+}
+
+.back-to-top.show {
+    opacity: 1;
+    visibility: visible;
+}

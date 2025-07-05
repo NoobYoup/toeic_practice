@@ -9,7 +9,6 @@ import { vi } from 'date-fns/locale';
 function Role() {
     const [roles, setRoles] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
@@ -21,8 +20,6 @@ function Role() {
             setRoles(res.data?.data || res.data); // tuỳ cấu trúc API
         } catch (error) {
             console.error(error);
-            setError(error);
-            toast.error('Không thể tải danh sách vai trò');
         }
         setLoading(false);
     };
@@ -63,8 +60,6 @@ function Role() {
                 <div className="text-center py-5">
                     <i className="fa-solid fa-spinner fa-spin fa-2x"></i>
                 </div>
-            ) : error ? (
-                <p className="text-danger">Đã xảy ra lỗi khi tải dữ liệu</p>
             ) : (
                 <div className="table-responsive">
                     <table className="table table-hover align-middle">
@@ -79,58 +74,66 @@ function Role() {
                             </tr>
                         </thead>
                         <tbody>
-                            {displayedRoles.map((role) => (
-                                <tr key={role.id_vai_tro}>
-                                    <td>{role.id_vai_tro}</td>
-                                    <td>
-                                        {role.ten_vai_tro === 'quan_tri_vien'
-                                            ? 'Quản trị viên'
-                                            : role.ten_vai_tro === 'nguoi_dung'
-                                            ? 'Người dùng'
-                                            : role.ten_vai_tro === 'giang_vien'
-                                            ? 'Giảng viên'
-                                            : role.ten_vai_tro}
-                                    </td>
-                                    <td>{role.mo_ta}</td>
-                                    <td>
-                                        {role.thoi_gian_tao
-                                            ? format(new Date(role.thoi_gian_tao), 'dd/MM/yyyy HH:mm:ss', {
-                                                  locale: vi,
-                                              })
-                                            : ''}
-                                    </td>
-                                    <td>
-                                        {role.thoi_gian_cap_nhat
-                                            ? format(new Date(role.thoi_gian_cap_nhat), 'dd/MM/yyyy HH:mm:ss', {
-                                                  locale: vi,
-                                              })
-                                            : ''}
-                                    </td>
-                                    <td className="text-center">
-                                        <div className="btn-group">
-                                            <Link
-                                                to={`detail-role/${role.id_vai_tro}`}
-                                                className="btn btn-sm btn-outline-primary"
-                                            >
-                                                <i className="fas fa-eye"></i>
-                                            </Link>
-                                            <Link
-                                                to={`edit-role/${role.id_vai_tro}`}
-                                                className="btn btn-sm btn-outline-primary"
-                                            >
-                                                <i className="fas fa-edit"></i>
-                                            </Link>
-                                            <button
-                                                onClick={() => handleDeleteRole(role.id_vai_tro)}
-                                                type="button"
-                                                className="btn btn-sm btn-outline-danger"
-                                            >
-                                                <i className="fas fa-trash-alt"></i>
-                                            </button>
-                                        </div>
+                            {roles.length > 0 ? (
+                                displayedRoles.map((role) => (
+                                    <tr key={role.id_vai_tro}>
+                                        <td>{role.id_vai_tro}</td>
+                                        <td>
+                                            {role.ten_vai_tro === 'quan_tri_vien'
+                                                ? 'Quản trị viên'
+                                                : role.ten_vai_tro === 'nguoi_dung'
+                                                ? 'Người dùng'
+                                                : role.ten_vai_tro === 'giang_vien'
+                                                ? 'Giảng viên'
+                                                : role.ten_vai_tro}
+                                        </td>
+                                        <td>{role.mo_ta}</td>
+                                        <td>
+                                            {role.thoi_gian_tao
+                                                ? format(new Date(role.thoi_gian_tao), 'dd/MM/yyyy HH:mm:ss', {
+                                                      locale: vi,
+                                                  })
+                                                : ''}
+                                        </td>
+                                        <td>
+                                            {role.thoi_gian_cap_nhat
+                                                ? format(new Date(role.thoi_gian_cap_nhat), 'dd/MM/yyyy HH:mm:ss', {
+                                                      locale: vi,
+                                                  })
+                                                : ''}
+                                        </td>
+                                        <td className="text-center">
+                                            <div className="btn-group">
+                                                <Link
+                                                    to={`detail-role/${role.id_vai_tro}`}
+                                                    className="btn btn-sm btn-outline-primary"
+                                                >
+                                                    <i className="fas fa-eye"></i>
+                                                </Link>
+                                                <Link
+                                                    to={`edit-role/${role.id_vai_tro}`}
+                                                    className="btn btn-sm btn-outline-primary"
+                                                >
+                                                    <i className="fas fa-edit"></i>
+                                                </Link>
+                                                <button
+                                                    onClick={() => handleDeleteRole(role.id_vai_tro)}
+                                                    type="button"
+                                                    className="btn btn-sm btn-outline-danger"
+                                                >
+                                                    <i className="fas fa-trash-alt"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan={13} className="text-center text-muted">
+                                        Không có dữ liệu
                                     </td>
                                 </tr>
-                            ))}
+                            )}
                         </tbody>
                     </table>
 

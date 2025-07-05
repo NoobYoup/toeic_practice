@@ -210,8 +210,8 @@ function User() {
                                         ))
                                     ) : (
                                         <tr>
-                                            <td colSpan="7" className="text-center">
-                                                Không có người dùng nào.
+                                            <td colSpan={7} className="text-center text-muted">
+                                                Không có dữ liệu
                                             </td>
                                         </tr>
                                     )}

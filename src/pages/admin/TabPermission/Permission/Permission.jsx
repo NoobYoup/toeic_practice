@@ -21,8 +21,6 @@ function RolePermission() {
             setPermissions(res.data?.data || res.data); // tuỳ cấu trúc API
         } catch (error) {
             console.error(error);
-
-            toast.error(error.response?.data?.message);
         }
         setLoading(false);
     };
@@ -76,7 +74,7 @@ function RolePermission() {
                         <tbody>
                             {displayedPermissions.length === 0 ? (
                                 <tr>
-                                    <td colSpan={4} className="text-center">
+                                    <td colSpan={4} className="text-center text-muted">
                                         Không có dữ liệu
                                     </td>
                                 </tr>

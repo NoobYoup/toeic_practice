@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 
 import Header from '@/components/client/Header';
 import Footer from '@/components/client/Footer';
+import BackToTop from '@/components/Button/BackToTop';
 
 function MainLayout() {
     const location = useLocation();
@@ -25,6 +26,7 @@ function MainLayout() {
             </main>
 
             <Footer />
+            <BackToTop />
         </>
     );
 }
