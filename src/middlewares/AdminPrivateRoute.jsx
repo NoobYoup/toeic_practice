@@ -10,8 +10,10 @@ function AdminPrivateRoute() {
         return <Navigate to="/admin" replace state={{ toastMsg }} />;
     }
     try {
-        const { vai_tro } = jwtDecode(token);
+        const { vai_tro, exp } = jwtDecode(token);
+        // Kiểm tra vai trò và hạn token
         if (vai_tro !== 'quan_tri_vien') throw new Error('not admin');
+        if (exp * 1000 < Date.now()) throw new Error('token expired');
         return <Outlet />;
     } catch {
         localStorage.removeItem('admin_token');

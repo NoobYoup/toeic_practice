@@ -206,26 +206,13 @@ function Header() {
                                             <i className="fas fa-user"></i> Thông tin cá nhân
                                         </Link>
                                     </li>
-                                    <li>
-                                        <Link className="dropdown-item" to="/course">
-                                            <i className="fas fa-book"></i> Khóa học của tôi
-                                        </Link>
-                                    </li>
+
                                     <li>
                                         <Link className="dropdown-item" to="/history">
                                             <i className="fas fa-history"></i> Lịch sử bài thi
                                         </Link>
                                     </li>
-                                    <li>
-                                        <Link className="dropdown-item" to="/archive">
-                                            <i className="fas fa-star"></i> Bài thi đã lưu
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link className="dropdown-item" to="/setting">
-                                            <i className="fas fa-cog"></i> Cài đặt
-                                        </Link>
-                                    </li>
+
                                     <li>
                                         <hr className="dropdown-divider" />
                                     </li>
