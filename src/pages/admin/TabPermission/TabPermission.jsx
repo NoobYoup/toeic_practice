@@ -10,12 +10,12 @@ function TabPermission() {
                     </NavLink>
                 </li>
                 <li className="nav-item">
-                    <NavLink to="role-permission" className="nav-link">
+                    <NavLink to="permission" className="nav-link">
                         <i className="fas fa-question-circle me-2"></i>Quản lý quyền
                     </NavLink>
                 </li>
                 <li className="nav-item">
-                    <NavLink to="modified" className="nav-link">
+                    <NavLink to="role-permission" className="nav-link">
                         <i className="far fa-list-alt me-2"></i>Phân quyền
                     </NavLink>
                 </li>

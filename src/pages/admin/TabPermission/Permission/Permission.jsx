@@ -1,499 +1,154 @@
-import styles from './Permission.module.scss';
-import classNames from 'classnames/bind';
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import ReactPaginate from 'react-paginate';
+import { format } from 'date-fns';
+import { vi } from 'date-fns/locale';
+import { getAllPermission, deletePermission } from '@/services/permissionService';
 
-const cx = classNames.bind(styles);
+function RolePermission() {
+    const [permissions, setPermissions] = useState([]);
+    const [loading, setLoading] = useState(false);
 
-function Permission() {
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
+
+    const fetchAllPermission = async () => {
+        setLoading(true);
+        try {
+            const res = await getAllPermission();
+            console.log(res);
+            setPermissions(res.data?.data || res.data); // tuỳ cấu trúc API
+        } catch (error) {
+            console.error(error);
+
+            toast.error(error.response?.data?.message);
+        }
+        setLoading(false);
+    };
+
+    useEffect(() => {
+        fetchAllPermission();
+    }, []);
+
+    // Pagination helpers
+    const pageCount = Math.ceil(permissions.length / itemsPerPage);
+    const displayedPermissions = permissions.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+    const handlePageClick = (selectedItem) => {
+        setCurrentPage(selectedItem.selected + 1);
+    };
+
+    const handleDeletePermission = async (permissionId) => {
+        try {
+            const res = await deletePermission(permissionId);
+            toast.success(res.data.message);
+            await fetchAllPermission();
+        } catch (err) {
+            console.error(err);
+            toast.error(err.response?.data?.message);
+        }
+    };
+
     return (
-        <div className="col-12">
-            <h1>Phân quyền</h1>
-            <div className={`${cx('card')} card shadow bg-white`}>
-                <div className="row" style={{ padding: '0 12px' }}>
-                    <div className="card-header d-flex mb-3">
-                        <div className="col-md-3"></div>
-                        <div className="col-md-3 text-center">
-                            <h4>Quản trị viên</h4>
-                        </div>
-
-                        <div className="col-md-3 text-center">
-                            <h4>Giảng viên</h4>
-                        </div>
-                        <div className="col-md-3 text-center">
-                            <h4>Người dùng</h4>
-                        </div>
-                    </div>
-                </div>
-                <div className="card-body">
-                    <div className={`${cx('permission-group')}`}>
-                        <div className={cx('permission-item')}>
-                            <div className="row">
-                                <div className="col-md-3">
-                                    <div>
-                                        <strong>Xem danh sách</strong>
-                                        <br />
-                                        <small className="text-muted">Xem danh sách người dùng</small>
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch ">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch ">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className={cx('permission-item')}>
-                            <div className="row">
-                                <div className="col-md-3">
-                                    <div>
-                                        <strong>Tạo người dùng</strong>
-                                        <br />
-                                        <small className="text-muted">Thêm người dùng mới</small>
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch ">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch ">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className={cx('permission-item')}>
-                            <div className="row">
-                                <div className="col-md-3">
-                                    <div>
-                                        <strong>Chỉnh sửa</strong>
-                                        <br />
-                                        <small className="text-muted">Sửa thông tin người dùng</small>
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch ">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch ">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className={cx('permission-item')}>
-                            <div className="row">
-                                <div className="col-md-3">
-                                    <div>
-                                        <strong>Xóa người dùng</strong>
-                                        <br />
-                                        <small className="text-muted">Xóa người dùng khỏi hệ thống</small>
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch ">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch ">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className={`${cx('permission-group')}`}>
-                        <div className={cx('permission-item')}>
-                            <div className="row">
-                                <div className="col-md-3">
-                                    <div>
-                                        <strong>Xem đề thi</strong>
-                                        <br />
-                                        <small className="text-muted">Xem danh sách đề thi</small>
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch ">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch ">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className={cx('permission-item')}>
-                            <div className="row">
-                                <div className="col-md-3">
-                                    <div>
-                                        <strong>Tạo đề thi</strong>
-                                        <br />
-                                        <small className="text-muted">Thêm đề thi mới</small>
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch ">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch ">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className={cx('permission-item')}>
-                            <div className="row">
-                                <div className="col-md-3">
-                                    <div>
-                                        <strong>Chỉnh sửa</strong>
-                                        <br />
-                                        <small className="text-muted">Sửa nội dung đề thi</small>
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch ">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch ">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className={cx('permission-item')}>
-                            <div className="row">
-                                <div className="col-md-3">
-                                    <div>
-                                        <strong>Xóa đề thi</strong>
-                                        <br />
-                                        <small className="text-muted">Xóa đề thi khỏi hệ thống</small>
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch ">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch ">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className={`${cx('permission-group')}`}>
-                        <div className={cx('permission-item')}>
-                            <div className="row">
-                                <div className="col-md-3">
-                                    <div>
-                                        <strong>Cài đặt hệ thống</strong>
-                                        <br />
-                                        <small className="text-muted">Thay đổi cấu hình hệ thống</small>
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch ">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch ">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className={cx('permission-item')}>
-                            <div className="row">
-                                <div className="col-md-3">
-                                    <div>
-                                        <strong>Xem báo cáo</strong>
-                                        <br />
-                                        <small className="text-muted">Truy cập các báo cáo hệ thống</small>
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch ">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch ">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className={cx('permission-item')}>
-                            <div className="row">
-                                <div className="col-md-3">
-                                    <div>
-                                        <strong>Quản lý phân quyền</strong>
-                                        <br />
-                                        <small className="text-muted">Thay đổi quyền hạn người dùng</small>
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch ">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch ">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className={cx('permission-item')}>
-                            <div className="row">
-                                <div className="col-md-3">
-                                    <div>
-                                        <strong>Backup & Restore</strong>
-                                        <br />
-                                        <small className="text-muted">Sao lưu và khôi phục dữ liệu</small>
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch ">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                    <div className="form-check form-switch ">
-                                        <input
-                                            className="form-check-input permission-switch"
-                                            type="checkbox"
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="text-end mt-4">
-                        <button className="btn btn-success">Lưu thay đổi</button>
-                    </div>
-                </div>
+        <div className="container-fluid">
+            <div className="d-flex justify-content-between align-items-center mb-4">
+                <h2>Quản lý vai trò</h2>
+                {/* Placeholder for add role */}
+                <Link to="create-permission" className="btn btn-primary">
+                    <i className="fas fa-plus-circle me-2"></i>Thêm quyền
+                </Link>
             </div>
+            {loading ? (
+                <div className="text-center py-5">
+                    <i className="fa-solid fa-spinner fa-spin fa-2x"></i>
+                </div>
+            ) : (
+                <div className="table-responsive">
+                    <table className="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tên quyền</th>
+                                <th>Mã quyền</th>
+                                <th className="text-center">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {displayedPermissions.length === 0 ? (
+                                <tr>
+                                    <td colSpan={4} className="text-center">
+                                        Không có dữ liệu
+                                    </td>
+                                </tr>
+                            ) : (
+                                displayedPermissions.map((permission) => (
+                                    <tr key={permission.id_quyen}>
+                                        <td>{permission.id_quyen}</td>
+                                        <td>
+                                            {permission.ten_quyen === 'quan_tri_vien'
+                                                ? 'Quản trị viên'
+                                                : permission.ten_quyen === 'nguoi_dung'
+                                                ? 'Người dùng'
+                                                : permission.ten_quyen === 'giang_vien'
+                                                ? 'Giảng viên'
+                                                : permission.ten_quyen}
+                                        </td>
+                                        <td>{permission.ma_quyen}</td>
+                                        <td className="text-center">
+                                            <div className="btn-group">
+                                                <Link
+                                                    to={`detail-permission/${permission.id_quyen}`}
+                                                    className="btn btn-sm btn-outline-primary"
+                                                >
+                                                    <i className="fas fa-eye"></i>
+                                                </Link>
+                                                <Link
+                                                    to={`edit-permission/${permission.id_quyen}`}
+                                                    className="btn btn-sm btn-outline-primary"
+                                                >
+                                                    <i className="fas fa-edit"></i>
+                                                </Link>
+                                                <button
+                                                    onClick={() => handleDeletePermission(permission.id_quyen)}
+                                                    type="button"
+                                                    className="btn btn-sm btn-outline-danger"
+                                                >
+                                                    <i className="fas fa-trash-alt"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+
+                    {pageCount > 1 && (
+                        <ReactPaginate
+                            previousLabel={'«'}
+                            nextLabel={'»'}
+                            breakLabel={'...'}
+                            forcePage={currentPage - 1}
+                            onPageChange={handlePageClick}
+                            pageCount={pageCount}
+                            marginPagesDisplayed={2}
+                            pageRangeDisplayed={3}
+                            containerClassName={'pagination justify-content-center'}
+                            pageClassName={'page-item'}
+                            pageLinkClassName={'page-link'}
+                            previousClassName={'page-item'}
+                            previousLinkClassName={'page-link'}
+                            nextClassName={'page-item'}
+                            nextLinkClassName={'page-link'}
+                            breakClassName={'page-item'}
+                            breakLinkClassName={'page-link'}
+                            activeClassName={'active'}
+                        />
+                    )}
+                </div>
+            )}
         </div>
     );
 }
 
-export default Permission;
+export default RolePermission;

@@ -7,52 +7,61 @@ function DetailRole() {
     const [role, setRole] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        const fetchRole = async () => {
-            setLoading(true);
-            try {
-                const res = await detailRole(id);
-                console.log(res);
+    const fetchRole = async () => {
+        setLoading(true);
+        try {
+            const res = await detailRole(id);
+            console.log(res);
 
-                setRole(res.data.data);
-            } catch (err) {
-                console.error(err);
-            }
-            setLoading(false);
-        };
+            setRole(res.data.data);
+        } catch (err) {
+            console.error(err);
+        }
+        setLoading(false);
+    };
+
+    useEffect(() => {
         fetchRole();
     }, [id]);
     return (
-        <div>
-            <h5 className="fw-bold mb-3">Thông tin vai trò</h5>
+        <>
+            {loading ? (
+                <div className="text-center py-4">
+                    <i className="fas fa-spinner fa-spin fa-2x"></i>
+                </div>
+            ) : (
+                <>
+                    <h5 className="fw-bold mb-3">Thông tin vai trò</h5>
 
-            <div className="row g-3">
-                <div className="col-md-3">
-                    <strong>ID: </strong> {role.id_vai_tro}
-                </div>
-                <div className="col-md-3">
-                    <strong>Tên vai trò:</strong> {''}
-                    <span className="badge bg-primary">
-                        {role.ten_vai_tro === 'quan_tri_vien'
-                            ? 'Quản trị viên'
-                            : role.ten_vai_tro === 'nguoi_dung'
-                            ? 'Người dùng'
-                            : 'Giảng viên'}
-                    </span>
-                </div>
+                    <div className="row g-3">
+                        <div className="col-md-3">
+                            <strong>ID: </strong> {role?.id_vai_tro}
+                        </div>
+                        <div className="col-md-3">
+                            <strong>Tên vai trò:</strong> {''}
+                            <span className="badge bg-primary">
+                                {role?.ten_vai_tro === 'quan_tri_vien'
+                                    ? 'Quản trị viên'
+                                    : role?.ten_vai_tro === 'nguoi_dung'
+                                    ? 'Người dùng'
+                                    : 'Giảng viên'}
+                            </span>
+                        </div>
 
-                <div className="col-md-3">
-                    <strong>Mô tả:</strong> {role.mo_ta}
-                </div>
+                        <div className="col-md-3">
+                            <strong>Mô tả:</strong> {role?.mo_ta}
+                        </div>
 
-                <div className="col-md-3">
-                    <strong>Thời gian tạo:</strong> {new Date(role.thoi_gian_tao).toLocaleString()}
-                </div>
-                <div className="col-md-3">
-                    <strong>Thời gian cập nhật:</strong> {new Date(role.thoi_gian_cap_nhat).toLocaleString()}
-                </div>
-            </div>
-        </div>
+                        <div className="col-md-3">
+                            <strong>Thời gian tạo:</strong> {new Date(role?.thoi_gian_tao).toLocaleString()}
+                        </div>
+                        <div className="col-md-3">
+                            <strong>Thời gian cập nhật:</strong> {new Date(role?.thoi_gian_cap_nhat).toLocaleString()}
+                        </div>
+                    </div>
+                </>
+            )}
+        </>
     );
 }
 

@@ -1,5 +1,5 @@
-function CreateRolePermission() {
+function CreatePermission() {
     return <div>Thêm quyền</div>;
 }
 
-export default CreateRolePermission;
+export default CreatePermission;

@@ -55,7 +55,7 @@ function Sidebar() {
                         </NavLink>
                     </li>
                     <li className="nav-item">
-                        <NavLink to="/admin/permission" className="nav-link">
+                        <NavLink to="/admin/tab-permission" className="nav-link">
                             {' '}
                             <i className="fas fa-shield-alt"></i> Nhóm quyền{' '}
                         </NavLink>
