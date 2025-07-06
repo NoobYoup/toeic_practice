@@ -21,6 +21,7 @@ function DetailUser() {
             setLoading(true);
             try {
                 const res = await getDetailUser(id);
+                console.log(res);
                 setUser(res.data.data.user);
             } catch (err) {
                 console.error(err);

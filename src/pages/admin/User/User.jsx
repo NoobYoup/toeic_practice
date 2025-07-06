@@ -151,7 +151,7 @@ function User() {
                                                 </td>
                                                 <td>
                                                     <div>
-                                                        <div className="fw-bold">{user.ho_so.ho_ten}</div>
+                                                        <div className="fw-bold">{user.ten_dang_nhap}</div>
                                                     </div>
                                                 </td>
                                                 <td>{user.email}</td>
@@ -235,29 +235,6 @@ function User() {
                             nextLinkClassName="page-link"
                         />
                     </div>
-
-                    {/* <nav aria-label="Page navigation">
-                        <ul className="pagination justify-content-center">
-                            <li className={`page-item ${page === 1 ? 'disabled' : ''}`}>
-                                <button className="page-link" onClick={() => setPage(page - 1)}>
-                                    Trước
-                                </button>
-                            </li>
-                            {[...Array(totalPages)].map((_, i) => (
-                                <li key={i} className={`page-item ${page === i + 1 ? 'active' : ''}`}>
-                                    <button className="page-link" onClick={() => setPage(i + 1)}>
-                                        {i + 1}
-                                    </button>
-                                </li>
-                            ))}
-
-                            <li className={`page-item ${page === totalPages ? 'disabled' : ''}`}>
-                                <button className="page-link" onClick={() => setPage(page + 1)}>
-                                    Sau
-                                </button>
-                            </li>
-                        </ul>
-                    </nav> */}
                 </div>
             </div>
         </>

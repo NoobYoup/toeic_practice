@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getDetailQuestion } from '@/services/questionService';
+import { toast } from 'react-toastify';
 
 function DetailQuesionBank() {
     const { id } = useParams();
@@ -15,6 +16,7 @@ function DetailQuesionBank() {
             setQuestionData(res.data.data);
         } catch (error) {
             console.error('Error fetching question detail:', error);
+            toast.error(error.response?.data?.message);
         }
         setLoading(false);
     };
@@ -118,14 +120,14 @@ function DetailQuesionBank() {
                         <></>
                     )}
 
-                    { questionData?.doan_van && questionData?.doan_van.noi_dung ? (
+                    {questionData?.doan_van && questionData?.doan_van.noi_dung ? (
                         <div className="card mb-4">
                             <div className="card-header">
                                 <h5 className="mb-0">
                                     <i className="fas fa-question-circle me-2"></i>Nội dung đoạn văn
                                 </h5>
                             </div>
-                                    <h3 className="mb-0 px-3">{questionData?.doan_van.tieu_de}</h3>
+                            <h3 className="mb-0 px-3">{questionData?.doan_van.tieu_de}</h3>
                             <div className="card-body">
                                 <div className="alert alert-light" role="alert">
                                     <p className="mb-0 fs-5">{questionData?.doan_van.noi_dung}</p>

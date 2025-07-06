@@ -30,6 +30,7 @@ function EditQuestionBank() {
                 setContent(res.data.data.noi_dung || '');
             } catch (error) {
                 console.error('Lỗi khi lấy thông tin câu hỏi:', error);
+                toast.error(error.response?.data?.message);
             }
             setLoadingFetch(false);
         };
@@ -37,7 +38,12 @@ function EditQuestionBank() {
         fetchQuestionDetail();
     }, [id]);
 
-    if (loadingFetch) return <div className="text-center"><i className="fa-solid fa-spinner fa-spin fa-2x"></i></div>;
+    if (loadingFetch)
+        return (
+            <div className="text-center">
+                <i className="fa-solid fa-spinner fa-spin fa-2x"></i>
+            </div>
+        );
     if (!question) return <p>Không tìm thấy câu hỏi</p>;
 
     // 1. Xác định key part
@@ -52,7 +58,6 @@ function EditQuestionBank() {
         part6: Part6QuestionForm,
         part7: Part7QuestionForm,
     }[partKey];
-
 
     if (!FormByPart) {
         return <p>Không có form phù hợp cho part {partKey}</p>;
@@ -70,8 +75,6 @@ function EditQuestionBank() {
         }
         setLoadingSubmit(false);
     };
-
-
 
     return (
         <>
