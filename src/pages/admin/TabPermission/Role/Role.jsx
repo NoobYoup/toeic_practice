@@ -78,15 +78,7 @@ function Role() {
                                 displayedRoles.map((role) => (
                                     <tr key={role.id_vai_tro}>
                                         <td>{role.id_vai_tro}</td>
-                                        <td>
-                                            {role.ten_vai_tro === 'quan_tri_vien'
-                                                ? 'Quản trị viên'
-                                                : role.ten_vai_tro === 'nguoi_dung'
-                                                ? 'Người dùng'
-                                                : role.ten_vai_tro === 'giang_vien'
-                                                ? 'Giảng viên'
-                                                : role.ten_vai_tro}
-                                        </td>
+                                        <td>{role.ten_vai_tro}</td>
                                         <td>{role.mo_ta}</td>
                                         <td>
                                             {role.thoi_gian_tao

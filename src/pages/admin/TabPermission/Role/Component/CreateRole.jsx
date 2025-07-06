@@ -21,7 +21,7 @@ function CreateRole() {
             };
             const res = await createRole(payload);
             toast.success(res.data?.message);
-            navigate('/admin/permission/role');
+            navigate('/admin/tab-permission/role');
         } catch (err) {
             console.error(err);
             toast.error(err.response?.data?.message);

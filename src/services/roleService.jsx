@@ -53,7 +53,7 @@ const getPermissionTable = () => {
 const updatePermissionTable = (permissionId, permission) => {
     const token = localStorage.getItem('admin_token');
 
-    return axios.patch(`${API}/roles/permissions/${permissionId}`, permission, {
+    return axios.post(`${API}/roles/permissions/${permissionId}`, permission, {
         headers: { Authorization: `Bearer ${token}` },
     });
 };
