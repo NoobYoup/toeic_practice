@@ -68,6 +68,8 @@ function RolePermission() {
                                 <th>ID</th>
                                 <th>Tên quyền</th>
                                 <th>Mã quyền</th>
+                                <th>Thời gian tạo</th>
+                                <th>Thời gian cập nhật</th>
                                 <th className="text-center">Thao tác</th>
                             </tr>
                         </thead>
@@ -92,6 +94,8 @@ function RolePermission() {
                                                 : permission.ten_quyen}
                                         </td>
                                         <td>{permission.ma_quyen}</td>
+                                        <td>{new Date(permission.thoi_gian_tao).toLocaleString()}</td>
+                                        <td>{new Date(permission.thoi_gian_cap_nhat).toLocaleString()}</td>
                                         <td className="text-center">
                                             <div className="btn-group">
                                                 <Link

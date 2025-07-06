@@ -40,6 +40,7 @@ function EditPermission() {
                 ten_quyen: tenQuyen.trim(),
                 ma_quyen: maQuyen.trim().toUpperCase(),
             };
+
             const res = await updatePermission(id, payload);
             toast.success(res.data?.message || 'Cập nhật quyền thành công');
             navigate('/admin/tab-permission/permission');
@@ -83,6 +84,7 @@ function EditPermission() {
                                     id="maQuyen"
                                     value={maQuyen}
                                     onChange={(e) => setMaQuyen(e.target.value)}
+                                    disabled
                                 />
                             </div>
                             <div className="text-end">

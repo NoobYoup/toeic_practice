@@ -42,4 +42,20 @@ const deleteRole = (roleId) => {
     });
 };
 
-export { getAllRole, createRole, updateRole, deleteRole, detailRole };
+const getPermissionTable = () => {
+    const token = localStorage.getItem('admin_token');
+
+    return axios.get(`${API}/roles/permissions-table`, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+};
+
+const updatePermissionTable = (permissionId, permission) => {
+    const token = localStorage.getItem('admin_token');
+
+    return axios.patch(`${API}/roles/permissions/${permissionId}`, permission, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+};
+
+export { getAllRole, createRole, updateRole, deleteRole, detailRole, getPermissionTable, updatePermissionTable };

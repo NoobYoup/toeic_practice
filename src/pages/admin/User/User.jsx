@@ -24,7 +24,7 @@ function User() {
             setLoading(true);
             try {
                 const res = await getAllUser(searchTerm, currentPage);
-
+                console.log(res);
                 setUsers(res.data.data);
                 setPagination((prev) => ({ ...prev, total: res.data.pagination.total }));
             } catch (error) {
@@ -159,11 +159,7 @@ function User() {
                                                     <span
                                                         className={`${cx('role-student')} badge rounded-pill px-3 py-2`}
                                                     >
-                                                        {user.vai_tro === 'nguoi_dung'
-                                                            ? 'Người dùng'
-                                                            : user.vai_tro === 'admin'
-                                                            ? 'Quản trị viên'
-                                                            : ''}
+                                                        {user.id_vai_tro}
                                                     </span>
                                                 </td>
                                                 <td>

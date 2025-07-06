@@ -42,7 +42,7 @@ function CreatePermission() {
                                 type="text"
                                 className="form-control"
                                 id="tenQuyen"
-                                placeholder="Nhập tên quyền (ví dụ: quan_tri_vien)"
+                                placeholder="Nhập tên quyền"
                                 value={tenQuyen}
                                 onChange={(e) => setTenQuyen(e.target.value)}
                             />

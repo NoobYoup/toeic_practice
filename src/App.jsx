@@ -43,6 +43,7 @@ import EditRole from './pages/admin/TabPermission/Role/Component/EditRole.jsx';
 import Permission from './pages/admin/TabPermission/Permission/Permission.jsx';
 import CreatePermission from './pages/admin/TabPermission/Permission/Component/CreatePermission.jsx';
 import EditPermission from './pages/admin/TabPermission/Permission/Component/EditPermission.jsx';
+import DetailPermission from './pages/admin/TabPermission/Permission/Component/DetailPermission.jsx';
 import RolePermission from './pages/admin/TabPermission/RolePermission/RolePermission.jsx';
 import TestAdmin from './pages/admin/Test/Test.jsx';
 import Exam from './pages/admin/Test/Exam/Exam.jsx';
@@ -118,6 +119,7 @@ function App() {
                                 <Route path="permission" element={<Permission />} />
                                 <Route path="permission/create-permission" element={<CreatePermission />} />
                                 <Route path="permission/edit-permission/:id" element={<EditPermission />} />
+                                <Route path="permission/detail-permission/:id" element={<DetailPermission />} />
 
                                 <Route path="role-permission" element={<RolePermission />} />
 

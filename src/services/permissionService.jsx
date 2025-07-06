@@ -34,4 +34,12 @@ const deletePermission = (permissionId) => {
     });
 };
 
-export { getAllPermission, createPermission, updatePermission, deletePermission };
+const getDetailPermission = (permissionId) => {
+    const token = localStorage.getItem('admin_token');
+
+    return axios.get(`${API}/permissions/detail/${permissionId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+};
+
+export { getAllPermission, createPermission, updatePermission, deletePermission, getDetailPermission };

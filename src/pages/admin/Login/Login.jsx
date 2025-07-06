@@ -54,6 +54,7 @@ function Login() {
                 setErrors(newErrors);
             } else if (generalMsg) {
                 setErrors({ general: generalMsg });
+
                 // toast.warn(generalMsg);
             } else {
                 // setErrors({ general: 'Đăng nhập thất bại.' });
