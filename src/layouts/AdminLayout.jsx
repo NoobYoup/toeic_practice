@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Sidebar from '@/components/admin/Sidebar';
 import { Link, Outlet } from 'react-router-dom';
 import './AdminLayout.scss';
+import BackToTop from '@/components/Button/BackToTop';
 
 function AdminLayout() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -39,6 +40,7 @@ function AdminLayout() {
                     </div>
                 </div>
             </div>
+            <BackToTop />
         </>
     );
 }

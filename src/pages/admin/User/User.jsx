@@ -26,7 +26,7 @@ function User() {
                 const res = await getAllUser(searchTerm, currentPage);
                 console.log(res);
                 setUsers(res.data.data);
-                setPagination((prev) => ({ ...prev, total: res.data.pagination.total }));
+                setPagination(res.data.pagination);
             } catch (error) {
                 console.log('Lỗi gọi API', error);
             }
@@ -93,7 +93,7 @@ function User() {
     };
 
     const handlePageClick = (e) => {
-        setPagination((prev) => ({ ...prev, page: e.selected + 1 }));
+        setPage(e.selected + 1);
     };
 
     return (
