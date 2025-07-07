@@ -65,10 +65,19 @@ function RolePermission() {
     const handleSave = async () => {
         setSaving(true);
         try {
+            // Build a roleId map once to avoid looking it up repeatedly
+            const roleIdMap = permissionTable.reduce((acc, p) => {
+                if (p.roleIds) {
+                    Object.entries(p.roleIds).forEach(([key, id]) => {
+                        if (!acc[key]) acc[key] = id;
+                    });
+                }
+                return acc;
+            }, {});
+
             for (const roleKey of rolesList) {
-                if (roleKey === 'quan_tri_vien') continue; // skip admin role
                 const ds_ma_quyen = permissionTable.filter((p) => p.roles[roleKey]).map((p) => p.ma_quyen);
-                const roleId = permissionTable.find((p) => p.roleIds && p.roleIds[roleKey])?.roleIds[roleKey];
+                const roleId = roleIdMap[roleKey];
                 if (!roleId) continue;
                 const payload = { ds_ma_quyen };
                 console.log('Sending payload to server:', {
