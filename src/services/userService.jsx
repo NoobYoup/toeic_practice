@@ -101,4 +101,27 @@ const getMe = () => {
     });
 };
 
-export { getAllUser, getDetailUser, deleteUser, editUser, getProfile, updateProfile, changeUserStatus, getMe };
+const updateUserRole = (userId, roleId) => {
+    const token = localStorage.getItem('admin_token');
+
+    // Back-end nhận JSON: { id_vai_tro: <roleId> }
+    return axios.patch(
+        `${API}/users/set-role/${userId}`,
+        { id_vai_tro: roleId },
+        {
+            headers: { Authorization: `Bearer ${token}` },
+        },
+    );
+};
+
+export {
+    getAllUser,
+    getDetailUser,
+    deleteUser,
+    editUser,
+    updateUserRole,
+    getProfile,
+    updateProfile,
+    changeUserStatus,
+    getMe,
+};

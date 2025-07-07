@@ -27,7 +27,7 @@ function DetailExam() {
             try {
                 const res = await getDraftExam(id);
                 console.log(res.data.data);
-                
+
                 setExam(res.data.data);
             } catch (err) {
                 console.error(err);
@@ -85,7 +85,7 @@ function DetailExam() {
             <div className="mb-4">
                 <h5 className="fw-bold mb-3">Thông tin bài thi</h5>
 
-                <div className="row g-3">                  
+                <div className="row g-3">
                     <div className="col-md-4">
                         <strong>Tên bài thi:</strong> {exam.ten_bai_thi}
                     </div>
@@ -113,7 +113,7 @@ function DetailExam() {
                         <strong>Thời gian thi (phút):</strong> {exam.thoi_gian_thi || exam.thoi_gian_bai_thi}
                     </div>
                     <div className="col-md-4">
-                        <strong>Năm xuất bản:</strong> {new Date(exam.nam_xuat_ban).getFullYear()}
+                        <strong>Năm xuất bản:</strong> {exam.nam_xuat_ban}
                     </div>
                     <div className="col-md-4">
                         <strong>Trạng thái:</strong>{' '}
@@ -164,10 +164,7 @@ function DetailExam() {
                                             </div>
                                             <div className="mb-2">
                                                 {Array.from({ length: p.count }).map((_, idx) => (
-                                                    <span
-                                                        key={p.start + idx}
-                                                        className={cx('question-number')}
-                                                    >
+                                                    <span key={p.start + idx} className={cx('question-number')}>
                                                         {p.start + idx}
                                                     </span>
                                                 ))}
@@ -191,10 +188,7 @@ function DetailExam() {
                                             </div>
                                             <div className="mb-2">
                                                 {Array.from({ length: p.count }).map((_, idx) => (
-                                                    <span
-                                                        key={p.start + idx}
-                                                        className={cx('question-number')}
-                                                    >
+                                                    <span key={p.start + idx} className={cx('question-number')}>
                                                         {p.start + idx}
                                                     </span>
                                                 ))}

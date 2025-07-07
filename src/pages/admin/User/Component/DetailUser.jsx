@@ -111,7 +111,8 @@ function DetailUser() {
                                 {format(new Date(user.thoi_gian_tao), 'dd/MM/yyyy HH:mm', { locale: vi })}
                             </p>
                             <span className={`${cx('role-student')} badge px-3 py-2`}>
-                                <i className="fas fa-graduation-cap me-1"></i>Người dùng
+                                <i className="fas fa-graduation-cap me-1"></i>
+                                {user.nguoi_dung?.id_vai_tro}
                             </span>
                         </div>
                         <div className="col-md-3 text-end">

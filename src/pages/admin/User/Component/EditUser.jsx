@@ -1,8 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import dayjs from 'dayjs';
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { getDetailUser, editUser } from '@/services/userService.jsx';
+import { getDetailUser, editUser, updateUserRole } from '@/services/userService.jsx';
 import { getAllRole } from '@/services/roleService.jsx';
 import { toast } from 'react-toastify';
 import Select from 'react-select';
@@ -117,7 +115,9 @@ function EditUser() {
         setLoading(true);
 
         try {
-            const res = await editUser(id, formData, selectedFile);
+            // Không gửi vai_tro cùng với editUser
+            const { vai_tro, ...otherFields } = formData;
+            const res = await editUser(id, otherFields, selectedFile);
             console.log('API Response:', res.data);
             toast.success(res.data.message);
 
@@ -141,6 +141,22 @@ function EditUser() {
             toast.error(err.response?.data?.message);
         }
         setLoading(false);
+    };
+
+    // Cập nhật vai trò riêng lẻ
+    const handleUpdateRole = async () => {
+        if (!selectedRole) {
+            toast.error('Vui lòng chọn vai trò');
+            return;
+        }
+        try {
+            const res = await updateUserRole(id, selectedRole.value);
+            toast.success(res.data?.message || 'Cập nhật vai trò thành công');
+            navigate(`/admin/user/detail-user/${id}`);
+        } catch (err) {
+            console.error(err);
+            toast.error(err.response?.data?.message || 'Cập nhật vai trò thất bại');
+        }
     };
 
     const handleFileChange = (e) => {
@@ -298,6 +314,21 @@ function EditUser() {
                                             setUser((prev) => ({ ...prev, vai_tro: newValue }));
                                         }}
                                     />
+
+                                    <div className="mt-2 d-flex align-items-center justify-content-between">
+                                        <label htmlFor="vai_tro" className="form-label text-muted">
+                                            *Lưu ý: Quản trị viên cấp quyền truy cập vào trang quản trị
+                                        </label>
+                                        <button
+                                            type="button"
+                                            className="btn btn-warning"
+                                            onClick={handleUpdateRole}
+                                            disabled={loading || saving}
+                                        >
+                                            {loading && <i className="fas fa-spinner fa-spin me-2"></i>}
+                                            Cập nhật vai trò
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 

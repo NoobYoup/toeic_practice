@@ -6,6 +6,7 @@ import { createRole } from '@/services/roleService';
 function CreateRole() {
     const [tenVaiTro, setTenVaiTro] = useState('');
     const [moTa, setMoTa] = useState('');
+    const [isAdmin, setIsAdmin] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
@@ -18,7 +19,9 @@ function CreateRole() {
             const payload = {
                 ten_vai_tro: tenVaiTro.trim(),
                 mo_ta: moTa.trim(),
+                is_admin: isAdmin,
             };
+            console.log(payload);
             const res = await createRole(payload);
             toast.success(res.data?.message);
             navigate('/admin/tab-permission/role');
@@ -60,6 +63,18 @@ function CreateRole() {
                                 value={moTa}
                                 onChange={(e) => setMoTa(e.target.value)}
                             ></textarea>
+                        </div>
+                        <div className="mb-3">
+                            <input
+                                type="checkbox"
+                                className="form-check-input"
+                                id="isAdmin"
+                                checked={isAdmin}
+                                onChange={(e) => setIsAdmin(e.target.checked)}
+                            />
+                            <label htmlFor="isAdmin" className="ms-2 form-label">
+                                Là quản trị viên
+                            </label>
                         </div>
                         <div className="text-end">
                             <Link to="/admin/permission/role" className="btn btn-secondary me-2">
