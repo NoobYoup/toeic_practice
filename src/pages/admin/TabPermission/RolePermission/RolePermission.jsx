@@ -48,7 +48,7 @@ function RolePermission() {
 
     // Toggle a specific role's permission state in the UI (local only for now)
     const handleToggle = (ma_quyen, roleKey) => {
-        if (roleKey === 'quan_tri_vien') return; // admin immutable
+        // if (roleKey === 'quan_tri_vien') return; // admin immutable
         setPermissionTable((prev) =>
             prev.map((p) =>
                 p.ma_quyen === ma_quyen ? { ...p, roles: { ...p.roles, [roleKey]: !p.roles[roleKey] } } : p,
@@ -77,7 +77,7 @@ function RolePermission() {
                     data: payload,
                     roleKey,
                     roleId,
-                    permissions: ds_ma_quyen
+                    permissions: ds_ma_quyen,
                 });
                 const res = await updatePermissionTable(roleId, payload);
                 console.log('Server response:', res.data);
@@ -121,7 +121,7 @@ function RolePermission() {
                                         permissionTable.reduce((acc, p) => {
                                             (acc[p.group] = acc[p.group] || []).push(p);
                                             return acc;
-                                        }, {})
+                                        }, {}),
                                     ).map(([groupName, perms]) => (
                                         <React.Fragment key={groupName}>
                                             <tr className="table-secondary">
@@ -141,8 +141,10 @@ function RolePermission() {
                                                                     className="form-check-input permission-switch"
                                                                     type="checkbox"
                                                                     checked={permission.roles[role]}
-                                                                    disabled={role === 'quan_tri_vien'}
-                                                                    onChange={() => handleToggle(permission.ma_quyen, role)}
+                                                                    // disabled={role === 'quan_tri_vien'}
+                                                                    onChange={() =>
+                                                                        handleToggle(permission.ma_quyen, role)
+                                                                    }
                                                                 />
                                                             </div>
                                                         </td>
