@@ -72,7 +72,11 @@ function DetailUser() {
                 <div className={`${cx('profile-header')} shadow-sm`}>
                     <div className={cx('status-badge')}>
                         <span className={`${cx('status-active')} badge px-3 py-2`}>
-                            {user.nguoi_dung.trang_thai === 'hoat_dong' ? 'Hoạt động' : ''}
+                            {user.nguoi_dung.trang_thai === 'hoat_dong'
+                                ? 'Hoạt động'
+                                : user.nguoi_dung.trang_thai === 'khong_hoat_dong'
+                                ? 'Không hoạt động'
+                                : 'Chưa xác nhận'}
                         </span>
                     </div>
                     <div className="row align-items-center">

@@ -34,6 +34,8 @@ function EditUser() {
     const [selectedFile, setSelectedFile] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
     const [error, setError] = useState(null);
+    const [updatingRole, setUpdatingRole] = useState(false);
+    const [listStatus, setListStatus] = useState([]);
 
     const fetchRoles = useCallback(async () => {
         try {
@@ -79,7 +81,7 @@ function EditUser() {
                 setFormData({
                     ten_dang_nhap: userData.nguoi_dung.ten_dang_nhap || '',
                     email: userData.nguoi_dung.email || '',
-                    trang_thai: userData.trang_thai || 'hoat_dong',
+                    trang_thai: userData.nguoi_dung.trang_thai || '',
                     ho_ten: userData.ho_ten || '',
                     dia_chi: userData.dia_chi || '',
                     vai_tro: String(userData.nguoi_dung?.id_vai_tro || ''),
@@ -89,6 +91,7 @@ function EditUser() {
                 });
 
                 setPreviewUrl(userData.url_hinh_dai_dien || '');
+                setListStatus(res.data.data.listStatus);
             } catch (err) {
                 console.error('Error updating user:', err);
                 if (err.response?.status === 401) {
@@ -104,8 +107,8 @@ function EditUser() {
     }, [id]);
 
     const handleInputChange = (e) => {
-        const { id, value } = e.target;
-        setFormData((prev) => ({ ...prev, [id]: value }));
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
     const handleSubmit = async (e) => {
@@ -149,6 +152,7 @@ function EditUser() {
             toast.error('Vui lòng chọn vai trò');
             return;
         }
+        setUpdatingRole(true);
         try {
             const res = await updateUserRole(id, selectedRole.value);
             toast.success(res.data?.message || 'Cập nhật vai trò thành công');
@@ -157,6 +161,7 @@ function EditUser() {
             console.error(err);
             toast.error(err.response?.data?.message || 'Cập nhật vai trò thất bại');
         }
+        setUpdatingRole(false);
     };
 
     const handleFileChange = (e) => {
@@ -323,9 +328,9 @@ function EditUser() {
                                             type="button"
                                             className="btn btn-warning"
                                             onClick={handleUpdateRole}
-                                            disabled={loading || saving}
+                                            disabled={updatingRole}
                                         >
-                                            {loading && <i className="fas fa-spinner fa-spin me-2"></i>}
+                                            {updatingRole && <i className="fas fa-spinner fa-spin me-2"></i>}
                                             Cập nhật vai trò
                                         </button>
                                     </div>
@@ -346,6 +351,7 @@ function EditUser() {
                                             type="text"
                                             className={`${cx('form-control')} form-control`}
                                             id="ten_dang_nhap"
+                                            name="ten_dang_nhap"
                                             value={formData?.ten_dang_nhap}
                                             onChange={handleInputChange}
                                             required
@@ -367,6 +373,7 @@ function EditUser() {
                                             type="text"
                                             className={`${cx('form-control')} form-control`}
                                             id="ho_ten"
+                                            name="ho_ten"
                                             value={formData?.ho_ten}
                                             onChange={handleInputChange}
                                             required
@@ -388,6 +395,7 @@ function EditUser() {
                                             type="text"
                                             className={`${cx('form-control')} form-control`}
                                             id="dia_chi"
+                                            name="dia_chi"
                                             value={formData?.dia_chi}
                                             onChange={handleInputChange}
                                         />
@@ -408,6 +416,7 @@ function EditUser() {
                                             type="date"
                                             className={`${cx('form-control')} form-control`}
                                             id="ngay_sinh"
+                                            name="ngay_sinh"
                                             value={formData?.ngay_sinh}
                                             onChange={handleInputChange}
                                         />
@@ -428,6 +437,7 @@ function EditUser() {
                                             type="text"
                                             className={`${cx('form-control')} form-control`}
                                             id="so_dien_thoai"
+                                            name="so_dien_thoai"
                                             value={formData?.so_dien_thoai}
                                             onChange={handleInputChange}
                                         />
@@ -449,6 +459,7 @@ function EditUser() {
                                             type="text"
                                             className={`${cx('form-control')} form-control`}
                                             id="gioi_thieu"
+                                            name="gioi_thieu"
                                             value={formData?.gioi_thieu}
                                             onChange={handleInputChange}
                                         />
@@ -464,20 +475,18 @@ function EditUser() {
                                     <select
                                         className="form-select"
                                         id="trang_thai"
+                                        name="trang_thai"
                                         value={formData?.trang_thai}
                                         onChange={handleInputChange}
                                     >
-                                        {user?.nguoi_dung?.trang_thai === 'hoat_dong' ? (
-                                            <>
-                                                <option value="hoat_dong">Hoạt động</option>
-                                                <option value="khong_hoat_dong">Không hoạt động</option>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <option value="khong_hoat_dong">Không hoạt động</option>
-                                                <option value="hoat_dong">Hoạt động</option>
-                                            </>
-                                        )}
+                                        {listStatus.map((status) => {
+                                            const statusText = status === 'hoat_dong' ? 'Hoạt động' : 'Không hoạt động';
+                                            return (
+                                                <option key={status} value={status}>
+                                                    {statusText}
+                                                </option>
+                                            );
+                                        })}
                                     </select>
                                 </div>
                             </div>
