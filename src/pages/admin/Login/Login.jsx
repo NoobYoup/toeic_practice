@@ -35,11 +35,14 @@ function Login() {
             const res = await login(form);
             console.log(res);
 
-            if (res.data.vai_tro === 'quan_tri_vien') {
+            // Chỉ cho phép đăng nhập nếu tài khoản là admin
+            if (res.data.is_admin === true) {
                 localStorage.setItem('admin_token', res.data.token);
+                navigate('/admin/dashboard');
+            } else {
+                // Không phải admin, hiển thị lỗi
+                toast.error('Bạn không có quyền truy cập trang quản trị.');
             }
-
-            navigate('/admin/dashboard');
         } catch (err) {
             const apiErrors = err.response?.data?.errors;
             const generalMsg = err.response?.data?.message;

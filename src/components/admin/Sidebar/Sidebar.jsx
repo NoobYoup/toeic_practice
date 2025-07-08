@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-
+import { jwtDecode } from 'jwt-decode';
 import { DEFAULT_AVATAR } from '@/constants/default';
 
 import './Sidebar.scss';
@@ -8,9 +8,16 @@ import './Sidebar.scss';
 function Sidebar() {
     const navigate = useNavigate();
 
+    // Lấy thông tin người dùng từ token
+    const token = localStorage.getItem('admin_token');
+    let user = {};
+    if (token) {
+        user = jwtDecode(token);
+        console.log(user);
+    }
+
     const handleLogout = () => {
         localStorage.removeItem('admin_token');
-
         navigate('/admin');
     };
 
@@ -77,8 +84,14 @@ function Sidebar() {
                         data-bs-toggle="dropdown"
                         aria-expanded="false"
                     >
-                        <img src={DEFAULT_AVATAR} alt="Admin" width="32" height="32" className="rounded-circle me-2" />
-                        <strong>Admin</strong>
+                        <img
+                            src={user?.avatar_url || DEFAULT_AVATAR}
+                            alt={user?.email || 'Admin'}
+                            width="32"
+                            height="32"
+                            className="rounded-circle me-2"
+                        />
+                        <strong>{user?.ho_ten || user?.email || 'Admin'}</strong>
                     </a>
                     <ul className="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
                         <li>

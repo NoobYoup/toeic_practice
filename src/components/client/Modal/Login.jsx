@@ -29,8 +29,8 @@ function Login({ setIsLogin, onSwitch, onClose, isOpen }) {
             const res = await login(form);
             console.log(res);
 
-            // Kiểm tra vai trò, nếu là quản trị viên thì không cho đăng nhập ở client
-            if (res.data.vai_tro === 'quan_tri_vien') {
+            // Nếu tài khoản là admin thì không cho đăng nhập ở client
+            if (res.data.is_admin === true) {
                 toast.error('Bạn không có quyền truy cập tại đây');
                 setLoadingAPI(false);
                 return;
