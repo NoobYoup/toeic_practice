@@ -59,4 +59,28 @@ const getAllExamSubmit = (id, page = 1, limit = 20) => {
     });
 };
 
-export { submitResult, getDetailResult, getAllResultExam, submitExamToResult, getAllExamSubmit };
+const getDetailFirstUser = (id_bai_lam) => {
+    const token = localStorage.getItem('user_token');
+
+    return axios.get(`${API}/results/detail-first-user/${id_bai_lam}`, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+};
+
+const getDetailPartUser = (id_bai_lam, id_phan) => {
+    const token = localStorage.getItem('user_token');
+
+    return axios.get(`${API}/results/detail-part-user/${id_bai_lam}/${id_phan}`, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+};
+
+export {
+    submitResult,
+    getDetailResult,
+    getAllResultExam,
+    submitExamToResult,
+    getAllExamSubmit,
+    getDetailFirstUser,
+    getDetailPartUser,
+};

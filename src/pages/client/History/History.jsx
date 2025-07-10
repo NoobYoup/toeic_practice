@@ -23,7 +23,6 @@ function History() {
         setLoading(true);
         try {
             const res = await getAllExamSubmit(decoded.id_nguoi_dung, page, pagination.limit);
-            console.log(res);
             const { data, pagination: pag } = res.data;
             setExamSubmit(data);
             setPagination(pag);
