@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import { useEffect, useState } from 'react';
 import { debounce } from 'lodash';
 import ReactPaginate from 'react-paginate';
+import { jwtDecode } from 'jwt-decode';
 import { getAllUser, deleteUser, changeUserStatus } from '@/services/userService.jsx';
 
 import classNames from 'classnames/bind';
@@ -18,6 +19,9 @@ function User() {
     const [sortOrder, setSortOrder] = useState('asc');
     const [idSortOrder, setIdSortOrder] = useState('asc');
     const [pagination, setPagination] = useState({ page: 1, limit: 3, total: 0 });
+
+    const token = localStorage.getItem('admin_token');
+    const user = jwtDecode(token);
 
     useEffect(() => {
         const debouncedFetch = debounce(async (searchTerm, currentPage) => {
@@ -143,38 +147,38 @@ function User() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {users.length > 0 ? (
-                                        users.map((user) => (
-                                            <tr key={user.id_nguoi_dung}>
+                                    {user.permissions.includes('USER_VIEW') && users.length > 0 ? (
+                                        users.map((u) => (
+                                            <tr key={u.id_nguoi_dung}>
                                                 <td>
-                                                    <span>{user.id_nguoi_dung}</span>
+                                                    <span>{u.id_nguoi_dung}</span>
                                                 </td>
                                                 <td>
                                                     <div>
-                                                        <div className="fw-bold">{user.ten_dang_nhap}</div>
+                                                        <div className="fw-bold">{u.ten_dang_nhap}</div>
                                                     </div>
                                                 </td>
-                                                <td>{user.email}</td>
+                                                <td>{u.email}</td>
                                                 <td>
                                                     <span
                                                         className={`${cx('role-student')} badge rounded-pill px-3 py-2`}
                                                     >
-                                                        {user.id_vai_tro}
+                                                        {u.id_vai_tro}
                                                     </span>
                                                 </td>
                                                 <td>
                                                     <button
                                                         type="button"
-                                                        onClick={() => handleChangeStatus(user)}
+                                                        onClick={() => handleChangeStatus(u)}
                                                         className={`${cx(
-                                                            user.trang_thai === 'hoat_dong'
+                                                            u.trang_thai === 'hoat_dong'
                                                                 ? 'user-status-active'
                                                                 : 'user-status-inactive',
                                                         )} badge rounded-pill px-3 py-2 border-0`}
                                                     >
-                                                        {user.trang_thai === 'hoat_dong'
+                                                        {u.trang_thai === 'hoat_dong'
                                                             ? 'Hoạt động'
-                                                            : user.trang_thai === 'khong_hoat_dong'
+                                                            : u.trang_thai === 'khong_hoat_dong'
                                                             ? 'Không hoạt động'
                                                             : ''}
                                                     </button>
@@ -182,24 +186,43 @@ function User() {
 
                                                 <td>
                                                     <div className="btn-group">
-                                                        <Link
-                                                            className="btn btn-sm btn-outline-primary"
-                                                            to={`/admin/user/detail-user/${user.id_nguoi_dung}`}
-                                                        >
-                                                            <i className="fas fa-eye"></i>
-                                                        </Link>
-                                                        <Link
-                                                            className="btn btn-sm btn-outline-warning"
-                                                            to={`/admin/user/edit-user/${user.id_nguoi_dung}`}
-                                                        >
-                                                            <i className="fas fa-edit"></i>
-                                                        </Link>
-                                                        <button
-                                                            className="btn btn-sm btn-outline-danger"
-                                                            onClick={() => handleDelete(user.id_nguoi_dung)}
-                                                        >
-                                                            <i className="fas fa-trash"></i>
-                                                        </button>
+                                                        {user.permissions.includes('USER_DETAIL') ? (
+                                                            <Link
+                                                                className="btn btn-sm btn-outline-primary"
+                                                                to={`/admin/user/detail-user/${user.id_nguoi_dung}`}
+                                                            >
+                                                                <i className="fas fa-eye"></i>
+                                                            </Link>
+                                                        ) : (
+                                                            <button className="btn btn-sm btn-outline-primary" disabled>
+                                                                <i className="fas fa-eye"></i>
+                                                            </button>
+                                                        )}
+                                                        {user.permissions.includes('USER_UPDATE') ? (
+                                                            <Link
+                                                                className="btn btn-sm btn-outline-warning"
+                                                                to={`/admin/user/edit-user/${user.id_nguoi_dung}`}
+                                                            >
+                                                                <i className="fas fa-edit"></i>
+                                                            </Link>
+                                                        ) : (
+                                                            <button className="btn btn-sm btn-outline-warning" disabled>
+                                                                <i className="fas fa-edit"></i>
+                                                            </button>
+                                                        )}
+
+                                                        {user.permissions.includes('USER_DELETE') ? (
+                                                            <button
+                                                                className="btn btn-sm btn-outline-danger"
+                                                                onClick={() => handleDelete(user.id_nguoi_dung)}
+                                                            >
+                                                                <i className="fas fa-trash"></i>
+                                                            </button>
+                                                        ) : (
+                                                            <button className="btn btn-sm btn-outline-danger" disabled>
+                                                                <i className="fas fa-trash"></i>
+                                                            </button>
+                                                        )}
                                                     </div>
                                                 </td>
                                             </tr>

@@ -32,6 +32,10 @@ function CreateExam() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
+        // if (!Array.isArray(user.permissions) || !user.permissions.includes('EXAM_CREATE')) {
+        //     toast.error('Bạn không có quyền tạo đề thi');
+        //     return;
+        // }
         try {
             const payload = {
                 ten_bai_thi: tenBaiThi,

@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import ReactPaginate from 'react-paginate';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
+import { jwtDecode } from 'jwt-decode';
 import { getAllPermission, deletePermission } from '@/services/permissionService';
 
 function RolePermission() {
@@ -12,6 +13,9 @@ function RolePermission() {
 
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
+
+    const token = localStorage.getItem('admin_token');
+    const user = jwtDecode(token);
 
     const fetchAllPermission = async () => {
         setLoading(true);
@@ -51,10 +55,15 @@ function RolePermission() {
         <div className="container-fluid">
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h2>Quản lý vai trò</h2>
-                {/* Placeholder for add role */}
-                <Link to="create-permission" className="btn btn-primary">
-                    <i className="fas fa-plus-circle me-2"></i>Thêm quyền
-                </Link>
+                {user.permissions.includes('PERMISSION_CREATE') ? (
+                    <Link to="create-permission" className="btn btn-primary">
+                        <i className="fas fa-plus-circle me-2"></i>Thêm quyền
+                    </Link>
+                ) : (
+                    <button className="btn btn-primary" disabled>
+                        <i className="fas fa-plus-circle me-2"></i>Thêm quyền
+                    </button>
+                )}
             </div>
             {loading ? (
                 <div className="text-center py-5">
@@ -74,7 +83,7 @@ function RolePermission() {
                             </tr>
                         </thead>
                         <tbody>
-                            {displayedPermissions.length === 0 ? (
+                            {user.permissions.includes('PERMISSION_VIEW') && displayedPermissions.length === 0 ? (
                                 <tr>
                                     <td colSpan={4} className="text-center text-muted">
                                         Không có dữ liệu
@@ -98,25 +107,43 @@ function RolePermission() {
                                         <td>{new Date(permission.thoi_gian_cap_nhat).toLocaleString()}</td>
                                         <td className="text-center">
                                             <div className="btn-group">
-                                                <Link
-                                                    to={`detail-permission/${permission.id_quyen}`}
-                                                    className="btn btn-sm btn-outline-primary"
-                                                >
-                                                    <i className="fas fa-eye"></i>
-                                                </Link>
-                                                <Link
-                                                    to={`edit-permission/${permission.id_quyen}`}
-                                                    className="btn btn-sm btn-outline-primary"
-                                                >
-                                                    <i className="fas fa-edit"></i>
-                                                </Link>
-                                                <button
-                                                    onClick={() => handleDeletePermission(permission.id_quyen)}
-                                                    type="button"
-                                                    className="btn btn-sm btn-outline-danger"
-                                                >
-                                                    <i className="fas fa-trash-alt"></i>
-                                                </button>
+                                                {user.permissions.includes('PERMISSION_DETAIL') ? (
+                                                    <Link
+                                                        to={`detail-permission/${permission.id_quyen}`}
+                                                        className="btn btn-sm btn-outline-primary"
+                                                    >
+                                                        <i className="fas fa-eye"></i>
+                                                    </Link>
+                                                ) : (
+                                                    <button className="btn btn-sm btn-outline-primary" disabled>
+                                                        <i className="fas fa-eye"></i>
+                                                    </button>
+                                                )}
+                                                {user.permissions.includes('PERMISSION_UPDATE') ? (
+                                                    <Link
+                                                        to={`edit-permission/${permission.id_quyen}`}
+                                                        className="btn btn-sm btn-outline-primary"
+                                                    >
+                                                        <i className="fas fa-edit"></i>
+                                                    </Link>
+                                                ) : (
+                                                    <button className="btn btn-sm btn-outline-primary" disabled>
+                                                        <i className="fas fa-edit"></i>
+                                                    </button>
+                                                )}
+                                                {user.permissions.includes('PERMISSION_DELETE') ? (
+                                                    <button
+                                                        onClick={() => handleDeletePermission(permission.id_quyen)}
+                                                        type="button"
+                                                        className="btn btn-sm btn-outline-danger"
+                                                    >
+                                                        <i className="fas fa-trash-alt"></i>
+                                                    </button>
+                                                ) : (
+                                                    <button className="btn btn-sm btn-outline-danger" disabled>
+                                                        <i className="fas fa-trash-alt"></i>
+                                                    </button>
+                                                )}
                                             </div>
                                         </td>
                                     </tr>

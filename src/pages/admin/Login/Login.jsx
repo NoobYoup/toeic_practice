@@ -37,10 +37,12 @@ function Login() {
 
             // Chỉ cho phép đăng nhập nếu tài khoản là admin
             if (res.data.is_admin === true) {
-                localStorage.setItem('admin_token', res.data.token);
+                const role = res.data.vai_tro;
+                const tokenKey = `${role}_token`;
+                localStorage.setItem(tokenKey, res.data.token);
+                localStorage.setItem('admin_token', res.data.token); // token phụ
                 navigate('/admin/dashboard');
             } else {
-                // Không phải admin, hiển thị lỗi
                 toast.error('Bạn không có quyền truy cập trang quản trị.');
             }
         } catch (err) {

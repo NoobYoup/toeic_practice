@@ -4,6 +4,7 @@ import ReactPaginate from 'react-paginate';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import { toast } from 'react-toastify';
+import { jwtDecode } from 'jwt-decode';
 
 import { getAllResultExam } from '@/services/resultService.jsx';
 
@@ -15,6 +16,9 @@ function Result() {
     // Client-side pagination
     const [currentPage, setCurrentPage] = useState(1);
     const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0 });
+
+    const token = localStorage.getItem('admin_token');
+    const user = jwtDecode(token);
 
     const fetchResults = async () => {
         setLoading(true);
@@ -74,7 +78,7 @@ function Result() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {currentData.length === 0 ? (
+                                    {user.permissions.includes('RESULT_VIEW') && currentData.length === 0 ? (
                                         <tr>
                                             <td colSpan={11} className="text-center text-muted">
                                                 Không có dữ liệu
@@ -110,13 +114,19 @@ function Result() {
 
                                                 <td>
                                                     <div className="btn-group">
-                                                        <Link
-                                                            to={`detail-result/${item.id_bai_lam_nguoi_dung}`}
-                                                            // onClick={() => localStorage.setItem('examId', exam.id_bai_thi)}
-                                                            className="btn btn-sm btn-outline-info"
-                                                        >
-                                                            <i className="fas fa-eye"></i>
-                                                        </Link>
+                                                        {user.permissions.includes('RESULT_DETAIL') ? (
+                                                            <Link
+                                                                to={`detail-result/${item.id_bai_lam_nguoi_dung}`}
+                                                                // onClick={() => localStorage.setItem('examId', exam.id_bai_thi)}
+                                                                className="btn btn-sm btn-outline-info"
+                                                            >
+                                                                <i className="fas fa-eye"></i>
+                                                            </Link>
+                                                        ) : (
+                                                            <button className="btn btn-sm btn-outline-info" disabled>
+                                                                <i className="fas fa-eye"></i>
+                                                            </button>
+                                                        )}
                                                     </div>
                                                 </td>
                                             </tr>

@@ -474,48 +474,41 @@ function ResultTest() {
                                                                         <div className="d-flex flex-wrap gap-3 mb-2">
                                                                             {group.passage.danh_sach_phuong_tien.map(
                                                                                 (media) => {
-                                                                                    if (
-                                                                                        media.loai_phuong_tien ===
-                                                                                        'hinh_anh'
-                                                                                    ) {
+                                                                                    const isImage = /\.(jpeg|jpg|gif|png)$/.test(
+                                                                                        media.url_phuong_tien,
+                                                                                    );
+                                                                                    const isAudio = /\.(mp3|wav|ogg)$/.test(
+                                                                                        media.url_phuong_tien,
+                                                                                    );
+
+                                                                                    if (isImage) {
                                                                                         return (
                                                                                             <img
-                                                                                                key={
-                                                                                                    media.id_phuong_tien
-                                                                                                }
-                                                                                                src={
-                                                                                                    media.url_phuong_tien
-                                                                                                }
+                                                                                                key={media.id_phuong_tien}
+                                                                                                src={media.url_phuong_tien}
                                                                                                 alt="passage"
                                                                                                 className="img-fluid rounded border"
-                                                                                                style={{
-                                                                                                    maxWidth: '100%',
-                                                                                                }}
+                                                                                                style={{ maxWidth: '100%' }}
                                                                                             />
                                                                                         );
                                                                                     }
-                                                                                    if (
-                                                                                        media.loai_phuong_tien ===
-                                                                                        'am_thanh'
-                                                                                    ) {
+
+                                                                                    if (isAudio) {
                                                                                         return (
                                                                                             <audio
-                                                                                                key={
-                                                                                                    media.id_phuong_tien
-                                                                                                }
+                                                                                                key={media.id_phuong_tien}
                                                                                                 controls
                                                                                                 className="w-100"
                                                                                             >
                                                                                                 <source
-                                                                                                    src={
-                                                                                                        media.url_phuong_tien
-                                                                                                    }
+                                                                                                    src={media.url_phuong_tien}
                                                                                                     type="audio/mpeg"
                                                                                                 />
                                                                                                 Audio not supported.
                                                                                             </audio>
                                                                                         );
                                                                                     }
+
                                                                                     return null;
                                                                                 },
                                                                             )}

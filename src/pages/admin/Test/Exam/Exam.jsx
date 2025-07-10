@@ -4,6 +4,7 @@ import ReactPaginate from 'react-paginate';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import { toast } from 'react-toastify';
+import { jwtDecode } from 'jwt-decode';
 import styles from './Exam.module.scss';
 import { getAllExam, deleteExam } from '@/services/examService';
 import { getMe } from '@/services/userService';
@@ -24,6 +25,11 @@ function Exam() {
 
     const [optionsTrangThai, setOptionsTrangThai] = useState([{ value: '', label: 'Tất cả trạng thái' }]);
     const [optionsNamXuatBan, setOptionsNamXuatBan] = useState([{ value: '', label: 'Tất cả năm xuất bản' }]);
+
+    const token = localStorage.getItem('admin_token');
+    const user = jwtDecode(token);
+    console.log(user.permissions);
+    // console.log('check', user.permissions.includes('EXAM_CREATE'));
 
     const fetchExams = async () => {
         setLoading(true);
@@ -66,6 +72,7 @@ function Exam() {
     const fetchCurrentUser = async () => {
         try {
             const res = await getMe();
+
             setCurrentUser(res.data);
         } catch (err) {
             console.error('Failed to fetch current user', err);
@@ -102,15 +109,25 @@ function Exam() {
         setCurrentPage(1);
     };
 
+    console.log(user.permissions.includes('EXAM_CREATE'));
+
     return (
         <>
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h2>Quản lý đề thi</h2>
-                <div>
-                    <Link to="create-exam" className="btn btn-primary">
-                        <i className="fas fa-plus-circle me-2"></i>Thêm đề thi
-                    </Link>
-                </div>
+                {user.permissions.includes('EXAM_CREATE') ? (
+                    <div>
+                        <Link to="create-exam" className="btn btn-primary">
+                            <i className="fas fa-plus-circle me-2"></i>Thêm đề thi
+                        </Link>
+                    </div>
+                ) : (
+                    <div>
+                        <button className="btn btn-primary" disabled>
+                            <i className="fas fa-plus-circle me-2"></i>Thêm đề thi
+                        </button>
+                    </div>
+                )}
             </div>
 
             <div className="row g-3 mb-3">
@@ -171,7 +188,7 @@ function Exam() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {exams.length === 0 ? (
+                                    {user.permissions.includes('EXAM_VIEW') && exams.length === 0 ? (
                                         <tr>
                                             <td colSpan={13} className="text-center text-muted">
                                                 Không có dữ liệu
@@ -189,13 +206,7 @@ function Exam() {
                                                 <td>{exam.la_bai_thi_dau_vao ? 'Có' : 'Không'}</td>
                                                 <td>{exam.loai_bai_thi === 'tu_do' ? 'Tự do' : 'Chuẩn'}</td>
                                                 <td>{exam.trang_thai === 'da_xuat_ban' ? 'Đã xuất bản' : 'Nháp'}</td>
-                                                <td>
-                                                    {currentUser
-                                                        ? currentUser.vai_tro === 'quan_tri_vien'
-                                                            ? 'Quản trị viên'
-                                                            : 'Giáo viên'
-                                                        : ''}
-                                                </td>
+                                                <td>{currentUser?.id_vai_tro}</td>
                                                 <td>
                                                     {format(new Date(exam.thoi_gian_tao), 'dd/MM/yyyy HH:mm', {
                                                         locale: vi,
@@ -208,26 +219,57 @@ function Exam() {
                                                 </td>
                                                 <td>
                                                     <div className="btn-group">
-                                                        <Link
-                                                            to={`detail-exam/${exam.id_bai_thi}`}
-                                                            // onClick={() => localStorage.setItem('examId', exam.id_bai_thi)}
-                                                            className="btn btn-sm btn-outline-info"
-                                                        >
-                                                            <i className="fas fa-eye"></i>
-                                                        </Link>
-                                                        <Link
-                                                            to={`edit-exam/${exam.id_bai_thi}`}
-                                                            className="btn btn-sm btn-outline-primary"
-                                                        >
-                                                            <i className="fas fa-edit"></i>
-                                                        </Link>
-                                                        <button
-                                                            onClick={() => handleDeleteExam(exam.id_bai_thi)}
-                                                            type="button"
-                                                            className="btn btn-sm btn-outline-danger"
-                                                        >
-                                                            <i className="fas fa-trash-alt"></i>
-                                                        </button>
+                                                        {user.permissions.includes('EXAM_DETAIL') ? (
+                                                            <Link
+                                                                to={`detail-exam/${exam.id_bai_thi}`}
+                                                                // onClick={() => localStorage.setItem('examId', exam.id_bai_thi)}
+                                                                className="btn btn-sm btn-outline-info"
+                                                            >
+                                                                <i className="fas fa-eye"></i>
+                                                            </Link>
+                                                        ) : (
+                                                            <button
+                                                                type="button"
+                                                                className="btn btn-sm btn-outline-info"
+                                                                disabled
+                                                            >
+                                                                <i className="fas fa-eye"></i>
+                                                            </button>
+                                                        )}
+
+                                                        {user.permissions.includes('EXAM_UPDATE') ? (
+                                                            <Link
+                                                                to={`edit-exam/${exam.id_bai_thi}`}
+                                                                className="btn btn-sm btn-outline-primary"
+                                                            >
+                                                                <i className="fas fa-edit"></i>
+                                                            </Link>
+                                                        ) : (
+                                                            <button
+                                                                type="button"
+                                                                className="btn btn-sm btn-outline-primary"
+                                                                disabled
+                                                            >
+                                                                <i className="fas fa-edit"></i>
+                                                            </button>
+                                                        )}
+                                                        {user.permissions.includes('EXAM_DELETE') ? (
+                                                            <button
+                                                                onClick={() => handleDeleteExam(exam.id_bai_thi)}
+                                                                type="button"
+                                                                className="btn btn-sm btn-outline-danger"
+                                                            >
+                                                                <i className="fas fa-trash-alt"></i>
+                                                            </button>
+                                                        ) : (
+                                                            <button
+                                                                type="button"
+                                                                className="btn btn-sm btn-outline-danger"
+                                                                disabled
+                                                            >
+                                                                <i className="fas fa-trash-alt"></i>
+                                                            </button>
+                                                        )}
                                                     </div>
                                                 </td>
                                             </tr>

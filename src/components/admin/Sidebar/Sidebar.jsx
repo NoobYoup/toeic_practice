@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import { DEFAULT_AVATAR } from '@/constants/default';
-
+import { toast } from 'react-toastify';
 import './Sidebar.scss';
 
 function Sidebar() {
@@ -13,12 +13,20 @@ function Sidebar() {
     let user = {};
     if (token) {
         user = jwtDecode(token);
-        console.log(user);
     }
 
     const handleLogout = () => {
-        localStorage.removeItem('admin_token');
-        navigate('/admin');
+        if (user.is_admin === true) {
+            const role = user.vai_tro || 'admin';
+            const tokenKey = `${role}_token`;
+            localStorage.removeItem(tokenKey, user.token);
+            localStorage.removeItem('admin_token');
+
+            toast.success('Đăng xuất thành công');
+            navigate('/admin');
+        } else {
+            toast.error('Bạn không có quyền truy cập trang quản trị.');
+        }
     };
 
     return (

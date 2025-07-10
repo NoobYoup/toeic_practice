@@ -4,6 +4,7 @@ import ReactPaginate from 'react-paginate';
 import Select from 'react-select';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
+import { jwtDecode } from 'jwt-decode';
 import { getAllQuestion, importExcel, deleteQuestion } from '@/services/questionService';
 import { toast } from 'react-toastify';
 import styles from './QuestionBank.module.scss';
@@ -22,6 +23,9 @@ function Question() {
     const [showImportModal, setShowImportModal] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
     const [importing, setImporting] = useState(false);
+
+    const token = localStorage.getItem('admin_token');
+    const user = jwtDecode(token);
 
     const fetchQuestions = async () => {
         setLoading(true);
@@ -126,13 +130,24 @@ function Question() {
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h2>Quản lý Ngân Hàng Câu Hỏi</h2>
                 <div>
-                    <button className="btn btn-success me-2" onClick={() => setShowImportModal(true)}>
-                        <i className="fas fa-file-excel me-2"></i>Import Excel
-                    </button>
-
-                    <Link to="create-question" className="btn btn-primary">
-                        <i className="fas fa-plus-circle me-2"></i>Thêm Câu Hỏi
-                    </Link>
+                    {user.permissions.includes('QUESTION_IMPORT') ? (
+                        <button className="btn btn-success me-2" onClick={() => setShowImportModal(true)}>
+                            <i className="fas fa-file-excel me-2"></i>Import Excel
+                        </button>
+                    ) : (
+                        <button className="btn btn-success me-2" disabled>
+                            <i className="fas fa-file-excel me-2"></i>Import Excel
+                        </button>
+                    )}
+                    {user.permissions.includes('QUESTION_CREATE') ? (
+                        <Link to="create-question" className="btn btn-primary">
+                            <i className="fas fa-plus-circle me-2"></i>Thêm Câu Hỏi
+                        </Link>
+                    ) : (
+                        <button className="btn btn-primary" disabled>
+                            <i className="fas fa-plus-circle me-2"></i>Thêm Câu Hỏi
+                        </button>
+                    )}
                 </div>
             </div>
 
@@ -245,7 +260,7 @@ function Question() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {questions.length > 0 ? (
+                                        {user.permissions.includes('QUESTION_VIEW') && questions.length > 0 ? (
                                             questions.map((question) => (
                                                 <tr key={question.id_cau_hoi}>
                                                     <td>{question.id_cau_hoi}</td>
@@ -341,24 +356,53 @@ function Question() {
                                                     </td>
                                                     <td>
                                                         <div className="btn-group">
-                                                            <Link
-                                                                to={`detail-question/${question.id_cau_hoi}`}
-                                                                className="btn btn-sm btn-outline-info"
-                                                            >
-                                                                <i className="fas fa-eye"></i>
-                                                            </Link>
-                                                            <Link
-                                                                to={`edit-question/${question.id_cau_hoi}`}
-                                                                className="btn btn-sm btn-outline-primary"
-                                                            >
-                                                                <i className="fas fa-edit"></i>
-                                                            </Link>
-                                                            <button
-                                                                className="btn btn-sm btn-outline-danger"
-                                                                onClick={() => handleDelete(question.id_cau_hoi)}
-                                                            >
-                                                                <i className="fas fa-trash-alt"></i>
-                                                            </button>
+                                                            {user.permissions.includes('QUESTION_DETAIL') ? (
+                                                                <Link
+                                                                    to={`detail-question/${question.id_cau_hoi}`}
+                                                                    className="btn btn-sm btn-outline-info"
+                                                                >
+                                                                    <i className="fas fa-eye"></i>
+                                                                </Link>
+                                                            ) : (
+                                                                <button
+                                                                    className="btn btn-sm btn-outline-info"
+                                                                    disabled
+                                                                >
+                                                                    <i className="fas fa-eye"></i>
+                                                                </button>
+                                                            )}
+
+                                                            {user.permissions.includes('QUESTION_UPDATE') ? (
+                                                                <Link
+                                                                    to={`edit-question/${question.id_cau_hoi}`}
+                                                                    className="btn btn-sm btn-outline-primary"
+                                                                >
+                                                                    <i className="fas fa-edit"></i>
+                                                                </Link>
+                                                            ) : (
+                                                                <button
+                                                                    className="btn btn-sm btn-outline-primary"
+                                                                    disabled
+                                                                >
+                                                                    <i className="fas fa-edit"></i>
+                                                                </button>
+                                                            )}
+
+                                                            {user.permissions.includes('QUESTION_DELETE') ? (
+                                                                <button
+                                                                    className="btn btn-sm btn-outline-danger"
+                                                                    onClick={() => handleDelete(question.id_cau_hoi)}
+                                                                >
+                                                                    <i className="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            ) : (
+                                                                <button
+                                                                    className="btn btn-sm btn-outline-danger"
+                                                                    disabled
+                                                                >
+                                                                    <i className="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            )}
                                                         </div>
                                                     </td>
                                                 </tr>

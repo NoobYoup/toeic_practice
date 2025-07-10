@@ -5,12 +5,16 @@ import ReactPaginate from 'react-paginate';
 import { getAllRole, deleteRole } from '@/services/roleService';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
+import { jwtDecode } from 'jwt-decode';
 
 function Role() {
     const [roles, setRoles] = useState([]);
     const [loading, setLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
+
+    const token = localStorage.getItem('admin_token');
+    const user = jwtDecode(token);
 
     const fetchAllRole = async () => {
         setLoading(true);
@@ -51,10 +55,16 @@ function Role() {
         <div className="container-fluid">
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h2>Quản lý vai trò</h2>
-                {/* Placeholder for add role */}
-                <Link to="create-role" className="btn btn-primary">
-                    <i className="fas fa-plus-circle me-2"></i>Thêm vai trò
-                </Link>
+
+                {user.permissions.includes('ROLE_CREATE') ? (
+                    <Link to="create-role" className="btn btn-primary">
+                        <i className="fas fa-plus-circle me-2"></i>Thêm vai trò
+                    </Link>
+                ) : (
+                    <button className="btn btn-primary" disabled>
+                        <i className="fas fa-plus-circle me-2"></i>Thêm vai trò
+                    </button>
+                )}
             </div>
             {loading ? (
                 <div className="text-center py-5">
@@ -74,7 +84,7 @@ function Role() {
                             </tr>
                         </thead>
                         <tbody>
-                            {roles.length > 0 ? (
+                            {user.permissions.includes('ROLE_VIEW') && roles.length > 0 ? (
                                 displayedRoles.map((role) => (
                                     <tr key={role.id_vai_tro}>
                                         <td>{role.id_vai_tro}</td>
@@ -96,25 +106,45 @@ function Role() {
                                         </td>
                                         <td className="text-center">
                                             <div className="btn-group">
-                                                <Link
-                                                    to={`detail-role/${role.id_vai_tro}`}
-                                                    className="btn btn-sm btn-outline-primary"
-                                                >
-                                                    <i className="fas fa-eye"></i>
-                                                </Link>
-                                                <Link
-                                                    to={`edit-role/${role.id_vai_tro}`}
-                                                    className="btn btn-sm btn-outline-primary"
-                                                >
-                                                    <i className="fas fa-edit"></i>
-                                                </Link>
-                                                <button
-                                                    onClick={() => handleDeleteRole(role.id_vai_tro)}
-                                                    type="button"
-                                                    className="btn btn-sm btn-outline-danger"
-                                                >
-                                                    <i className="fas fa-trash-alt"></i>
-                                                </button>
+                                                {user.permissions.includes('ROLE_DETAIL') ? (
+                                                    <Link
+                                                        to={`detail-role/${role.id_vai_tro}`}
+                                                        className="btn btn-sm btn-outline-primary"
+                                                    >
+                                                        <i className="fas fa-eye"></i>
+                                                    </Link>
+                                                ) : (
+                                                    <button className="btn btn-sm btn-outline-primary" disabled>
+                                                        <i className="fas fa-eye"></i>
+                                                    </button>
+                                                )}
+
+                                                {user.permissions.includes('ROLE_UPDATE') ? (
+                                                    <Link
+                                                        to={`edit-role/${role.id_vai_tro}`}
+                                                        className="btn btn-sm btn-outline-primary"
+                                                    >
+                                                        <i className="fas fa-edit"></i>
+                                                    </Link>
+                                                ) : (
+                                                    <button className="btn btn-sm btn-outline-primary" disabled>
+                                                        <i className="fas fa-edit"></i>
+                                                    </button>
+                                                )}
+
+                                                {user.permissions.includes('ROLE_DELETE') ? (
+                                                    <button
+                                                        onClick={() => handleDeleteRole(role.id_vai_tro)}
+                                                        type="button"
+                                                        className="btn btn-sm btn-outline-danger"
+                                                    >
+                                                        <i className="fas fa-trash-alt"></i>
+                                                    </button>
+                                                ) : (
+                                                    <button className="btn btn-sm btn-outline-danger" disabled>
+                                                        <i className="fas fa-trash-alt"></i>
+                                                    </button>
+                                                )}
                                             </div>
                                         </td>
                                     </tr>

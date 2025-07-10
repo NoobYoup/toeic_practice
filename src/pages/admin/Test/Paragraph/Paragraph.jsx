@@ -4,6 +4,7 @@ import ReactPaginate from 'react-paginate';
 import Select from 'react-select';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
+import { jwtDecode } from 'jwt-decode';
 import { getAllPassage, deletePassage } from '@/services/passageService';
 import styles from './Paragraph.module.scss';
 import classNames from 'classnames/bind';
@@ -20,6 +21,9 @@ function Paragraph() {
     const [filters, setFilters] = useState({});
 
     const [optionsPhan, setOptionsPhan] = useState([{ value: '', label: 'Tất cả phần' }]);
+
+    const token = localStorage.getItem('admin_token');
+    const user = jwtDecode(token);
 
     async function fetchPassages() {
         setLoading(true);
@@ -78,9 +82,15 @@ function Paragraph() {
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h2>Quản lý đoạn văn</h2>
                 <div>
-                    <Link to="create" className="btn btn-primary">
-                        <i className="fas fa-plus-circle me-2"></i>Thêm đoạn văn
-                    </Link>
+                    {user.permissions.includes('PASSAGE_CREATE') ? (
+                        <Link to="create" className="btn btn-primary">
+                            <i className="fas fa-plus-circle me-2"></i>Thêm đoạn văn
+                        </Link>
+                    ) : (
+                        <button className="btn btn-primary" disabled>
+                            <i className="fas fa-plus-circle me-2"></i>Thêm đoạn văn
+                        </button>
+                    )}
                 </div>
             </div>
 
@@ -123,7 +133,7 @@ function Paragraph() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {passages.length === 0 ? (
+                                    {user.permissions.includes('PASSAGE_VIEW') && passages.length === 0 ? (
                                         <tr>
                                             <td colSpan={8} className="text-center text-muted">
                                                 Không có dữ liệu
@@ -165,25 +175,32 @@ function Paragraph() {
                                                 </td>
 
                                                 <td>
-                                                    {/* <Link
-                                                        to={`/admin/paragraph/detail/${passage.id_doan_van}`}
-                                                        className="btn btn-sm btn-outline-info me-1"
-                                                    >
-                                                        <i className="fas fa-eye"></i>
-                                                    </Link> */}
                                                     <div className="btn-group">
-                                                        <Link
-                                                            to={`/admin/test/paragraph/edit/${passage.id_doan_van}`}
-                                                            className="btn btn-sm btn-outline-primary"
-                                                        >
-                                                            <i className="fas fa-edit"></i>
-                                                        </Link>
-                                                        <button
-                                                            onClick={() => handleDelete(passage.id_doan_van)}
-                                                            className="btn btn-sm btn-outline-danger"
-                                                        >
-                                                            <i className="fas fa-trash-alt"></i>
-                                                        </button>
+                                                        {user.permissions.includes('PASSAGE_UPDATE') ? (
+                                                            <Link
+                                                                to={`/admin/test/paragraph/edit/${passage.id_doan_van}`}
+                                                                className="btn btn-sm btn-outline-primary"
+                                                            >
+                                                                <i className="fas fa-edit"></i>
+                                                            </Link>
+                                                        ) : (
+                                                            <button className="btn btn-sm btn-outline-primary" disabled>
+                                                                <i className="fas fa-edit"></i>
+                                                            </button>
+                                                        )}
+
+                                                        {user.permissions.includes('PASSAGE_DELETE') ? (
+                                                            <button
+                                                                onClick={() => handleDelete(passage.id_doan_van)}
+                                                                className="btn btn-sm btn-outline-danger"
+                                                            >
+                                                                <i className="fas fa-trash-alt"></i>
+                                                            </button>
+                                                        ) : (
+                                                            <button className="btn btn-sm btn-outline-danger" disabled>
+                                                                <i className="fas fa-trash-alt"></i>
+                                                            </button>
+                                                        )}
                                                     </div>
                                                 </td>
                                             </tr>
@@ -194,7 +211,6 @@ function Paragraph() {
                         )}
                     </div>
 
-                    {/* Pagination */}
                     <div className="d-flex justify-content-center">
                         <ReactPaginate
                             breakLabel="..."
