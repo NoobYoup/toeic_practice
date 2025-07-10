@@ -75,6 +75,22 @@ const getDetailPartUser = (id_bai_lam, id_phan) => {
     });
 };
 
+const getQuestionIndex = (id_bai_lam) => {
+    const token = localStorage.getItem('user_token');
+
+    return axios.get(`${API}/results/question-index/${id_bai_lam}`, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+};
+
+const getAvailableParts = (id_bai_lam) => {
+    const token = localStorage.getItem('user_token');
+
+    return axios.get(`${API}/results/avaliable-parts/${id_bai_lam}`, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+};
+
 export {
     submitResult,
     getDetailResult,
@@ -83,4 +99,6 @@ export {
     getAllExamSubmit,
     getDetailFirstUser,
     getDetailPartUser,
+    getQuestionIndex,
+    getAvailableParts,
 };

@@ -1,6 +1,11 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState, useMemo, useRef } from 'react';
-import { getDetailFirstUser, getDetailPartUser } from '@/services/resultService.jsx';
+import {
+    getDetailFirstUser,
+    getDetailPartUser,
+    getQuestionIndex,
+    getAvailableParts,
+} from '@/services/resultService.jsx';
 import dayjs from 'dayjs';
 import 'dayjs/locale/vi';
 
@@ -17,18 +22,12 @@ function ResultTest() {
     const [activePart, setActivePart] = useState(1);
     // Persist global question numbering across part fetches
     const globalIndexRef = useRef({});
+    const [questionIndexMap, setQuestionIndexMap] = useState(null);
 
-    // Static parts list
-    const PARTS = [
-        { id_phan: 1, ten_phan: 'Part 1' },
-        { id_phan: 2, ten_phan: 'Part 2' },
-        { id_phan: 3, ten_phan: 'Part 3' },
-        { id_phan: 4, ten_phan: 'Part 4' },
-        { id_phan: 5, ten_phan: 'Part 5' },
-        { id_phan: 6, ten_phan: 'Part 6' },
-        { id_phan: 7, ten_phan: 'Part 7' },
-    ];
+    // Parts list fetched from backend
+    const [parts, setParts] = useState([]);
 
+    // Fetch a specific part's data and merge into state
     const fetchPartData = async (partId) => {
         setLoading(true);
         try {
@@ -40,14 +39,7 @@ function ResultTest() {
             }
             const prevResult = result;
             console.log(res);
-            // Update globalIndexRef with any new questions
-            const examQs = res.data?.data?.bai_thi_nguoi_dung?.cau_hoi_cua_bai_thi || [];
-            examQs.forEach((item) => {
-                if (item?.cau_hoi && !globalIndexRef.current[item.cau_hoi.id_cau_hoi]) {
-                    const nextIdx = Object.keys(globalIndexRef.current).length + 1;
-                    globalIndexRef.current[item.cau_hoi.id_cau_hoi] = nextIdx;
-                }
-            });
+
             setResult(res.data?.data);
             setActivePart(partId);
             if (!res.data?.data?.bai_thi_nguoi_dung?.cau_hoi_cua_bai_thi) {
@@ -59,7 +51,28 @@ function ResultTest() {
         setLoading(false);
     };
 
-    // Process data once result is available
+    // Pre-fetch global question index once on mount or when id changes
+    useEffect(() => {
+        const fetchQuestionIndex = async () => {
+            try {
+                const res = await getQuestionIndex(id);
+                console.log(res);
+                const mapping = {};
+                res.data?.data?.forEach((item) => {
+                    if (item.id_cau_hoi && item.thu_tu) {
+                        mapping[item.id_cau_hoi] = item.thu_tu;
+                    }
+                });
+                globalIndexRef.current = mapping; // Seed global mapping
+                setQuestionIndexMap(mapping); // trigger re-render
+            } catch (error) {
+                console.error('Lỗi khi lấy thứ tự câu hỏi:', error);
+            }
+        };
+        fetchQuestionIndex();
+    }, [id]);
+
+    // Process data once result or questionIndexMap is available
     const processedData = useMemo(() => {
         if (!result) return null;
 
@@ -72,14 +85,12 @@ function ResultTest() {
             diem_doc,
         } = result;
 
-        console.log('result', result);
-
         // Map questionId -> question detail + part info for quick lookup
         const questionMap = {};
         const partMap = {};
 
         // Pre-fill partMap with static parts to ensure consistent ordering and indexing
-        PARTS.forEach((p) => {
+        parts.forEach((p) => {
             partMap[p.id_phan] = {
                 id_phan: p.id_phan,
                 ten_phan: p.ten_phan,
@@ -128,7 +139,7 @@ function ResultTest() {
                 ...ans,
                 question: q,
                 status,
-                globalIndex: globalIndexRef.current[ans.id_cau_hoi] || null,
+                globalIndex: globalIndexRef.current[ans.id_cau_hoi] || 0,
             };
         });
 
@@ -145,13 +156,28 @@ function ResultTest() {
             questionsDetail,
             totalQuestions: so_luong_cau_hoi,
         };
-    }, [result]);
+    }, [result, questionIndexMap, parts]);
 
     // Set default active part once data loaded
 
+    // Fetch available parts when component mounts or id changes
     useEffect(() => {
-        fetchPartData(1);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        const loadParts = async () => {
+            try {
+                const res = await getAvailableParts(id);
+                const list = res.data?.parts || [];
+                // Chỉ giữ "Part X" trước dấu ':' để hiển thị gọn
+                const formatted = list.map((p) => ({ ...p, ten_phan: p.ten_phan.split(':')[0].trim() }));
+                setParts(formatted);
+                if (list.length) {
+                    setActivePart(list[0].id_phan);
+                    fetchPartData(list[0].id_phan);
+                }
+            } catch (error) {
+                console.error('Lỗi khi lấy danh sách phần:', error);
+            }
+        };
+        loadParts();
     }, [id]);
 
     return (
@@ -189,7 +215,7 @@ function ResultTest() {
 
                         {/* Part selector */}
                         <div className="mb-3 px-3">
-                            {PARTS.map((p) => (
+                            {parts.map((p) => (
                                 <button
                                     key={p.id_phan}
                                     className={`${cx('part-label', {
@@ -211,11 +237,6 @@ function ResultTest() {
                                         (q) => Number(q.question?.phan?.id_phan) === Number(activePart),
                                     );
 
-                                    console.log('questionsInPart', questionsInPart);
-
-                                    // Parts that actually contain questions (total > 0)
-                                    // Use pre-computed globalIndex from processedData
-                                    const partsWithData = processedData.parts.filter((p) => p.total > 0); // keep for potential other logic
                                     const isAudioGrouped = [3, 4].includes(Number(activePart));
                                     const isPassageGrouped = activePart === 6 || activePart === 7;
 
