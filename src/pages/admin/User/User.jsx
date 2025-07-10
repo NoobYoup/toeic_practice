@@ -189,7 +189,7 @@ function User() {
                                                         {user.permissions.includes('USER_DETAIL') ? (
                                                             <Link
                                                                 className="btn btn-sm btn-outline-primary"
-                                                                to={`/admin/user/detail-user/${user.id_nguoi_dung}`}
+                                                                to={`/admin/user/detail-user/${u.id_nguoi_dung}`}
                                                             >
                                                                 <i className="fas fa-eye"></i>
                                                             </Link>
@@ -201,7 +201,7 @@ function User() {
                                                         {user.permissions.includes('USER_UPDATE') ? (
                                                             <Link
                                                                 className="btn btn-sm btn-outline-warning"
-                                                                to={`/admin/user/edit-user/${user.id_nguoi_dung}`}
+                                                                to={`/admin/user/edit-user/${u.id_nguoi_dung}`}
                                                             >
                                                                 <i className="fas fa-edit"></i>
                                                             </Link>
@@ -214,7 +214,7 @@ function User() {
                                                         {user.permissions.includes('USER_DELETE') ? (
                                                             <button
                                                                 className="btn btn-sm btn-outline-danger"
-                                                                onClick={() => handleDelete(user.id_nguoi_dung)}
+                                                                onClick={() => handleDelete(u.id_nguoi_dung)}
                                                             >
                                                                 <i className="fas fa-trash"></i>
                                                             </button>
