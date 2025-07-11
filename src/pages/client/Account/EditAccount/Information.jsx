@@ -182,7 +182,7 @@ function Information() {
                                     type="text"
                                     className="form-control"
                                     id="id"
-                                    value={profile?.id || ''}
+                                    value={profile?.ho_so?.id_nguoi_dung || ''}
                                     readOnly
                                     disabled
                                     required

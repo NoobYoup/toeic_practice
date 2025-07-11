@@ -42,7 +42,6 @@ function EditUser() {
             const res = await getAllRole();
             const rolesData = res.data?.data || [];
             setRoles(rolesData);
-            console.log(rolesData);
 
             const options = rolesData.map((role) => ({
                 value: String(role.id_vai_tro),
@@ -72,7 +71,6 @@ function EditUser() {
             setLoading(true);
             try {
                 const res = await getDetailUser(id);
-                console.log(res);
                 const userData = res.data.data.user;
 
                 // Flatten role id for easier access in UI state

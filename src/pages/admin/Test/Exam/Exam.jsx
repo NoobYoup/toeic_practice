@@ -28,14 +28,11 @@ function Exam() {
 
     const token = localStorage.getItem('admin_token');
     const user = jwtDecode(token);
-    console.log(user.permissions);
-    // console.log('check', user.permissions.includes('EXAM_CREATE'));
 
     const fetchExams = async () => {
         setLoading(true);
         try {
             const res = await getAllExam(currentPage, filters);
-            console.log(res.data.data);
             setExams(res.data.data);
             setPagination((prev) => ({
                 ...prev,
@@ -108,8 +105,6 @@ function Exam() {
         setFilters({});
         setCurrentPage(1);
     };
-
-    console.log(user.permissions.includes('EXAM_CREATE'));
 
     return (
         <>

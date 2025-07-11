@@ -21,7 +21,7 @@ function RolePermission() {
         setLoading(true);
         try {
             const res = await getAllPermission();
-            console.log(res);
+
             setPermissions(res.data?.data || res.data); // tuỳ cấu trúc API
         } catch (error) {
             console.error(error);

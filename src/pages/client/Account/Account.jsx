@@ -54,22 +54,22 @@ function Account() {
                                             </p>
                                             <div className="d-flex align-items-center mb-2">
                                                 <i className="fas fa-calendar-alt me-2"></i>
-                                                <span>
-                                                    {format(
-                                                        new Date(profile.ho_so?.thoi_gian_tao),
-                                                        'dd/MM/yyyy HH:mm',
-                                                        {
-                                                            locale: vi,
-                                                        },
-                                                    )}
-                                                </span>
+                                                <span>{profile.ho_so.ngay_sinh}</span>
                                             </div>
-                                            <div className="d-flex align-items-center">
+                                            <div className="d-flex align-items-center mb-2">
+                                                <i className="fas fa-phone me-2"></i>
+                                                <span>{profile.ho_so.so_dien_thoai}</span>
+                                            </div>
+                                            <div className="d-flex align-items-center mb-2">
+                                                <i className="fas fa-map-marker-alt me-2"></i>
+                                                <span>{profile.ho_so.dia_chi}</span>
+                                            </div>
+                                            {/* <div className="d-flex align-items-center">
                                                 <i className="fas fa-trophy me-2"></i>
                                                 <span>
                                                     Điểm TOEIC cao nhất: <strong>785</strong>
                                                 </span>
-                                            </div>
+                                            </div> */}
                                         </div>
                                     </div>
                                 </div>
@@ -82,7 +82,7 @@ function Account() {
                         </div>
                     </section>
 
-                    <Dashboard />
+                    <Dashboard user={profile} />
                 </>
             ) : (
                 <>
@@ -111,7 +111,7 @@ function Account() {
                         </div>
                     </section>
 
-                    <Dashboard />
+                    <Dashboard user={profile} />
                 </>
             )}
         </>

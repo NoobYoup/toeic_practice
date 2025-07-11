@@ -11,7 +11,6 @@ function DetailRole() {
         setLoading(true);
         try {
             const res = await detailRole(id);
-            console.log(res);
 
             setRole(res.data.data);
         } catch (err) {

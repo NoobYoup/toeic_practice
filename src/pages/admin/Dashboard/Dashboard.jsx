@@ -32,7 +32,7 @@ function Dashboard() {
             setStats({ questions: questionsTotal, exams: examsTotal, users: usersTotal, results: resultsTotal });
         } catch (error) {
             console.error('Lỗi khi lấy thống kê:', error);
-            toast.error('Không thể tải dữ liệu thống kê');
+            // toast.error('Không thể tải dữ liệu thống kê');
         }
         setLoading(false);
     }, []);

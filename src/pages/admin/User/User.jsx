@@ -28,7 +28,6 @@ function User() {
             setLoading(true);
             try {
                 const res = await getAllUser(searchTerm, currentPage);
-                console.log(res);
                 setUsers(res.data.data);
                 setPagination(res.data.pagination);
             } catch (error) {

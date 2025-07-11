@@ -10,7 +10,7 @@ function DetailPermission() {
         try {
             setLoading(true);
             const res = await getDetailPermission(id);
-            console.log(res);
+
             setPermission(res.data.data);
         } catch (error) {
             console.log(error);

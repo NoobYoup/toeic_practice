@@ -1,5 +1,6 @@
 import { getPermissionTable, updatePermissionTable } from '@/services/roleService';
 import React, { useState, useEffect } from 'react';
+import { jwtDecode } from 'jwt-decode';
 import styles from './RolePermission.module.scss';
 import classNames from 'classnames/bind';
 import { toast } from 'react-toastify';
@@ -11,11 +12,13 @@ function RolePermission() {
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
 
+    const token = localStorage.getItem('admin_token');
+    const user = jwtDecode(token);
+
     const fetchPermissionTable = async () => {
         setLoading(true);
         try {
             const res = await getPermissionTable();
-            console.log(res);
             const raw = res.data?.permissions || {};
             // Flatten permissions and attach group name, also convert roles array → object for O(1) access
             const flat = [];
@@ -167,10 +170,16 @@ function RolePermission() {
                         </div>
                     )}
                     <div className="text-end mt-3">
-                        <button className="btn btn-success" onClick={handleSave} disabled={saving}>
-                            {saving && <i className="fas fa-spinner fa-spin me-2"></i>}
-                            Lưu thay đổi
-                        </button>
+                        {user.permissions.includes('ROLE_PERMISSION') ? (
+                            <button className="btn btn-success" onClick={handleSave} disabled={saving}>
+                                {saving && <i className="fas fa-spinner fa-spin me-2"></i>}
+                                Lưu thay đổi
+                            </button>
+                        ) : (
+                            <button className="btn btn-success" disabled>
+                                Lưu thay đổi
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>

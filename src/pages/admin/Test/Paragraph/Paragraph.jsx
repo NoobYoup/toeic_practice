@@ -30,7 +30,7 @@ function Paragraph() {
         setError(null);
         try {
             const res = await getAllPassage(currentPage, filters);
-            console.log(res.data.data);
+
             setPassages(res.data.data || []);
             setPagination(res.data.pagination || { page: 1, limit: 7, total: 0 });
             setOptionsPhan([

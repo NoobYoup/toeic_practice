@@ -31,7 +31,7 @@ function Question() {
         setLoading(true);
         try {
             const res = await getAllQuestion(pagination.page, filters);
-            console.log(res.data.data);
+
             setQuestions(res.data.data);
             setPagination((prev) => ({
                 ...prev,

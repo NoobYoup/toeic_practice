@@ -60,7 +60,7 @@ const getAllExamSubmit = (id, page = 1, limit = 20) => {
 };
 
 const getDetailFirstUser = (id_bai_lam) => {
-    const token = localStorage.getItem('user_token');
+    const token = localStorage.getItem('user_token') || localStorage.getItem('admin_token');
 
     return axios.get(`${API}/results/detail-first-user/${id_bai_lam}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -68,7 +68,7 @@ const getDetailFirstUser = (id_bai_lam) => {
 };
 
 const getDetailPartUser = (id_bai_lam, id_phan) => {
-    const token = localStorage.getItem('user_token');
+    const token = localStorage.getItem('user_token') || localStorage.getItem('admin_token');
 
     return axios.get(`${API}/results/detail-part-user/${id_bai_lam}/${id_phan}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -76,7 +76,7 @@ const getDetailPartUser = (id_bai_lam, id_phan) => {
 };
 
 const getQuestionIndex = (id_bai_lam) => {
-    const token = localStorage.getItem('user_token');
+    const token = localStorage.getItem('user_token') || localStorage.getItem('admin_token');
 
     return axios.get(`${API}/results/question-index/${id_bai_lam}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -84,7 +84,7 @@ const getQuestionIndex = (id_bai_lam) => {
 };
 
 const getAvailableParts = (id_bai_lam) => {
-    const token = localStorage.getItem('user_token');
+    const token = localStorage.getItem('user_token') || localStorage.getItem('admin_token');
 
     return axios.get(`${API}/results/avaliable-parts/${id_bai_lam}`, {
         headers: { Authorization: `Bearer ${token}` },

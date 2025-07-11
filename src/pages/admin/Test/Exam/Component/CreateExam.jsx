@@ -4,6 +4,7 @@ import Select from 'react-select';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
+import { jwtDecode } from 'jwt-decode';
 import ChooseQuestion from './Modal/ChooseQuestion';
 import { createExam, addQuestionToExam, approveExam } from '@/services/examService';
 
@@ -22,6 +23,9 @@ function CreateExam() {
     const [loading, setLoading] = useState(false);
     const [examId, setExamId] = useState(null);
     const navigate = useNavigate();
+
+    const token = localStorage.getItem('admin_token');
+    const user = jwtDecode(token);
 
     // Danh sách loại bài thi
     const examTypeOptions = [
@@ -258,15 +262,22 @@ function CreateExam() {
                                 <Link to="/admin/question-bank" type="button" className="btn btn-secondary me-2">
                                     Hủy
                                 </Link>
-                                <button
-                                    type="button"
-                                    className="btn btn-success"
-                                    disabled={approving || !examId}
-                                    onClick={handleApproveExam}
-                                >
-                                    {approving && <i className="fas fa-spinner fa-spin me-2"></i>}
-                                    Duyệt đề thi
-                                </button>
+
+                                {user.permissions.includes('EXAM_APPROVE') ? (
+                                    <button
+                                        type="button"
+                                        className="btn btn-success"
+                                        disabled={approving || !examId}
+                                        onClick={handleApproveExam}
+                                    >
+                                        {approving && <i className="fas fa-spinner fa-spin me-2"></i>}
+                                        Duyệt đề thi
+                                    </button>
+                                ) : (
+                                    <button type="button" className="btn btn-success" disabled>
+                                        Duyệt đề thi
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>

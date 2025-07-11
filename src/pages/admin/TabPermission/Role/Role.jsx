@@ -20,7 +20,7 @@ function Role() {
         setLoading(true);
         try {
             const res = await getAllRole();
-            console.log(res);
+
             setRoles(res.data?.data || res.data); // tuỳ cấu trúc API
         } catch (error) {
             console.error(error);
