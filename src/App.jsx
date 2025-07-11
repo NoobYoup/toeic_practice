@@ -30,7 +30,14 @@ import AdminLayout from './layouts/AdminLayout.jsx';
 import Setting from './pages/admin/Setting';
 import Result from './pages/admin/Result/Result.jsx';
 import DetailResult from './pages/admin/Result/Component/DetailResult.jsx';
-import BlogAdmin from './pages/admin/Blog/Blog.jsx';
+import TabBlog from './pages/admin/TabBlog/TabBlog.jsx';
+import BlogAdmin from './pages/admin/TabBlog/Blog/Blog.jsx';
+import EditBlogAdmin from './pages/admin/TabBlog/Blog/Component/EditBlog.jsx';
+import DetailBlogAdmin from './pages/admin/TabBlog/Blog/Component/DetailBlog.jsx';
+import CategoryBlogAdmin from './pages/admin/TabBlog/CategoryBlog/CategoryBlog.jsx';
+import CreateCategoryBlogAdmin from './pages/admin/TabBlog/CategoryBlog/Component/CreateCategoryBlog.jsx';
+import EditCategoryBlogAdmin from './pages/admin/TabBlog/CategoryBlog/Component/EditCategoryBlog.jsx';
+import DetailCategoryBlogAdmin from './pages/admin/TabBlog/CategoryBlog/Component/DetailCategoryBlog.jsx';
 import User from './pages/admin/User';
 import EditUser from './pages/admin/User/Component/EditUser.jsx';
 import DetailUser from './pages/admin/User/Component/DetailUser.jsx';
@@ -160,7 +167,18 @@ function App() {
 
                             <Route path="/admin/result" element={<Result />} />
                             <Route path="/admin/result/detail-result/:id" element={<DetailResult />} />
-                            <Route path="/admin/blog" element={<BlogAdmin />} />
+                            <Route path="/admin/tab-blog" element={<TabBlog />}>
+                                <Route path="blog" element={<BlogAdmin />} />
+
+                                <Route path="blog/edit/:id" element={<EditBlogAdmin />} />
+                                <Route path="blog/detail/:id" element={<DetailBlogAdmin />} />
+
+                                <Route path="category-blog" element={<CategoryBlogAdmin />} />
+                                <Route path="category-blog/create" element={<CreateCategoryBlogAdmin />} />
+                                <Route path="category-blog/edit/:id" element={<EditCategoryBlogAdmin />} />
+                                <Route path="category-blog/detail/:id" element={<DetailCategoryBlogAdmin />} />
+                                <Route index element={<Navigate to="blog" replace />} />
+                            </Route>
                         </Route>
                     </Route>
                 </Routes>

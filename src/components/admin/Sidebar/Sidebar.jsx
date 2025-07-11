@@ -64,9 +64,9 @@ function Sidebar() {
                         </NavLink>
                     </li>
                     <li className="nav-item">
-                        <NavLink to="/admin/blog" className="nav-link">
+                        <NavLink to="/admin/tab-blog" className="nav-link">
                             {' '}
-                            <i className="fa-solid fa-chart-line"></i> Quản lý bài viết{' '}
+                            <i className="fa-solid fa-book"></i> Quản lý bài viết{' '}
                         </NavLink>
                     </li>
                     <li className="nav-item">
