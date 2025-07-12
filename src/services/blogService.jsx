@@ -76,4 +76,41 @@ const getAllCategory = () => {
     });
 };
 
-export { getAllBlog, createBlog, updateBlog, deleteBlog, getDetailBlog, getAllCategory };
+const getAdminPendingBlog = () => {
+    const token = localStorage.getItem('user_token');
+    return axios.get(`${API}/blogs/pending`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+const approvedBlog = (id) => {
+    const token = localStorage.getItem('user_token');
+    return axios.get(`${API}/blogs/approve/${id}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+const rejectedBlog = (id) => {
+    const token = localStorage.getItem('user_token');
+    return axios.get(`${API}/blogs/reject/${id}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+export {
+    getAllBlog,
+    createBlog,
+    updateBlog,
+    deleteBlog,
+    getDetailBlog,
+    getAllCategory,
+    getAdminPendingBlog,
+    approvedBlog,
+    rejectedBlog,
+};

@@ -42,6 +42,7 @@ import CategoryBlogAdmin from './pages/admin/TabBlog/CategoryBlog/CategoryBlog.j
 import CreateCategoryBlogAdmin from './pages/admin/TabBlog/CategoryBlog/Component/CreateCategoryBlog.jsx';
 import EditCategoryBlogAdmin from './pages/admin/TabBlog/CategoryBlog/Component/EditCategoryBlog.jsx';
 import DetailCategoryBlogAdmin from './pages/admin/TabBlog/CategoryBlog/Component/DetailCategoryBlog.jsx';
+import ApproveBlog from './pages/admin/TabBlog/ApproveBlog/ApproveBlog.jsx';
 import User from './pages/admin/User';
 import EditUser from './pages/admin/User/Component/EditUser.jsx';
 import DetailUser from './pages/admin/User/Component/DetailUser.jsx';
@@ -186,6 +187,9 @@ function App() {
                                 <Route path="category-blog/create" element={<CreateCategoryBlogAdmin />} />
                                 <Route path="category-blog/edit/:id" element={<EditCategoryBlogAdmin />} />
                                 <Route path="category-blog/detail/:id" element={<DetailCategoryBlogAdmin />} />
+
+                                <Route path="approve-blog" element={<ApproveBlog />} />
+
                                 <Route index element={<Navigate to="blog" replace />} />
                             </Route>
                         </Route>
