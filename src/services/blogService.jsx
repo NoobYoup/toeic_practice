@@ -135,6 +135,15 @@ const updateMyBlog = (id, data) => {
     });
 };
 
+const getDetailMyBlog = (id) => {
+    const token = localStorage.getItem('user_token');
+    return axios.get(`${API}/blogs/detail/${id}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
 export {
     getAllBlog,
     createBlog,
@@ -147,4 +156,5 @@ export {
     rejectedBlog,
     getMyBlog,
     updateMyBlog,
+    getDetailMyBlog,
 };

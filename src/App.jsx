@@ -115,8 +115,8 @@ function App() {
 
                             <Route path="/my-blog" element={<MyBlog />} />
                             <Route path="/my-blog/create" element={<CreateMyBlog />} />
-                            <Route path="/my-blog/edit" element={<EditMyBlog />} />
-                            <Route path="/my-blog/detail" element={<DetailMyBlog />} />
+                            <Route path="/my-blog/edit/:id" element={<EditMyBlog />} />
+                            <Route path="/my-blog/detail/:id" element={<DetailMyBlog />} />
                         </Route>
                     </Route>
 
