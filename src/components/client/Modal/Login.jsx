@@ -41,7 +41,7 @@ function Login({ setIsLogin, onSwitch, onClose, isOpen }) {
             console.log(decoded);
             setIsLogin(true);
             onClose();
-            toast.success(res.data.message);
+            // toast.success(res.data.message);
         } catch (err) {
             const apiErrors = err.response?.data?.errors;
             const generalMsg = err.response?.data?.message;

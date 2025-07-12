@@ -8,6 +8,10 @@ import AdminPrivateRoute from '@/middlewares/AdminPrivateRoute.jsx';
 import Home from './pages/client/Home/Home.jsx';
 import Blog from './pages/client/Blog';
 import DetailBlog from './pages/client/Blog/Component/DetailBlog.jsx';
+import MyBlog from './pages/client/Blog/MyBlog/MyBlog.jsx';
+import CreateMyBlog from './pages/client/Blog/MyBlog/Component/CreateMyBlog.jsx';
+import DetailMyBlog from './pages/client/Blog/MyBlog/Component/DetailMyBlog.jsx';
+import EditMyBlog from './pages/client/Blog/MyBlog/Component/EditMyBlog.jsx';
 
 import Account from './pages/client/Account/Account.jsx';
 import EditAccount from './pages/client/Account/EditAccount/EditAccount.jsx';
@@ -107,6 +111,11 @@ function App() {
                                 <Route path="security" element={<Security />} />
                                 <Route index element={<Navigate to="information" replace />} />
                             </Route>
+
+                            <Route path="/my-blog" element={<MyBlog />} />
+                            <Route path="/my-blog/create" element={<CreateMyBlog />} />
+                            <Route path="/my-blog/edit" element={<EditMyBlog />} />
+                            <Route path="/my-blog/detail" element={<DetailMyBlog />} />
                         </Route>
                     </Route>
 

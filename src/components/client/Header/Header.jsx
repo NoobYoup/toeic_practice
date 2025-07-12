@@ -214,6 +214,12 @@ function Header() {
                                     </li>
 
                                     <li>
+                                        <Link className="dropdown-item" to="/my-blog">
+                                            <i className="fas fa-book"></i> Bài viết của tôi
+                                        </Link>
+                                    </li>
+
+                                    <li>
                                         <hr className="dropdown-divider" />
                                     </li>
                                     <li>
