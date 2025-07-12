@@ -12,7 +12,7 @@ function EditAccount() {
                     </li>
                     <li className="nav-item">
                         <NavLink to="security" className="nav-link">
-                            <i className="fas fa-question-circle me-2"></i>Bảo mật
+                            <i className="fas fa-question-circle me-2"></i>Thay đổi mật khẩu
                         </NavLink>
                     </li>
                 </ul>

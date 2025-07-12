@@ -54,25 +54,6 @@ function EntranceExamModal({ examInfo = {}, isOpen, onClose, onStart }) {
                             <h2 className="text-center mb-3">{title}</h2>
                             <p className="text-muted text-center mb-4">{description}</p>
 
-                            <div className="row text-center mb-4">
-                                <div className="col-6 col-md-3 mb-3">
-                                    <h4 className="mb-0 fw-bold">{totalQuestions}</h4>
-                                    <small className="text-uppercase">Câu hỏi</small>
-                                </div>
-                                <div className="col-6 col-md-3 mb-3">
-                                    <h4 className="mb-0 fw-bold">{listeningQuestions}</h4>
-                                    <small className="text-uppercase">Listening</small>
-                                </div>
-                                <div className="col-6 col-md-3 mb-3">
-                                    <h4 className="mb-0 fw-bold">{readingQuestions}</h4>
-                                    <small className="text-uppercase">Reading</small>
-                                </div>
-                                <div className="col-6 col-md-3 mb-3">
-                                    <h4 className="mb-0 fw-bold">{totalTime} phút</h4>
-                                    <small className="text-uppercase">Thời gian</small>
-                                </div>
-                            </div>
-
                             <div className="alert alert-info text-center mb-4" role="alert">
                                 Lưu ý: Bạn chỉ có thể làm bài 1 lần duy nhất. Hãy chắc chắn bạn đã sẵn sàng trước khi
                                 bắt đầu.

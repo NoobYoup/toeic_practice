@@ -13,7 +13,6 @@ const cx = classNames.bind(styles);
 function History() {
     const token = localStorage.getItem('user_token');
     const decoded = jwtDecode(token);
-    console.log(decoded);
 
     const [examSubmit, setExamSubmit] = useState([]);
     const [loading, setLoading] = useState(false);

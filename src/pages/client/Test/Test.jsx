@@ -41,7 +41,7 @@ function Test() {
             setLoading(true);
             try {
                 const res = await getDetailExamPublic(examId);
-                console.log(res);
+
                 setExam(res.data.data);
             } catch (err) {
                 // eslint-disable-next-line no-console

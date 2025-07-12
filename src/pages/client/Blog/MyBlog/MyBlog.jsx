@@ -16,17 +16,14 @@ function MyBlog() {
     const [blogs, setBlogs] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    const token = localStorage.getItem('user_token');
-    const user = jwtDecode(token);
-
     const fetchBlogs = async () => {
         setLoading(true);
         try {
             const res = await getMyBlog();
-            console.log(res);
             setBlogs(res.data.data);
         } catch (err) {
             console.error(err);
+            toast.error(err.response.data.message);
         }
         setLoading(false);
     };
@@ -40,11 +37,10 @@ function MyBlog() {
             <div className="container min-vh-100">
                 <div className="d-flex justify-content-between align-items-center mb-4">
                     <h1 className="mb-0">Bài viết của tôi</h1>
-                    {user.permissions.includes('BLOG_CREATE') && (
-                        <Link to="create" className="btn btn-primary">
-                            Thêm bài viết
-                        </Link>
-                    )}
+
+                    <Link to="create" className="btn btn-primary">
+                        Thêm bài viết
+                    </Link>
                 </div>
 
                 {loading ? (
@@ -53,13 +49,13 @@ function MyBlog() {
                     </div>
                 ) : (
                     <div className="row">
-                        {user.permissions.includes('BLOG_VIEW') &&
+                        {blogs.length > 0 ? (
                             blogs.map((blog) => (
-                                <div className="col-md-3">
+                                <div className="col-md-3" key={blog.id_bai_viet}>
                                     <div className={cx('blog-card')}>
-                                        <Link to="/my-blog/detail">
+                                        <Link to={`/my-blog/detail/${blog.id_bai_viet}`}>
                                             <img
-                                                src={DEFAULT_AVATAR}
+                                                src={blog.hinh_anh.url_phuong_tien}
                                                 alt="TOEIC Test"
                                                 className="blog-card-img w-100 mb-2"
                                             />
@@ -69,9 +65,12 @@ function MyBlog() {
                                                 {blog.id_danh_muc}
                                             </a>
                                             <h3 className={cx('card-title')}>
-                                                <a href="./detail_blog.html" className="text-decoration-none text-dark">
+                                                <Link
+                                                    to={`/my-blog/detail/${blog.id_bai_viet}`}
+                                                    className="text-decoration-none text-dark"
+                                                >
                                                     {blog.tieu_de}
-                                                </a>
+                                                </Link>
                                             </h3>
                                             <p className={cx('card-text')}>{blog.noi_dung}</p>
                                             <div className="d-flex justify-content-between align-items-center">
@@ -81,18 +80,21 @@ function MyBlog() {
                                                         alt="Author"
                                                         className={`${cx('author-img')} me-2`}
                                                     />
-                                                    <span className="text-muted small">
-                                                        {jwtDecode(blog.user_id).name}
-                                                    </span>
+                                                    <span className="text-muted small">{blog.id_nguoi_dung}</span>
                                                 </div>
                                                 <small className="text-muted">
-                                                    {format(blog.created_at, 'dd/MM/yyyy')}
+                                                    {format(new Date(blog.thoi_gian_tao), 'dd/MM/yyyy', { locale: vi })}
                                                 </small>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            ))}
+                            ))
+                        ) : (
+                            <div className="text-center py-5">
+                                <span className="text-muted">Bạn chưa có bài viết nào</span>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>

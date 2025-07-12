@@ -20,14 +20,11 @@ function ListTest() {
             setLoading(true);
             try {
                 const response = await getAllExamPublic(page);
-                console.log('API Response:', response.data);
                 setExams(response.data.data);
-                
+
                 // Extract unique years from dsNamXuatBan if available
                 if (response.data.dsNamXuatBan && Array.isArray(response.data.dsNamXuatBan)) {
-                    const years = response.data.dsNamXuatBan
-                        .map(item => item.nam_xuat_ban)
-                        .sort((a, b) => b - a); // Sort in descending order (newest first)
+                    const years = response.data.dsNamXuatBan.map((item) => item.nam_xuat_ban).sort((a, b) => b - a); // Sort in descending order (newest first)
                     setPublicationYears(years);
                 }
             } catch (error) {
@@ -41,11 +38,11 @@ function ListTest() {
     return (
         <>
             <section className={cx('page-header')}>
-                <div class="container">
-                    <div class="row align-items-center">
-                        <div class="col-lg-8">
-                            <h1 class="fw-bold mb-3">Các Đề Thi TOEIC</h1>
-                            <p class="lead mb-0">
+                <div className="container">
+                    <div className="row align-items-center">
+                        <div className="col-lg-8">
+                            <h1 className="fw-bold mb-3">Các Đề Thi TOEIC</h1>
+                            <p className="lead mb-0">
                                 Lựa chọn từ hơn 300+ đề thi và bài luyện tập được thiết kế theo chuẩn ETS
                             </p>
                         </div>
@@ -79,10 +76,10 @@ function ListTest() {
                                 <Select
                                     options={[
                                         { label: 'Tất cả năm xuất bản', value: '' },
-                                        ...publicationYears.map(year => ({
+                                        ...publicationYears.map((year) => ({
                                             label: year.toString(),
-                                            value: year.toString()
-                                        }))
+                                            value: year.toString(),
+                                        })),
                                     ]}
                                     defaultValue={{ label: 'Tất cả năm xuất bản', value: '' }}
                                     placeholder="Chọn năm xuất bản"

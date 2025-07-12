@@ -1,12 +1,56 @@
 import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { getAllBlog } from '@/services/blogService';
+import { getAllCategoryBlog } from '@/services/categoryBlogService';
+import Select from 'react-select';
 
 import styles from './Blog.module.scss';
 import classNames from 'classnames/bind';
+import ReactPaginate from 'react-paginate';
 
 const cx = classNames.bind(styles);
 const DEFAULT_AVATAR = '/images/logo_black.png';
 
 function Blog() {
+    const [blogs, setBlogs] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [pagination, setPagination] = useState({
+        page: 1,
+        limit: 10,
+        total: 0,
+    });
+    const [currentPage, setCurrentPage] = useState(1);
+    const [categories, setCategories] = useState([]);
+    const fetchBlogs = async () => {
+        setLoading(true);
+        try {
+            const res = await getAllBlog(currentPage);
+            setBlogs(res.data.data);
+            setPagination((prev) => ({
+                ...prev,
+                total: res.data.pagination.total,
+                limit: res.data.pagination.limit,
+            }));
+        } catch (error) {
+            console.log(error);
+        }
+        setLoading(false);
+    };
+
+    const fetchCategories = async () => {
+        const res = await getAllCategoryBlog();
+        setCategories(res.data.data);
+    };
+
+    useEffect(() => {
+        fetchBlogs();
+        fetchCategories();
+    }, [currentPage]);
+
+    const handlePageClick = (data) => {
+        setCurrentPage(data.selected + 1);
+    };
+
     return (
         <>
             <header className={cx('blog-header')} style={{ flex: '1 0 auto' }}>
@@ -23,198 +67,160 @@ function Blog() {
                 </div>
             </header>
 
-            <div className="container py-5">
-                <div className="row">
-                    <div className="col-md-8">
-                        <div className="d-flex flex-wrap justify-content-between align-items-center mb-4">
-                            <div className="mb-3 mb-md-0">
-                                <span className="me-2">Hiển thị 1-9 của 42 bài viết</span>
-                            </div>
-                            <div className="d-flex">
-                                <div className="me-3">
-                                    <select className="form-select" defaultValue="">
-                                        <option>Danh mục</option>
-                                        <option>Chiến lược học tập</option>
-                                        <option>Kỹ năng Reading</option>
-                                        <option>Kỹ năng Listening</option>
-                                        <option>Từ vựng TOEIC</option>
-                                        <option>Ngữ pháp TOEIC</option>
-                                        <option>Kinh nghiệm thi</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <select className="form-select" defaultValue="">
-                                        <option>Mới nhất</option>
-                                        <option>Phổ biến nhất</option>
-                                        <option>Đọc nhiều nhất</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
+            <div className="container min-vh-100 py-5">
+                {loading ? (
+                    <div className="text-center py-5">
+                        <i className="fa-solid fa-spinner fa-spin fa-2x"></i>
+                    </div>
+                ) : (
+                    <>
                         <div className="row">
-                            <div className="col-md-6">
-                                <div className={cx('blog-card')}>
-                                    <Link to="/blog/detail-blog">
-                                        <img
-                                            src={DEFAULT_AVATAR}
-                                            alt="TOEIC Test"
-                                            className="blog-card-img w-100 mb-2"
-                                        />
-                                    </Link>
-                                    <div className="card-body p-2">
-                                        <a href="#" className={cx('category-badge')}>
-                                            Chiến lược học tập
-                                        </a>
-                                        <h3 className={cx('card-title')}>
-                                            <a href="./detail_blog.html" className="text-decoration-none text-dark">
-                                                10 Chiến lược làm bài thi TOEIC hiệu quả cho người mới bắt đầu
-                                            </a>
-                                        </h3>
-                                        <p className={cx('card-text')}>
-                                            Nếu bạn đang bắt đầu hành trình chinh phục TOEIC, việc hiểu rõ cấu trúc bài
-                                            thi và có chiến lược phù hợp sẽ giúp bạn tự tin hơn và đạt được điểm số như
-                                            mong muốn.
-                                        </p>
-                                        <div className="d-flex justify-content-between align-items-center">
-                                            <div className="d-flex align-items-center">
-                                                <img
-                                                    src={DEFAULT_AVATAR}
-                                                    alt="Author"
-                                                    className={`${cx('author-img')} me-2`}
-                                                />
-                                                <span className="text-muted small">Nguyễn Minh Tuấn</span>
-                                            </div>
-                                            <small className="text-muted">05/05/2025</small>
-                                        </div>
+                            <div className="col-md-12">
+                                <div className="d-flex flex-wrap justify-content-between align-items-center mb-4">
+                                    <div className="mb-3 mb-md-0">
+                                        <span className="me-2">Hiển thị 1-9 của 42 bài viết</span>
                                     </div>
-                                </div>
-                            </div>
-                            <div className="col-md-6">
-                                <div className={cx('blog-card')}>
-                                    <Link to="/blog/detail-blog">
-                                        <img
-                                            src={DEFAULT_AVATAR}
-                                            alt="TOEIC Test"
-                                            className="blog-card-img w-100 mb-2"
-                                        />
-                                    </Link>
-                                    <div className="card-body p-2">
-                                        <a href="#" className={cx('category-badge')}>
-                                            Chiến lược học tập
-                                        </a>
-                                        <h3 className={cx('card-title')}>
-                                            <a href="./detail_blog.html" className="text-decoration-none text-dark">
-                                                10 Chiến lược làm bài thi TOEIC hiệu quả cho người mới bắt đầu
-                                            </a>
-                                        </h3>
-                                        <p className={cx('card-text')}>
-                                            Nếu bạn đang bắt đầu hành trình chinh phục TOEIC, việc hiểu rõ cấu trúc bài
-                                            thi và có chiến lược phù hợp sẽ giúp bạn tự tin hơn và đạt được điểm số như
-                                            mong muốn.
-                                        </p>
-                                        <div className="d-flex justify-content-between align-items-center">
-                                            <div className="d-flex align-items-center">
-                                                <img
-                                                    src={DEFAULT_AVATAR}
-                                                    alt="Author"
-                                                    className={`${cx('author-img')} me-2`}
-                                                />
-                                                <span className="text-muted small">Nguyễn Minh Tuấn</span>
-                                            </div>
-                                            <small className="text-muted">05/05/2025</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-md-4">
-                        <div className={cx('blog-sidebar')}>
-                            <div className="card mb-4">
-                                <div className="card-body">
-                                    <form className={cx('search-form')}>
-                                        <div className="input-group">
-                                            <input
-                                                type="text"
-                                                className="form-control"
-                                                placeholder="Tìm kiếm bài viết..."
+                                    <div className="d-flex">
+                                        <div className="me-3">
+                                            <Select
+                                                options={categories.map((category) => ({
+                                                    value: category.id_danh_muc,
+                                                    label: category.ten_danh_muc,
+                                                }))}
+                                                // onChange={(selectedOption) => {
+                                                //     setCurrentPage(1);
+                                                //     setFilters({
+                                                //         ...filters,
+                                                //         id_danh_muc: selectedOption.value,
+                                                //     });
+                                                // }}
                                             />
-                                            <button type="submit" className="btn btn-primary px-3">
-                                                <i className="fas fa-search"></i>
-                                            </button>
                                         </div>
-                                    </form>
+                                    </div>
                                 </div>
-                            </div>
-                            <h4 className="mb-3">Bài viết nổi bật</h4>
-                            <div className={cx('featured-post')}>
-                                <img src={DEFAULT_AVATAR} alt="Featured post" />
-                                <div className={cx('featured-post-info')}>
-                                    <h6>
-                                        <a href="#" className="text-decoration-none text-dark">
-                                            10 Chiến lược làm bài thi TOEIC hiệu quả cho người mới bắt đầu
-                                        </a>
-                                    </h6>
-                                    <small>05/05/2025</small>
-                                </div>
-                            </div>
-                            <div className={cx('featured-post')}>
-                                <img src={DEFAULT_AVATAR} alt="Featured post" />
-                                <div className={cx('featured-post-info')}>
-                                    <h6>
-                                        <a href="#" className="text-decoration-none text-dark">
-                                            10 Chiến lược làm bài thi TOEIC hiệu quả cho người mới bắt đầu
-                                        </a>
-                                    </h6>
-                                    <small>05/05/2025</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <div className="d-flex justify-content-center mt-4">
-                    <nav>
-                        <ul className="pagination">
-                            <li className="page-item disabled">
-                                <a className="page-link" href="#" tabIndex="-1" aria-disabled="true">
-                                    <i className="fas fa-chevron-left small"></i>
-                                </a>
-                            </li>
-                            <li className="page-item active">
-                                <a className="page-link" href="#">
-                                    1
-                                </a>
-                            </li>
-                            <li className="page-item">
-                                <a className="page-link" href="#">
-                                    2
-                                </a>
-                            </li>
-                            <li className="page-item">
-                                <a className="page-link" href="#">
-                                    3
-                                </a>
-                            </li>
-                            <li className="page-item">
-                                <a className="page-link" href="#">
-                                    4
-                                </a>
-                            </li>
-                            <li className="page-item">
-                                <a className="page-link" href="#">
-                                    5
-                                </a>
-                            </li>
-                            <li className="page-item">
-                                <a className="page-link" href="#">
-                                    <i className="fas fa-chevron-right small"></i>
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
+                                <div className="row">
+                                    {blogs.length > 0 ? (
+                                        blogs.map((blog) => (
+                                            <div className="col-md-3" key={blog.id_bai_viet}>
+                                                <div className={cx('blog-card')}>
+                                                    <Link to={`/blog/detail-blog/${blog.id_bai_viet}`}>
+                                                        <img
+                                                            src={blog.hinh_anh.url_phuong_tien}
+                                                            alt="TOEIC Test"
+                                                            className="blog-card-img w-100 mb-2"
+                                                        />
+                                                    </Link>
+                                                    <div className="card-body p-2">
+                                                        <Link
+                                                            to={`/blog/detail-blog/${blog.id_bai_viet}`}
+                                                            className={cx('category-badge')}
+                                                        >
+                                                            {blog.id_danh_muc}
+                                                        </Link>
+                                                        <h3 className={cx('card-title')}>
+                                                            <Link
+                                                                to={`/blog/detail-blog/${blog.id_bai_viet}`}
+                                                                className="text-decoration-none text-dark"
+                                                            >
+                                                                {blog.tieu_de}
+                                                            </Link>
+                                                        </h3>
+                                                        <p className={cx('card-text')}>{blog.noi_dung}</p>
+                                                        <div className="d-flex justify-content-between align-items-center">
+                                                            <div className="d-flex align-items-center">
+                                                                <img
+                                                                    src={DEFAULT_AVATAR}
+                                                                    alt="Author"
+                                                                    className={`${cx('author-img')} me-2`}
+                                                                />
+                                                                <span className="text-muted small">
+                                                                    {blog.id_nguoi_dung}
+                                                                </span>
+                                                            </div>
+                                                            <small className="text-muted">
+                                                                {new Date(blog.thoi_gian_tao).toLocaleDateString()}
+                                                            </small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="text-center py-5">
+                                            <span className="text-muted">Không có bài viết nào</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                            {/* <div className="col-md-4">
+                                <div className={cx('blog-sidebar')}>
+                                    <div className="card mb-4">
+                                        <div className="card-body">
+                                            <form className={cx('search-form')}>
+                                                <div className="input-group">
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        placeholder="Tìm kiếm bài viết..."
+                                                    />
+                                                    <button type="submit" className="btn btn-primary px-3">
+                                                        <i className="fas fa-search"></i>
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <h4 className="mb-3">Bài viết nổi bật</h4>
+                                    <div className={cx('featured-post')}>
+                                        <img src={DEFAULT_AVATAR} alt="Featured post" />
+                                        <div className={cx('featured-post-info')}>
+                                            <h6>
+                                                <a href="#" className="text-decoration-none text-dark">
+                                                    10 Chiến lược làm bài thi TOEIC hiệu quả cho người mới bắt đầu
+                                                </a>
+                                            </h6>
+                                            <small>05/05/2025</small>
+                                        </div>
+                                    </div>
+                                    <div className={cx('featured-post')}>
+                                        <img src={DEFAULT_AVATAR} alt="Featured post" />
+                                        <div className={cx('featured-post-info')}>
+                                            <h6>
+                                                <a href="#" className="text-decoration-none text-dark">
+                                                    10 Chiến lược làm bài thi TOEIC hiệu quả cho người mới bắt đầu
+                                                </a>
+                                            </h6>
+                                            <small>05/05/2025</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> */}
+                        </div>
+
+                        <div className="mt-3">
+                            <ReactPaginate
+                                previousLabel={'Trước'}
+                                nextLabel={'Sau'}
+                                breakLabel={'...'}
+                                onPageChange={handlePageClick}
+                                pageCount={Math.ceil(pagination.total / pagination.limit)}
+                                marginPagesDisplayed={2}
+                                pageRangeDisplayed={3}
+                                containerClassName={'pagination justify-content-center'}
+                                pageClassName={'page-item'}
+                                pageLinkClassName={'page-link'}
+                                previousClassName={'page-item'}
+                                previousLinkClassName={'page-link'}
+                                nextClassName={'page-item'}
+                                nextLinkClassName={'page-link'}
+                                breakClassName={'page-item'}
+                                breakLinkClassName={'page-link'}
+                                activeClassName={'active'}
+                            />
+                        </div>
+                    </>
+                )}
             </div>
         </>
     );

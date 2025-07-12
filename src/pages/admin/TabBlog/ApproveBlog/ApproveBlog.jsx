@@ -15,6 +15,7 @@ function ApproveBlog() {
         limit: 10,
     });
     const [currentPage, setCurrentPage] = useState(1);
+
     const token = localStorage.getItem('admin_token');
     const user = jwtDecode(token);
 
@@ -46,12 +47,12 @@ function ApproveBlog() {
     const handleApproveBlog = async (id) => {
         setLoading(true);
         try {
-            await approvedBlog(id);
-            toast.success('Duyệt bài viết thành công');
+            const res = await approvedBlog(id);
+            toast.success(res.data.message || 'Duyệt bài viết thành công');
             fetchBlogPending();
         } catch (error) {
             console.error(error);
-            toast.error('Duyệt bài viết thất bại');
+            toast.error(error.response.data.message);
         } finally {
             setLoading(false);
         }
@@ -60,12 +61,12 @@ function ApproveBlog() {
     const handleRejectBlog = async (id) => {
         setLoading(true);
         try {
-            await rejectedBlog(id);
-            toast.success('Từ chối bài viết thành công');
+            const res = await rejectedBlog(id);
+            toast.success(res.data.message);
             fetchBlogPending();
         } catch (error) {
             console.error(error);
-            toast.error('Từ chối bài viết thất bại');
+            toast.error(error.response.data.message);
         } finally {
             setLoading(false);
         }
@@ -99,7 +100,7 @@ function ApproveBlog() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {user.permissions.includes('BLOG_VIEW_PENDING') && blogPending.length > 0 ? (
+                                    {user.permissions.includes('BLOG_VIEW') && blogPending.length > 0 ? (
                                         blogPending.map((blog) => (
                                             <tr key={blog.id_bai_viet}>
                                                 <td>{blog.id_bai_viet}</td>
@@ -145,7 +146,7 @@ function ApproveBlog() {
                                                                 <i className="fas fa-check"></i>
                                                             </button>
                                                         ) : (
-                                                            <button className="btn btn-sm btn-outline-danger" disabled>
+                                                            <button className="btn btn-sm btn-outline-success" disabled>
                                                                 <i className="fas fa-check"></i>
                                                             </button>
                                                         )}
@@ -159,7 +160,7 @@ function ApproveBlog() {
                                                                 <i className="fas fa-trash-alt"></i>
                                                             </button>
                                                         ) : (
-                                                            <button className="btn btn-sm btn-outline-danger" disabled>
+                                                            <button className="btn btn-sm btn-outline-success" disabled>
                                                                 <i className="fas fa-trash-alt"></i>
                                                             </button>
                                                         )}

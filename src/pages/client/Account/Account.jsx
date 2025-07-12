@@ -20,7 +20,6 @@ function Account() {
         const fetchUser = async () => {
             setLoading(true);
             const res = await getProfile(token);
-            console.log(res.data.data);
 
             setProfile(res.data.data);
             setLoading(false);

@@ -38,7 +38,6 @@ function ResultTest() {
                 res = await getDetailPartUser(id, partId);
             }
             const prevResult = result;
-            console.log(res);
 
             setResult(res.data?.data);
             setActivePart(partId);
@@ -56,7 +55,6 @@ function ResultTest() {
         const fetchQuestionIndex = async () => {
             try {
                 const res = await getQuestionIndex(id);
-                console.log(res);
                 const mapping = {};
                 res.data?.data?.forEach((item) => {
                     if (item.id_cau_hoi && item.thu_tu) {
@@ -474,21 +472,29 @@ function ResultTest() {
                                                                         <div className="d-flex flex-wrap gap-3 mb-2">
                                                                             {group.passage.danh_sach_phuong_tien.map(
                                                                                 (media) => {
-                                                                                    const isImage = /\.(jpeg|jpg|gif|png)$/.test(
-                                                                                        media.url_phuong_tien,
-                                                                                    );
-                                                                                    const isAudio = /\.(mp3|wav|ogg)$/.test(
-                                                                                        media.url_phuong_tien,
-                                                                                    );
+                                                                                    const isImage =
+                                                                                        /\.(jpeg|jpg|gif|png)$/.test(
+                                                                                            media.url_phuong_tien,
+                                                                                        );
+                                                                                    const isAudio =
+                                                                                        /\.(mp3|wav|ogg)$/.test(
+                                                                                            media.url_phuong_tien,
+                                                                                        );
 
                                                                                     if (isImage) {
                                                                                         return (
                                                                                             <img
-                                                                                                key={media.id_phuong_tien}
-                                                                                                src={media.url_phuong_tien}
+                                                                                                key={
+                                                                                                    media.id_phuong_tien
+                                                                                                }
+                                                                                                src={
+                                                                                                    media.url_phuong_tien
+                                                                                                }
                                                                                                 alt="passage"
                                                                                                 className="img-fluid rounded border"
-                                                                                                style={{ maxWidth: '100%' }}
+                                                                                                style={{
+                                                                                                    maxWidth: '100%',
+                                                                                                }}
                                                                                             />
                                                                                         );
                                                                                     }
@@ -496,12 +502,16 @@ function ResultTest() {
                                                                                     if (isAudio) {
                                                                                         return (
                                                                                             <audio
-                                                                                                key={media.id_phuong_tien}
+                                                                                                key={
+                                                                                                    media.id_phuong_tien
+                                                                                                }
                                                                                                 controls
                                                                                                 className="w-100"
                                                                                             >
                                                                                                 <source
-                                                                                                    src={media.url_phuong_tien}
+                                                                                                    src={
+                                                                                                        media.url_phuong_tien
+                                                                                                    }
                                                                                                     type="audio/mpeg"
                                                                                                 />
                                                                                                 Audio not supported.

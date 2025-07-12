@@ -77,6 +77,7 @@ import Paragraph from './pages/admin/Test/Paragraph/Paragraph.jsx';
 import CreateParagraph from './pages/admin/Test/Paragraph/Component/CreateParagraph.jsx';
 import EditParagraph from './pages/admin/Test/Paragraph/Component/EditParagraph.jsx';
 import DetailParagraph from './pages/admin/Test/Paragraph/Component/DetailParagraph.jsx';
+import GrammarAdmin from './pages/admin/Grammar/Grammar.jsx';
 
 function App() {
     return (
@@ -87,7 +88,7 @@ function App() {
                     <Route element={<MainLayout />}>
                         <Route path="/" element={<Home />} />
                         <Route path="/blog" element={<Blog />} />
-                        <Route path="/blog/detail-blog" element={<DetailBlog />} />
+                        <Route path="/blog/detail-blog/:id" element={<DetailBlog />} />
                         <Route path="/dictionary" element={<Dictionary />} />
                         <Route path="/grammar" element={<Grammar />} />
                         <Route path="/list-test" element={<ListTest />} />
@@ -192,6 +193,8 @@ function App() {
 
                                 <Route index element={<Navigate to="blog" replace />} />
                             </Route>
+
+                            <Route path="/admin/grammar" element={<GrammarAdmin />} />
                         </Route>
                     </Route>
                 </Routes>

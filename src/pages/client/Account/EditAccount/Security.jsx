@@ -8,7 +8,7 @@ function Security() {
         <>
             <div className="min-vh-100">
                 <div class={`${cx('edit-section')} shadow`}>
-                    <h4 class="section-title mb-4">Bảo mật tài khoản</h4>
+                    <h4 class="section-title mb-4">Thay đổi mật khẩu</h4>
                     <form id="securityForm">
                         <div class="row">
                             <div class="col-md-6 form-group mb-4">

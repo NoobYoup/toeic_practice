@@ -26,6 +26,7 @@
     "normalize.css": "^8.0.1",
     "react": "^19.1.0",
     "react-bootstrap": "^2.10.9",
+    "react-confirm-alert": "^3.0.6",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.58.0",
     "react-paginate": "^8.3.0",

@@ -20,17 +20,14 @@ function HeroSection() {
                 <div className="row align-items-center">
                     <div className="col-lg-6 hero-text">
                         <h1 className="mb-4">Chinh phục TOEIC cùng chúng tôi</h1>
-                        <p className="lead mb-4">
-                            Nền tảng luyện thi TOEIC trực tuyến hàng đầu với hơn 10,000+ câu hỏi và đề thi thử mô phỏng
-                            sát thực tế.
-                        </p>
+                        <p className="lead mb-4">Hãy làm bài thi đầu vào để kiểm tra năng lực của bạn.</p>
                         <div className="d-flex flex-wrap">
                             <button
                                 type="button"
                                 className="btn btn-light btn-lg me-3 mb-3"
                                 onClick={() => setShowExamModal(true)}
                             >
-                                Thi thử miễn phí
+                                Làm bài thi đầu vào
                             </button>
                         </div>
                     </div>

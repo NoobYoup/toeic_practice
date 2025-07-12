@@ -4,6 +4,7 @@ import classNames from 'classnames/bind';
 import { Link, useParams } from 'react-router-dom';
 import { getDetailMyBlog } from '@/services/blogService';
 import { useState, useEffect } from 'react';
+import { jwtDecode } from 'jwt-decode';
 
 const cx = classNames.bind(styles);
 
@@ -11,6 +12,9 @@ function DetailMyBlog() {
     const { id } = useParams();
     const [blog, setBlog] = useState(null);
     const [loading, setLoading] = useState(false);
+
+    const token = localStorage.getItem('user_token');
+    const user = jwtDecode(token);
 
     const fetchBlog = async () => {
         setLoading(true);
@@ -169,12 +173,14 @@ function DetailMyBlog() {
 
                         <div className="col-lg-4">
                             <div className={`${cx('toc')}`}>
-                                <Link
-                                    to={`/my-blog/edit/${blog?.id_bai_viet}`}
-                                    className="btn btn-success text-white mb-3"
-                                >
-                                    <i className="fas fa-edit"></i> Chỉnh sửa bài viết
-                                </Link>
+                                {user?.permissions?.includes('BLOG_UPDATE') && (
+                                    <Link
+                                        to={`/my-blog/edit/${blog?.id_bai_viet}`}
+                                        className="btn btn-success text-white mb-3"
+                                    >
+                                        <i className="fas fa-edit"></i> Chỉnh sửa bài viết
+                                    </Link>
+                                )}
                                 <h5 className="fw-bold mb-3">Thông tin bài viết</h5>
                                 <ul>
                                     <li>

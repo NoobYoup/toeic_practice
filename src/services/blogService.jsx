@@ -89,7 +89,8 @@ const getAdminPendingBlog = () => {
 
 const approvedBlog = (id) => {
     const token = localStorage.getItem('admin_token');
-    return axios.patch(`${API}/blogs/approve/${id}`, {
+
+    return axios.patch(`${API}/blogs/approve/${id}`, null, {
         headers: {
             Authorization: `Bearer ${token}`,
         },
@@ -98,7 +99,8 @@ const approvedBlog = (id) => {
 
 const rejectedBlog = (id) => {
     const token = localStorage.getItem('admin_token');
-    return axios.patch(`${API}/blogs/reject/${id}`, {
+
+    return axios.patch(`${API}/blogs/reject/${id}`, null, {
         headers: {
             Authorization: `Bearer ${token}`,
         },
@@ -127,7 +129,7 @@ const updateMyBlog = (id, data) => {
     formData.append('id_danh_muc', data.id_danh_muc);
     formData.append('hinh_anh', data.hinh_anh);
 
-    return axios.put(`${API}/blogs/update/${id}`, formData, {
+    return axios.patch(`${API}/blogs/update/${id}`, formData, {
         headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'multipart/form-data',

@@ -70,6 +70,12 @@ function Sidebar() {
                         </NavLink>
                     </li>
                     <li className="nav-item">
+                        <NavLink to="/admin/grammar" className="nav-link">
+                            {' '}
+                            <i className="fa-solid fa-book"></i> Quản lý ngữ pháp{' '}
+                        </NavLink>
+                    </li>
+                    <li className="nav-item">
                         <NavLink to="/admin/tab-permission" className="nav-link">
                             {' '}
                             <i className="fas fa-shield-alt"></i> Nhóm quyền{' '}
