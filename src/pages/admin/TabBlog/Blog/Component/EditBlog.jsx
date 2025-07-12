@@ -31,7 +31,6 @@ function EditBlog() {
         try {
             const res = await getDetailBlog(id);
             const data = res.data.data;
-            console.log(data);
             setTieuDe(data.tieu_de || '');
             setNoiDung(data.noi_dung || '');
             setIdDanhMuc(data.id_danh_muc || null);
