@@ -3,7 +3,7 @@ import axios from 'axios';
 const API = import.meta.env.VITE_API_BASE_URL;
 
 const getAllBlog = (page) => {
-    const token = localStorage.getItem('user_token');
+    const token = localStorage.getItem('admin_token');
 
     const params = {
         page,
@@ -34,14 +34,16 @@ const createBlog = (data) => {
     });
 };
 
-const updateBlog = (id, data, file) => {
-    const token = localStorage.getItem('user_token');
+const updateBlog = (id, data) => {
+    const token = localStorage.getItem('admin_token');
     const formData = new FormData();
+
     formData.append('tieu_de', data.tieu_de);
     formData.append('noi_dung', data.noi_dung);
     formData.append('id_danh_muc', data.id_danh_muc);
-    formData.append('hinh_anh', file);
-    return axios.put(`${API}/blogs/update/${id}`, formData, {
+    formData.append('hinh_anh', data.hinh_anh);
+
+    return axios.patch(`${API}/blogs/admin-update/${id}`, formData, {
         headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'multipart/form-data',
@@ -50,8 +52,8 @@ const updateBlog = (id, data, file) => {
 };
 
 const deleteBlog = (id) => {
-    const token = localStorage.getItem('user_token');
-    return axios.delete(`${API}/blogs/delete/${id}`, {
+    const token = localStorage.getItem('admin_token');
+    return axios.delete(`${API}/blogs/admin-delete/${id}`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },
@@ -59,8 +61,8 @@ const deleteBlog = (id) => {
 };
 
 const getDetailBlog = (id) => {
-    const token = localStorage.getItem('user_token');
-    return axios.get(`${API}/blogs/detail/${id}`, {
+    const token = localStorage.getItem('admin_token');
+    return axios.get(`${API}/blogs/admin-detail/${id}`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },
@@ -77,7 +79,7 @@ const getAllCategory = () => {
 };
 
 const getAdminPendingBlog = () => {
-    const token = localStorage.getItem('user_token');
+    const token = localStorage.getItem('admin_token');
     return axios.get(`${API}/blogs/pending`, {
         headers: {
             Authorization: `Bearer ${token}`,
@@ -86,8 +88,8 @@ const getAdminPendingBlog = () => {
 };
 
 const approvedBlog = (id) => {
-    const token = localStorage.getItem('user_token');
-    return axios.get(`${API}/blogs/approve/${id}`, {
+    const token = localStorage.getItem('admin_token');
+    return axios.patch(`${API}/blogs/approve/${id}`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },
@@ -95,10 +97,40 @@ const approvedBlog = (id) => {
 };
 
 const rejectedBlog = (id) => {
-    const token = localStorage.getItem('user_token');
-    return axios.get(`${API}/blogs/reject/${id}`, {
+    const token = localStorage.getItem('admin_token');
+    return axios.patch(`${API}/blogs/reject/${id}`, {
         headers: {
             Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+const getMyBlog = (page) => {
+    const token = localStorage.getItem('user_token');
+    const params = {
+        page,
+    };
+    return axios.get(`${API}/blogs/user`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        params,
+    });
+};
+
+const updateMyBlog = (id, data) => {
+    const token = localStorage.getItem('user_token');
+    const formData = new FormData();
+
+    formData.append('tieu_de', data.tieu_de);
+    formData.append('noi_dung', data.noi_dung);
+    formData.append('id_danh_muc', data.id_danh_muc);
+    formData.append('hinh_anh', data.hinh_anh);
+
+    return axios.put(`${API}/blogs/update/${id}`, formData, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data',
         },
     });
 };
@@ -113,4 +145,6 @@ export {
     getAdminPendingBlog,
     approvedBlog,
     rejectedBlog,
+    getMyBlog,
+    updateMyBlog,
 };

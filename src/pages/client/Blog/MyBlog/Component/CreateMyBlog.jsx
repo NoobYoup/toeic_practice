@@ -62,7 +62,6 @@ function CreateMyBlog() {
             };
             const res = await createBlog(payload);
             console.log(res);
-            toast.success('Tạo bài viết thành công');
             // reset form
             setTieuDe('');
             setNoiDung('');
@@ -70,9 +69,10 @@ function CreateMyBlog() {
             setHinhAnh(null);
             setPreviewUrl(null);
             if (fileInputRef.current) fileInputRef.current.value = '';
+            toast.success('Tạo bài viết thành công');
         } catch (error) {
             console.error(error);
-            toast.error(error?.response?.data?.message);
+            toast.error(error?.response?.data?.message || 'Tạo bài viết thất bại');
         }
         setLoading(false);
     };
@@ -159,7 +159,7 @@ function CreateMyBlog() {
                             </div>
                         </div>
                         <div className="edit-section">
-                            <div className="d-flex justify-content-between align-items-center">
+                            <div className="d-flex justify-content-end align-items-center">
                                 <div>
                                     <button type="submit" className="btn btn-primary me-3" disabled={loading}>
                                         {loading && <i className="fas fa-spinner fa-spin me-2"></i>}
@@ -173,61 +173,6 @@ function CreateMyBlog() {
                         </div>
                     </form>
                 </div>
-
-                {/* <form onSubmit={handleSubmit}>
-                  
-                    <div className="mb-3">
-                        <label className="form-label fw-semibold">Tiêu đề *</label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            value={tieu_de}
-                            onChange={(e) => setTieuDe(e.target.value)}
-                        />
-                    </div>
-
-                 
-                    <div className="mb-3">
-                        <label className="form-label fw-semibold">Danh mục *</label>
-                        <Select
-                            options={categoryOptions}
-                            value={categoryOptions.find((opt) => opt.value === id_danh_muc) || null}
-                            onChange={(opt) => setIdDanhMuc(opt?.value || null)}
-                            placeholder="Chọn danh mục..."
-                        />
-                    </div>
-
-                  
-                    <div className="mb-3">
-                        <label className="form-label fw-semibold">Hình ảnh *</label>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            className="form-control"
-                            ref={fileInputRef}
-                            onChange={handleFileChange}
-                        />
-                        {previewUrl && (
-                            <img src={previewUrl} alt="preview" className="mt-2 border" style={{ maxWidth: '200px' }} />
-                        )}
-                    </div>
-
-                  
-                    <div className="mb-3">
-                        <label className="form-label fw-semibold">Nội dung *</label>
-                        <CKEditor
-                            editor={ClassicEditor}
-                            data={noi_dung}
-                            onChange={(_, editor) => setNoiDung(editor.getData())}
-                        />
-                    </div>
-
-                    <div className="d-flex justify-content-end">
-                        <button type="submit" className="btn btn-primary" disabled={loading}>
-                            {loading && <i className="fas fa-spinner fa-spin me-2"></i>}Tạo bài viết
-                        </button>
-                    </div>
-                </form> */}
             </>
         </div>
     );

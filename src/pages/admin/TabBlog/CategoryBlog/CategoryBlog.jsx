@@ -71,119 +71,127 @@ function CategoryBlog() {
                     <i className="fa-solid fa-spinner fa-spin fa-2x"></i>
                 </div>
             ) : (
-                <div className="table-responsive">
-                    <table className="table table-hover align-middle">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Tên danh mục</th>
-                                <th>Mô tả</th>
-                                <th>Ngày tạo</th>
-                                <th>Ngày cập nhật</th>
-                                <th className="text-center">Thao tác</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {user.permissions.includes('ROLE_VIEW') && categoryBlogs.length > 0 ? (
-                                categoryBlogs.map((categoryBlog) => (
-                                    <tr key={categoryBlog.id_danh_muc}>
-                                        <td>{categoryBlog.id_danh_muc}</td>
-                                        <td>{categoryBlog.ten_danh_muc}</td>
-                                        <td>{categoryBlog.mo_ta}</td>
-                                        <td>
-                                            {categoryBlog.thoi_gian_tao
-                                                ? format(new Date(categoryBlog.thoi_gian_tao), 'dd/MM/yyyy HH:mm:ss', {
-                                                      locale: vi,
-                                                  })
-                                                : ''}
-                                        </td>
-                                        <td>
-                                            {categoryBlog.thoi_gian_cap_nhat
-                                                ? format(
-                                                      new Date(categoryBlog.thoi_gian_cap_nhat),
-                                                      'dd/MM/yyyy HH:mm:ss',
-                                                      {
-                                                          locale: vi,
-                                                      },
-                                                  )
-                                                : ''}
-                                        </td>
-                                        <td className="text-center">
-                                            <div className="btn-group">
-                                                {user.permissions.includes('CATEGORY_DETAIL') ? (
-                                                    <Link
-                                                        to={`detail/${categoryBlog.id_danh_muc}`}
-                                                        className="btn btn-sm btn-outline-primary"
-                                                    >
-                                                        <i className="fas fa-eye"></i>
-                                                    </Link>
-                                                ) : (
-                                                    <button className="btn btn-sm btn-outline-primary" disabled>
-                                                        <i className="fas fa-eye"></i>
-                                                    </button>
-                                                )}
-
-                                                {user.permissions.includes('CATEGORY_UPDATE') ? (
-                                                    <Link
-                                                        to={`edit/${categoryBlog.id_danh_muc}`}
-                                                        className="btn btn-sm btn-outline-primary"
-                                                    >
-                                                        <i className="fas fa-edit"></i>
-                                                    </Link>
-                                                ) : (
-                                                    <button className="btn btn-sm btn-outline-primary" disabled>
-                                                        <i className="fas fa-edit"></i>
-                                                    </button>
-                                                )}
-
-                                                {user.permissions.includes('CATEGORY_DELETE') ? (
-                                                    <button
-                                                        onClick={() =>
-                                                            handleDeleteCategoryBlog(categoryBlog.id_danh_muc)
-                                                        }
-                                                        type="button"
-                                                        className="btn btn-sm btn-outline-danger"
-                                                    >
-                                                        <i className="fas fa-trash-alt"></i>
-                                                    </button>
-                                                ) : (
-                                                    <button className="btn btn-sm btn-outline-danger" disabled>
-                                                        <i className="fas fa-trash-alt"></i>
-                                                    </button>
-                                                )}
-                                            </div>
-                                        </td>
+                <div className="card">
+                    <div className="card-body">
+                        <div className="table-responsive">
+                            <table className="table table-hover align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Tên danh mục</th>
+                                        <th>Mô tả</th>
+                                        <th>Ngày tạo</th>
+                                        <th>Ngày cập nhật</th>
+                                        <th className="text-center">Thao tác</th>
                                     </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan={13} className="text-center text-muted">
-                                        Không có dữ liệu
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
+                                </thead>
+                                <tbody>
+                                    {user.permissions.includes('ROLE_VIEW') && categoryBlogs.length > 0 ? (
+                                        categoryBlogs.map((categoryBlog) => (
+                                            <tr key={categoryBlog.id_danh_muc}>
+                                                <td>{categoryBlog.id_danh_muc}</td>
+                                                <td>{categoryBlog.ten_danh_muc}</td>
+                                                <td>{categoryBlog.mo_ta}</td>
+                                                <td>
+                                                    {categoryBlog.thoi_gian_tao
+                                                        ? format(
+                                                              new Date(categoryBlog.thoi_gian_tao),
+                                                              'dd/MM/yyyy HH:mm:ss',
+                                                              {
+                                                                  locale: vi,
+                                                              },
+                                                          )
+                                                        : ''}
+                                                </td>
+                                                <td>
+                                                    {categoryBlog.thoi_gian_cap_nhat
+                                                        ? format(
+                                                              new Date(categoryBlog.thoi_gian_cap_nhat),
+                                                              'dd/MM/yyyy HH:mm:ss',
+                                                              {
+                                                                  locale: vi,
+                                                              },
+                                                          )
+                                                        : ''}
+                                                </td>
+                                                <td className="text-center">
+                                                    <div className="btn-group">
+                                                        {user.permissions.includes('CATEGORY_DETAIL') ? (
+                                                            <Link
+                                                                to={`detail/${categoryBlog.id_danh_muc}`}
+                                                                className="btn btn-sm btn-outline-primary"
+                                                            >
+                                                                <i className="fas fa-eye"></i>
+                                                            </Link>
+                                                        ) : (
+                                                            <button className="btn btn-sm btn-outline-primary" disabled>
+                                                                <i className="fas fa-eye"></i>
+                                                            </button>
+                                                        )}
 
-                    <ReactPaginate
-                        previousLabel={'Trước'}
-                        nextLabel={'Sau'}
-                        breakLabel={'...'}
-                        onPageChange={handlePageClick}
-                        pageCount={Math.ceil(pagination.total / pagination.limit)}
-                        marginPagesDisplayed={2}
-                        pageRangeDisplayed={3}
-                        containerClassName={'pagination justify-content-center'}
-                        pageClassName={'page-item'}
-                        pageLinkClassName={'page-link'}
-                        previousClassName={'page-item'}
-                        previousLinkClassName={'page-link'}
-                        nextClassName={'page-item'}
-                        nextLinkClassName={'page-link'}
-                        breakClassName={'page-item'}
-                        breakLinkClassName={'page-link'}
-                        activeClassName={'active'}
-                    />
+                                                        {user.permissions.includes('CATEGORY_UPDATE') ? (
+                                                            <Link
+                                                                to={`edit/${categoryBlog.id_danh_muc}`}
+                                                                className="btn btn-sm btn-outline-primary"
+                                                            >
+                                                                <i className="fas fa-edit"></i>
+                                                            </Link>
+                                                        ) : (
+                                                            <button className="btn btn-sm btn-outline-primary" disabled>
+                                                                <i className="fas fa-edit"></i>
+                                                            </button>
+                                                        )}
+
+                                                        {user.permissions.includes('CATEGORY_DELETE') ? (
+                                                            <button
+                                                                onClick={() =>
+                                                                    handleDeleteCategoryBlog(categoryBlog.id_danh_muc)
+                                                                }
+                                                                type="button"
+                                                                className="btn btn-sm btn-outline-danger"
+                                                            >
+                                                                <i className="fas fa-trash-alt"></i>
+                                                            </button>
+                                                        ) : (
+                                                            <button className="btn btn-sm btn-outline-danger" disabled>
+                                                                <i className="fas fa-trash-alt"></i>
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan={13} className="text-center text-muted">
+                                                Không có dữ liệu
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+
+                            <ReactPaginate
+                                previousLabel={'Trước'}
+                                nextLabel={'Sau'}
+                                breakLabel={'...'}
+                                onPageChange={handlePageClick}
+                                pageCount={Math.ceil(pagination.total / pagination.limit)}
+                                marginPagesDisplayed={2}
+                                pageRangeDisplayed={3}
+                                containerClassName={'pagination justify-content-center'}
+                                pageClassName={'page-item'}
+                                pageLinkClassName={'page-link'}
+                                previousClassName={'page-item'}
+                                previousLinkClassName={'page-link'}
+                                nextClassName={'page-item'}
+                                nextLinkClassName={'page-link'}
+                                breakClassName={'page-item'}
+                                breakLinkClassName={'page-link'}
+                                activeClassName={'active'}
+                            />
+                        </div>
+                    </div>
                 </div>
             )}
         </div>
