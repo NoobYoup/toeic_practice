@@ -49,13 +49,18 @@ const getAllResultExam = () => {
     });
 };
 
-const getAllExamSubmit = (id, page = 1, limit = 20) => {
+const getAllExamSubmit = (id, page = 1) => {
     const token = localStorage.getItem('user_token');
 
-    return axios.get(`${API}/results/get-all-exam-submit/${id}?page=${page}&limit=${limit}`, {
+    const params = {
+        page,
+    };
+
+    return axios.get(`${API}/results/get-all-exam-submit/${id}`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },
+        params,
     });
 };
 

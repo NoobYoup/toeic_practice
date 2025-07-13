@@ -17,14 +17,19 @@ function History() {
     const [examSubmit, setExamSubmit] = useState([]);
     const [loading, setLoading] = useState(false);
     const [pagination, setPagination] = useState({ page: 1, limit: 20, total: 0 });
+    const [currentPage, setCurrentPage] = useState(1);
 
-    const fetchAllExamSubmit = async (page = 1) => {
+    const fetchAllExamSubmit = async () => {
         setLoading(true);
         try {
-            const res = await getAllExamSubmit(decoded.id_nguoi_dung, page, pagination.limit);
-            const { data, pagination: pag } = res.data;
-            setExamSubmit(data);
-            setPagination(pag);
+            const res = await getAllExamSubmit(decoded.id_nguoi_dung, currentPage);
+
+            setExamSubmit(res.data.data);
+            setPagination((prev) => ({
+                ...prev,
+                total: res.data.pagination.total,
+                limit: res.data.pagination.limit,
+            }));
         } catch (error) {
             console.log(error);
         }
@@ -32,16 +37,12 @@ function History() {
     };
 
     useEffect(() => {
-        fetchAllExamSubmit(1);
-    }, []);
+        fetchAllExamSubmit();
+    }, [currentPage]);
 
-    const handlePageClick = (event) => {
-        const selectedPage = event.selected + 1;
-        if (selectedPage !== pagination.page) {
-            fetchAllExamSubmit(selectedPage);
-        }
+    const handlePageClick = (data) => {
+        setCurrentPage(data.selected + 1);
     };
-
     return (
         <>
             <header className={cx('page-header')}>
@@ -201,25 +202,30 @@ function History() {
                                 )}
                             </div>
 
-                            <div className="d-flex justify-content-center">
-                                <ReactPaginate
-                                    breakLabel="..."
-                                    nextLabel="Sau"
-                                    onPageChange={handlePageClick}
-                                    pageRangeDisplayed={3}
-                                    pageCount={Math.ceil(pagination.total / pagination.limit)}
-                                    previousLabel="Trước"
-                                    renderOnZeroPageCount={null}
-                                    containerClassName="pagination justify-content-center"
-                                    pageClassName="page-item"
-                                    pageLinkClassName="page-link"
-                                    activeClassName="active"
-                                    previousClassName="page-item"
-                                    nextClassName="page-item"
-                                    previousLinkClassName="page-link"
-                                    nextLinkClassName="page-link"
-                                />
-                            </div>
+                            {pagination.total > 0 && (
+                                <div className="mt-3">
+                                    <ReactPaginate
+                                        previousLabel={'Trước'}
+                                        nextLabel={'Sau'}
+                                        breakLabel={'...'}
+                                        forcePage={currentPage - 1}
+                                        onPageChange={handlePageClick}
+                                        pageCount={Math.ceil(pagination.total / pagination.limit)}
+                                        marginPagesDisplayed={2}
+                                        pageRangeDisplayed={3}
+                                        containerClassName={'pagination justify-content-center'}
+                                        pageClassName={'page-item'}
+                                        pageLinkClassName={'page-link'}
+                                        previousClassName={'page-item'}
+                                        previousLinkClassName={'page-link'}
+                                        nextClassName={'page-item'}
+                                        nextLinkClassName={'page-link'}
+                                        breakClassName={'page-item'}
+                                        breakLinkClassName={'page-link'}
+                                        activeClassName={'active'}
+                                    />
+                                </div>
+                            )}
                         </div>
                     </>
                 )}

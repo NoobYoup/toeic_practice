@@ -27,7 +27,6 @@ function Login({ setIsLogin, onSwitch, onClose, isOpen }) {
         try {
             setErrors({});
             const res = await login(form);
-            console.log(res);
 
             // Nếu tài khoản là admin thì không cho đăng nhập ở client
             if (res.data.is_admin === true) {

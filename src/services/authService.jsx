@@ -33,4 +33,15 @@ const loginGoogle = (token) => {
     );
 };
 
-export { login, register, forgotPassword, verifyOTP, resetPassword, loginGoogle };
+const changePassword = (data) => {
+    const token = localStorage.getItem('user_token');
+
+    return axios.post(`${API}/auth/change-password`, data, {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+export { login, register, forgotPassword, verifyOTP, resetPassword, loginGoogle, changePassword };

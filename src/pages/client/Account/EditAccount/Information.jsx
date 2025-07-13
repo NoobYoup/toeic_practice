@@ -97,11 +97,9 @@ function Information() {
 
         setLoading(true);
 
-        let res;
         try {
-            res = await updateProfile(formData, selectedFile, token);
-            console.log('API Response:', res.data);
-
+            const res = await updateProfile(formData, selectedFile, token);
+            console.log(res);
             setProfile((prev) => ({
                 ...prev,
                 ten_dang_nhap: formData.ten_dang_nhap,
@@ -112,16 +110,18 @@ function Information() {
                     ngay_sinh: formData.ngay_sinh,
                     so_dien_thoai: formData.so_dien_thoai,
                     gioi_thieu: formData.gioi_thieu,
-                    hinh_dai_dien: res.data.data.user?.ho_so?.url_hinh_dai_dien || prev.ho_so?.url_hinh_dai_dien,
+                    hinh_dai_dien: res.data.data.ho_so?.url_hinh_dai_dien,
                 },
             }));
-            setPreviewUrl(res.data.data.user?.ho_so?.url_hinh_dai_dien);
+            setPreviewUrl(res.data.data.ho_so?.url_hinh_dai_dien);
             setSelectedFile(null);
             if (fileInputRef.current) {
                 fileInputRef.current.value = '';
             }
-            window.location.reload();
-            // setTimeout(() => navigate('/my-account'), 2000);
+            toast.success(res.data.message);
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
         } catch (err) {
             console.error('Error updating profile:', err);
             toast.error(err.response.data.message);

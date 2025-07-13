@@ -70,10 +70,7 @@ const updateProfile = (userData, file, token) => {
     });
     if (file) {
         formData.append('hinh_dai_dien', file);
-        console.log('File appended:', file.name, file.type, file.size);
-    }
-    for (let [key, value] of formData.entries()) {
-        console.log(`FormData: ${key} =`, value);
+        // console.log('File appended:', file.name, file.type, file.size);
     }
     return axios.patch(`${API}/users/update-profile`, formData, {
         headers: {
