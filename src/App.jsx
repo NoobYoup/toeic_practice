@@ -77,7 +77,15 @@ import Paragraph from './pages/admin/Test/Paragraph/Paragraph.jsx';
 import CreateParagraph from './pages/admin/Test/Paragraph/Component/CreateParagraph.jsx';
 import EditParagraph from './pages/admin/Test/Paragraph/Component/EditParagraph.jsx';
 import DetailParagraph from './pages/admin/Test/Paragraph/Component/DetailParagraph.jsx';
-import GrammarAdmin from './pages/admin/Grammar/Grammar.jsx';
+import TabGrammar from './pages/admin/TabGrammar/TabGrammar.jsx';
+import GrammarAdmin from './pages/admin/TabGrammar/Grammar/Grammar.jsx';
+import CreateGrammar from './pages/admin/TabGrammar/Grammar/Component/CreateGrammar.jsx';
+import EditGrammar from './pages/admin/TabGrammar/Grammar/Component/EditGrammar.jsx';
+import DetailGrammar from './pages/admin/TabGrammar/Grammar/Component/DetailGrammar.jsx';
+import CategoryGrammar from './pages/admin/TabGrammar/CategoryGrammar/CategoryGrammar.jsx';
+import CreateCategoryGrammar from './pages/admin/TabGrammar/CategoryGrammar/Component/CreateCategoryGrammar.jsx';
+import EditCategoryGrammar from './pages/admin/TabGrammar/CategoryGrammar/Component/EditCategoryGrammar.jsx';
+import DetailCategoryGrammar from './pages/admin/TabGrammar/CategoryGrammar/Component/DetailCategoryGrammar.jsx';
 
 function App() {
     return (
@@ -194,7 +202,19 @@ function App() {
                                 <Route index element={<Navigate to="blog" replace />} />
                             </Route>
 
-                            <Route path="/admin/grammar" element={<GrammarAdmin />} />
+                            <Route path="/admin/grammar" element={<TabGrammar />}>
+                                <Route path="grammar" element={<GrammarAdmin />} />
+                                <Route path="grammar/create" element={<CreateGrammar />} />
+                                <Route path="grammar/edit/:id" element={<EditGrammar />} />
+                                <Route path="grammar/detail/:id" element={<DetailGrammar />} />
+
+                                <Route path="category-grammar" element={<CategoryGrammar />} />
+                                <Route path="category-grammar/create" element={<CreateCategoryGrammar />} />
+                                <Route path="category-grammar/edit/:id" element={<EditCategoryGrammar />} />
+                                <Route path="category-grammar/detail/:id" element={<DetailCategoryGrammar />} />
+
+                                <Route index element={<Navigate to="grammar" replace />} />
+                            </Route>
                         </Route>
                     </Route>
                 </Routes>

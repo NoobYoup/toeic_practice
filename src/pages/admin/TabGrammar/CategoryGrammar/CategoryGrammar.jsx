@@ -1,26 +1,24 @@
-import { getAllCategoryBlog, deleteCategoryBlog } from '@/services/categoryBlogService';
 import { useState, useEffect } from 'react';
-import { jwtDecode } from 'jwt-decode';
-import ReactPaginate from 'react-paginate';
+import { getAllCategoryGrammar, deleteCategoryGrammar } from '@/services/categoryGrammar';
 import { Link } from 'react-router-dom';
-import { format } from 'date-fns';
-import { vi } from 'date-fns/locale';
+import ReactPaginate from 'react-paginate';
+import { jwtDecode } from 'jwt-decode';
 import { toast } from 'react-toastify';
 
-function CategoryBlog() {
-    const [categoryBlogs, setCategoryBlogs] = useState([]);
+function CategoryGrammar() {
+    const [categoryGrammar, setCategoryGrammar] = useState([]);
     const [loading, setLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-    const [pagination, setPagination] = useState({ page: 1, limit: 3, total: 0 });
+    const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 10 });
 
     const token = localStorage.getItem('admin_token');
     const user = jwtDecode(token);
 
-    const fetchCategoryBlog = async () => {
+    const fetchAllCategoryGrammar = async () => {
         setLoading(true);
         try {
-            const res = await getAllCategoryBlog(currentPage);
-            setCategoryBlogs(res.data.data);
+            const res = await getAllCategoryGrammar(currentPage);
+            setCategoryGrammar(res.data.data);
             setPagination((prev) => ({
                 ...prev,
                 total: res.data.pagination.total,
@@ -33,39 +31,42 @@ function CategoryBlog() {
     };
 
     useEffect(() => {
-        fetchCategoryBlog();
+        fetchAllCategoryGrammar();
     }, [currentPage]);
 
     const handlePageClick = (data) => {
         setCurrentPage(data.selected + 1);
     };
 
-    const handleDeleteCategoryBlog = async (roleId) => {
+    const handleDeleteCategoryGrammar = async (id) => {
         try {
-            const res = await deleteCategoryBlog(roleId);
+            const res = await deleteCategoryGrammar(id);
             toast.success(res.data.message);
-            await fetchCategoryBlog();
-        } catch (err) {
-            console.error(err);
-            toast.error(err.response?.data?.message);
+            fetchAllCategoryGrammar();
+        } catch (error) {
+            console.log(error);
+            toast.error(error.response.data.message);
         }
     };
-
     return (
         <div className="container-fluid">
             <div className="d-flex justify-content-between align-items-center mb-4">
-                <h2>Danh mục bài viết</h2>
-
-                {user.permissions.includes('CATEGORY_CREATE') ? (
-                    <Link to="create" className="btn btn-primary">
-                        <i className="fas fa-plus-circle me-2"></i>Thêm danh mục
-                    </Link>
+                <h1>Danh sách danh mục ngữ pháp</h1>
+                {user.permissions.includes('CATEGORY_GRAMMAR_CREATE') ? (
+                    <div className="d-flex justify-content-end">
+                        <Link to="create" className="btn btn-primary">
+                            Thêm danh mục
+                        </Link>
+                    </div>
                 ) : (
-                    <button className="btn btn-primary" disabled>
-                        <i className="fas fa-plus-circle me-2"></i>Thêm danh mục
-                    </button>
+                    <div className="d-flex justify-content-end">
+                        <button className="btn btn-primary" disabled>
+                            Thêm danh mục
+                        </button>
+                    </div>
                 )}
             </div>
+
             {loading ? (
                 <div className="text-center py-5">
                     <i className="fa-solid fa-spinner fa-spin fa-2x"></i>
@@ -86,39 +87,22 @@ function CategoryBlog() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {user.permissions.includes('CATEGORY_VIEW') && categoryBlogs.length > 0 ? (
-                                        categoryBlogs.map((categoryBlog) => (
-                                            <tr key={categoryBlog.id_danh_muc}>
-                                                <td>{categoryBlog.id_danh_muc}</td>
-                                                <td>{categoryBlog.ten_danh_muc}</td>
-                                                <td>{categoryBlog.mo_ta}</td>
+                                    {user.permissions.includes('CATEGORY_GRAMMAR_VIEW') &&
+                                    categoryGrammar.length > 0 ? (
+                                        categoryGrammar.map((categoryGrammar) => (
+                                            <tr key={categoryGrammar.id_danh_muc}>
+                                                <td>{categoryGrammar.id_danh_muc}</td>
+                                                <td>{categoryGrammar.ten_danh_muc}</td>
+                                                <td>{categoryGrammar.mo_ta}</td>
+                                                <td>{new Date(categoryGrammar.thoi_gian_tao).toLocaleDateString()}</td>
                                                 <td>
-                                                    {categoryBlog.thoi_gian_tao
-                                                        ? format(
-                                                              new Date(categoryBlog.thoi_gian_tao),
-                                                              'dd/MM/yyyy HH:mm:ss',
-                                                              {
-                                                                  locale: vi,
-                                                              },
-                                                          )
-                                                        : ''}
-                                                </td>
-                                                <td>
-                                                    {categoryBlog.thoi_gian_cap_nhat
-                                                        ? format(
-                                                              new Date(categoryBlog.thoi_gian_cap_nhat),
-                                                              'dd/MM/yyyy HH:mm:ss',
-                                                              {
-                                                                  locale: vi,
-                                                              },
-                                                          )
-                                                        : ''}
+                                                    {new Date(categoryGrammar.thoi_gian_cap_nhat).toLocaleDateString()}
                                                 </td>
                                                 <td className="text-center">
                                                     <div className="btn-group">
-                                                        {user.permissions.includes('CATEGORY_DETAIL') ? (
+                                                        {user.permissions.includes('CATEGORY_GRAMMAR_DETAIL') ? (
                                                             <Link
-                                                                to={`detail/${categoryBlog.id_danh_muc}`}
+                                                                to={`detail/${categoryGrammar.id_danh_muc}`}
                                                                 className="btn btn-sm btn-outline-primary"
                                                             >
                                                                 <i className="fas fa-eye"></i>
@@ -129,9 +113,9 @@ function CategoryBlog() {
                                                             </button>
                                                         )}
 
-                                                        {user.permissions.includes('CATEGORY_UPDATE') ? (
+                                                        {user.permissions.includes('CATEGORY_GRAMMAR_UPDATE') ? (
                                                             <Link
-                                                                to={`edit/${categoryBlog.id_danh_muc}`}
+                                                                to={`edit/${categoryGrammar.id_danh_muc}`}
                                                                 className="btn btn-sm btn-outline-primary"
                                                             >
                                                                 <i className="fas fa-edit"></i>
@@ -142,10 +126,12 @@ function CategoryBlog() {
                                                             </button>
                                                         )}
 
-                                                        {user.permissions.includes('CATEGORY_DELETE') ? (
+                                                        {user.permissions.includes('CATEGORY_GRAMMAR_DELETE') ? (
                                                             <button
                                                                 onClick={() =>
-                                                                    handleDeleteCategoryBlog(categoryBlog.id_danh_muc)
+                                                                    handleDeleteCategoryGrammar(
+                                                                        categoryGrammar.id_danh_muc,
+                                                                    )
                                                                 }
                                                                 type="button"
                                                                 className="btn btn-sm btn-outline-danger"
@@ -198,4 +184,4 @@ function CategoryBlog() {
     );
 }
 
-export default CategoryBlog;
+export default CategoryGrammar;

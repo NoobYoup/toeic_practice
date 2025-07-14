@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 
 function EditCategoryBlog() {
     const { id } = useParams();
-    const [categoryBlog, setCategoryBlog] = useState(null);
     const [loading, setLoading] = useState(false);
     const [tenDanhMuc, setTenDanhMuc] = useState('');
     const [moTa, setMoTa] = useState('');
@@ -16,7 +15,6 @@ function EditCategoryBlog() {
         setLoading(true);
         try {
             const res = await getDetailCategoryBlog(id);
-            setCategoryBlog(res.data.data);
             setTenDanhMuc(res.data.data.ten_danh_muc);
             setMoTa(res.data.data.mo_ta);
         } catch (err) {
