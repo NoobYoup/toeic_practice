@@ -53,4 +53,20 @@ const updateGrammar = (id, data) => {
     });
 };
 
-export { getAllGrammar, deleteGrammar, createGrammar, getDetailGrammar, updateGrammar };
+const getGrammarHome = (page = 1, filters = {}) => {
+    const token = localStorage.getItem('admin_token');
+    const params = {
+        page,
+    };
+    if (filters.danh_muc) {
+        params.id_danh_muc = filters.danh_muc;
+    }
+    return axios.get(`${API}/grammars/home`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        params,
+    });
+};
+
+export { getAllGrammar, deleteGrammar, createGrammar, getDetailGrammar, updateGrammar, getGrammarHome };
