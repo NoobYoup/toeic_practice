@@ -202,7 +202,7 @@ function App() {
                                 <Route index element={<Navigate to="blog" replace />} />
                             </Route>
 
-                            <Route path="/admin/grammar" element={<TabGrammar />}>
+                            <Route path="/admin/tab-grammar" element={<TabGrammar />}>
                                 <Route path="grammar" element={<GrammarAdmin />} />
                                 <Route path="grammar/create" element={<CreateGrammar />} />
                                 <Route path="grammar/edit/:id" element={<EditGrammar />} />

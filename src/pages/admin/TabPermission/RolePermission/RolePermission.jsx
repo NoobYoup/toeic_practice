@@ -83,16 +83,9 @@ function RolePermission() {
                 const roleId = roleIdMap[roleKey];
                 if (!roleId) continue;
                 const payload = { ds_ma_quyen };
-                console.log('Sending payload to server:', {
-                    endpoint: `roles/permissions/${roleId}`,
-                    method: 'POST',
-                    data: payload,
-                    roleKey,
-                    roleId,
-                    permissions: ds_ma_quyen,
-                });
+
                 const res = await updatePermissionTable(roleId, payload);
-                console.log('Server response:', res.data);
+
                 toast.success(res.data?.message);
             }
         } catch (err) {

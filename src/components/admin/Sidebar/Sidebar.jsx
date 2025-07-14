@@ -70,7 +70,7 @@ function Sidebar() {
                         </NavLink>
                     </li>
                     <li className="nav-item">
-                        <NavLink to="/admin/grammar" className="nav-link">
+                        <NavLink to="/admin/tab-grammar" className="nav-link">
                             {' '}
                             <i className="fa-solid fa-book"></i> Quản lý ngữ pháp{' '}
                         </NavLink>

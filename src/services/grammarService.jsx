@@ -1,0 +1,56 @@
+import axios from 'axios';
+
+const API = import.meta.env.VITE_API_BASE_URL;
+
+const getAllGrammar = (page) => {
+    const token = localStorage.getItem('admin_token');
+
+    const params = {
+        page,
+    };
+
+    return axios.get(`${API}/grammars`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        params,
+    });
+};
+
+const createGrammar = (data) => {
+    const token = localStorage.getItem('admin_token');
+    return axios.post(`${API}/grammars/create`, data, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+const getDetailGrammar = (id) => {
+    const token = localStorage.getItem('admin_token');
+    return axios.get(`${API}/grammars/detail/${id}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+const deleteGrammar = (id) => {
+    const token = localStorage.getItem('admin_token');
+    return axios.delete(`${API}/grammars/delete/${id}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+const updateGrammar = (id, data) => {
+    const token = localStorage.getItem('admin_token');
+    return axios.put(`${API}/grammars/update/${id}`, data, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+export { getAllGrammar, deleteGrammar, createGrammar, getDetailGrammar, updateGrammar };

@@ -19,7 +19,7 @@ function CreatePermission() {
                 ma_quyen: maQuyen.trim().toUpperCase(),
             };
             const res = await createPermission(payload);
-            console.log(res);
+
             toast.success(res.data?.message);
         } catch (err) {
             console.error(err);
