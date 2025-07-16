@@ -23,7 +23,7 @@ function DetailBlog() {
 
     const [comment, setComment] = useState('');
     const [idBaiViet, setIdBaiViet] = useState(null);
-    const [idBinhLuanCha, setIdBinhLuanCha] = useState(1);
+    const [idBinhLuanCha, setIdBinhLuanCha] = useState(null);
 
     const [listComment, setListComment] = useState([]);
 
@@ -56,6 +56,7 @@ function DetailBlog() {
 
         try {
             const res = await getCommentById(idBaiViet);
+
             setListComment(res.data.data);
         } catch (error) {
             console.log(error);
@@ -83,7 +84,7 @@ function DetailBlog() {
             fetchComment();
         } catch (error) {
             console.log(error);
-            toast.error(error?.response?.data?.message);
+            toast.error('Đăng nhập để bình luận');
         }
         setLoadingComment(false);
     };
@@ -97,11 +98,12 @@ function DetailBlog() {
                 noi_dung: replyContent,
                 id_binh_luan_cha: idBinhLuanCha,
             };
+
             const res = await createComment(payload);
             toast.success(res.data.message);
-            // setReplyContent('');
-            // setReplyingCommentId(null);
-            // setIdBinhLuanCha(null);
+            setReplyContent('');
+            setReplyingCommentId(null);
+            setIdBinhLuanCha(null);
             fetchComment();
         } catch (error) {
             console.log(error);
@@ -148,6 +150,31 @@ function DetailBlog() {
 
     return (
         <>
+            <header className={cx('blog-header')}>
+                <div className="container">
+                    <div className="row align-items-center">
+                        <div className="col-lg-12 mx-auto text-center">
+                            <a href="#" className={`${cx('category-badge')} mb-3 d-inline-block`}>
+                                {blog?.danh_muc_bai_viet.ten_danh_muc}
+                            </a>
+                            <h1 className="fw-bold">{blog?.danh_muc_bai_viet.mo_ta}</h1>
+                            <div className="d-flex align-items-center justify-content-center mt-3">
+                                <img
+                                    src={blog?.nguoi_dung?.ho_so?.url_hinh_dai_dien || DEFAULT_AVATAR}
+                                    alt="Author"
+                                    className={`${cx('author-img')} me-2`}
+                                />
+                                <span className="me-3">{blog?.nguoi_dung.ten_dang_nhap}</span>
+                                <span className="me-3">
+                                    <i className="far fa-calendar me-1"></i>{' '}
+                                    {new Date(blog?.thoi_gian_tao).toLocaleString()}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
             <div className="container min-vh-100">
                 {loading ? (
                     <div className="text-center py-5">
@@ -155,7 +182,7 @@ function DetailBlog() {
                     </div>
                 ) : (
                     <div className="row">
-                        <div className="col-lg-8">
+                        <div className="col-lg-12">
                             <div className={cx('blog-content')}>
                                 <h2 id="intro">{blog?.tieu_de}</h2>
                                 <img
@@ -296,7 +323,12 @@ function DetailBlog() {
                                                                     ? null
                                                                     : item.id_binh_luan,
                                                             );
-                                                            setIdBinhLuanCha(item.id_binh_luan);
+                                                            setIdBinhLuanCha(
+                                                                replyingCommentId === item.id_binh_luan
+                                                                    ? null
+                                                                    : item.id_binh_luan,
+                                                            );
+
                                                             setReplyContent('');
                                                         }}
                                                     >
@@ -326,18 +358,13 @@ function DetailBlog() {
                                                         </>
                                                     )}
                                                 </div>
+
                                                 {replyingCommentId === item.id_binh_luan && (
                                                     <div className="comment-reply-input d-flex align-items-start mt-3">
                                                         <img
                                                             src={DEFAULT_AVATAR}
                                                             alt="User Avatar"
                                                             className={`${cx('author-img')} me-3`}
-                                                            style={{
-                                                                width: 32,
-                                                                height: 32,
-                                                                borderRadius: '50%',
-                                                                objectFit: 'cover',
-                                                            }}
                                                         />
                                                         <form onSubmit={handleReply} className="flex-grow-1 d-flex">
                                                             <input
@@ -359,12 +386,101 @@ function DetailBlog() {
                                                 )}
                                             </div>
                                         </div>
+
+                                        {/* Render phản hồi 1 cấp */}
+                                        {item.phan_hoi && item.phan_hoi.length > 0 && (
+                                            <div className="mt-3 ms-5">
+                                                {item.phan_hoi.map((reply) => (
+                                                    <div className="d-flex mb-3" key={reply.id_binh_luan}>
+                                                        <img
+                                                            src={
+                                                                reply.nguoi_dung?.ho_so?.url_hinh_dai_dien ||
+                                                                DEFAULT_AVATAR
+                                                            }
+                                                            alt="Author"
+                                                            className={`${cx('author-img')} me-3`}
+                                                        />
+                                                        <div>
+                                                            <h6 className="fw-bold mb-1">
+                                                                {reply.nguoi_dung?.ten_dang_nhap}
+                                                                {reply.nguoi_dung?.id_nguoi_dung ===
+                                                                    blog?.nguoi_dung?.id_nguoi_dung && (
+                                                                    <span className="badge bg-primary ms-2">
+                                                                        Tác giả
+                                                                    </span>
+                                                                )}
+                                                            </h6>
+                                                            <p className="text-muted small mb-2">
+                                                                {new Date(reply.thoi_gian_tao).toLocaleString()}
+                                                            </p>
+                                                            {editingCommentId === reply.id_binh_luan ? (
+                                                                <form
+                                                                    className="d-flex align-items-center mb-2"
+                                                                    onSubmit={handleUpdate}
+                                                                >
+                                                                    <input
+                                                                        className="form-control me-2"
+                                                                        value={editContent}
+                                                                        onChange={(e) => setEditContent(e.target.value)}
+                                                                    />
+                                                                    <button
+                                                                        type="submit"
+                                                                        className="btn btn-success me-2"
+                                                                        disabled={loadingUpdate}
+                                                                    >
+                                                                        <i className="fas fa-check"></i>
+                                                                    </button>
+                                                                    <button
+                                                                        type="button"
+                                                                        className="btn btn-secondary"
+                                                                        title="Hủy"
+                                                                        onClick={() => setEditingCommentId(null)}
+                                                                    >
+                                                                        <i className="fas fa-times"></i>
+                                                                    </button>
+                                                                </form>
+                                                            ) : (
+                                                                <p>{reply.noi_dung}</p>
+                                                            )}
+                                                            <div className="d-flex align-items-center gap-2">
+                                                                {/* Không có nút phản hồi ở cấp con */}
+                                                                {reply.id_nguoi_dung === userId && (
+                                                                    <>
+                                                                        <a
+                                                                            href="#"
+                                                                            className="text-muted ms-2"
+                                                                            onClick={(e) => {
+                                                                                e.preventDefault();
+                                                                                setEditingCommentId(reply.id_binh_luan);
+                                                                                setEditContent(reply.noi_dung);
+                                                                            }}
+                                                                        >
+                                                                            <i className="fas fa-edit"></i> Chỉnh sửa
+                                                                        </a>
+                                                                        <button
+                                                                            type="button"
+                                                                            className="text-muted ms-2 border-0 bg-transparent"
+                                                                            disabled={loadingDelete}
+                                                                            onClick={() =>
+                                                                                handleDelete(reply.id_binh_luan)
+                                                                            }
+                                                                        >
+                                                                            <i className="fas fa-trash-alt"></i> Xóa
+                                                                        </button>
+                                                                    </>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
                                     </div>
                                 ))}
                             </div>
                         </div>
 
-                        <div className="col-lg-4">
+                        {/* <div className="col-lg-4">
                             <div className={`${cx('toc')}`}>
                                 <h5 className="fw-bold mb-3">Thông tin bài viết</h5>
                                 <ul>
@@ -411,7 +527,7 @@ function DetailBlog() {
                                     </li>
                                 </ul>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 )}
             </div>
