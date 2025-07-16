@@ -5,7 +5,6 @@ import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import Select from 'react-select';
 
-
 import classNames from 'classnames/bind';
 import { getAllQuestion } from '@/services/questionService';
 import styles from '../CreateQuestionBank.module.scss';
@@ -15,7 +14,6 @@ const cx = classNames.bind(styles);
 function Part3QuestionForm({
     // Props for legacy create mode (kept for backward compatibility)
     formData,
-    setFormData,
     questions,
     onChangeQuestion,
     imagePreview,
@@ -32,7 +30,6 @@ function Part3QuestionForm({
     onSubmit,
     loading,
 }) {
-
     const [difficultyOptions, setDifficultyOptions] = useState([]);
     const [statusOptions, setStatusOptions] = useState([]);
     const [partOptions, setPartOptions] = useState([]);
@@ -44,7 +41,8 @@ function Part3QuestionForm({
                 setDifficultyOptions(
                     (res.data?.dsMucDoKho || []).map((item) => ({
                         value: item,
-                        label: item === 'de' ? 'Dễ' : item === 'trung_binh' ? 'Trung bình' : item === 'kho' ? 'Khó' : item,
+                        label:
+                            item === 'de' ? 'Dễ' : item === 'trung_binh' ? 'Trung bình' : item === 'kho' ? 'Khó' : item,
                     })),
                 );
                 setStatusOptions(
@@ -54,7 +52,7 @@ function Part3QuestionForm({
                     })),
                 );
                 setPartOptions((res.data?.dsPhan || []).map((item) => ({ value: item.id_phan, label: item.ten_phan })));
-            } catch (e) {
+            } catch {
                 setDifficultyOptions([]);
                 setStatusOptions([]);
                 setPartOptions([]);
@@ -66,37 +64,50 @@ function Part3QuestionForm({
     /* ------------------------------------------------------------ */
     /* EDIT MODE IMPLEMENTATION                                     */
     /* ------------------------------------------------------------ */
-    const {
-        control,
-        handleSubmit,
-        register,
-        watch,
-        setValue,
-    } = useForm({
-        defaultValues: mode === 'edit' ? {
-            phan: String(defaultValues?.phan?.id_phan || ''),
-            muc_do_kho: defaultValues?.muc_do_kho || '',
-            trang_thai: defaultValues?.trang_thai || '',
-            hinh_anh: null,
-            am_thanh: null,
-            cau_hoi: (defaultValues?.cau_hoi || defaultValues?.ds_cau_hoi || []).map((q) => ({
-                noi_dung: q.noi_dung || '',
-                dap_an_dung: q.dap_an_dung || 'A',
-                giai_thich: q.giai_thich || '',
-                lua_chon: (q.lua_chon || []).map((lc) => ({ noi_dung: lc.noi_dung })),
-            })),
-        } : {},
+    const { control, handleSubmit, setValue } = useForm({
+        defaultValues:
+            mode === 'edit'
+                ? (() => {
+                      // Nếu có mảng cau_hoi hoặc ds_cau_hoi thì dùng luôn
+                      if (Array.isArray(defaultValues?.cau_hoi) && defaultValues.cau_hoi.length > 0) {
+                          return {
+                              ...defaultValues,
+                              cau_hoi: defaultValues.cau_hoi.map((q) => ({
+                                  noi_dung: q.noi_dung || '',
+                                  dap_an_dung: q.dap_an_dung || 'A',
+                                  giai_thich: q.giai_thich || '',
+                                  lua_chon: Array(4)
+                                      .fill(0)
+                                      .map((_, i) => ({ noi_dung: q.lua_chon?.[i]?.noi_dung || '' })),
+                              })),
+                          };
+                      }
+                      // Nếu là dạng 1 câu hỏi đơn lẻ (API trả về không có cau_hoi)
+                      return {
+                          phan: String(defaultValues?.phan?.id_phan || ''),
+                          muc_do_kho: defaultValues?.muc_do_kho || '',
+                          trang_thai: defaultValues?.trang_thai || '',
+                          hinh_anh: defaultValues?.hinh_anh || null,
+                          am_thanh: defaultValues?.am_thanh || null,
+                          cau_hoi: [
+                              {
+                                  noi_dung: defaultValues?.noi_dung || '',
+                                  dap_an_dung: defaultValues?.dap_an_dung || 'A',
+                                  giai_thich: defaultValues?.giai_thich || '',
+                                  lua_chon: Array(4)
+                                      .fill(0)
+                                      .map((_, i) => ({ noi_dung: defaultValues?.lua_chon?.[i]?.noi_dung || '' })),
+                              },
+                          ],
+                      };
+                  })()
+                : {},
     });
-
-    const { fields: questionFields, append, update } = useFieldArray({ control, name: 'cau_hoi' });
+    const { fields: questionFields } = useFieldArray({ control, name: 'cau_hoi' });
 
     // preview states
-    const [imagePreviewEdit, setImagePreviewEdit] = useState(
-        defaultValues?.hinh_anh_url || defaultValues?.hinh_anh || defaultValues?.file_hinh_anh || '',
-    );
-    const [audioPreviewEdit, setAudioPreviewEdit] = useState(
-        defaultValues?.am_thanh_url || defaultValues?.am_thanh || defaultValues?.file_am_thanh || '',
-    );
+    const [imagePreviewEdit, setImagePreviewEdit] = useState(defaultValues?.hinh_anh?.url_phuong_tien);
+    const [audioPreviewEdit, setAudioPreviewEdit] = useState(defaultValues?.am_thanh?.url_phuong_tien);
 
     const handleImageInput = (e) => {
         const file = e.target.files?.[0];
@@ -241,9 +252,7 @@ function Part3QuestionForm({
                                 <Controller
                                     control={control}
                                     name={`cau_hoi.${idx}.lua_chon.${opIdx}.noi_dung`}
-                                    render={({ field }) => (
-                                        <input type="text" className="form-control" {...field} />
-                                    )}
+                                    render={({ field }) => <input type="text" className="form-control" {...field} />}
                                 />
                             </div>
                         ))}
@@ -268,9 +277,7 @@ function Part3QuestionForm({
 
                 <div className="text-end">
                     <button type="submit" className="btn btn-success" disabled={loading}>
-                        {loading ? (
-                            <span className="spinner-border spinner-border-sm me-2"></span>
-                        ) : null}
+                        {loading ? <span className="spinner-border spinner-border-sm me-2"></span> : null}
                         Lưu thay đổi
                     </button>
                 </div>
@@ -278,7 +285,6 @@ function Part3QuestionForm({
         );
     }
 
-    
     // -------------------- CREATE MODE (legacy) --------------------
     if (!Array.isArray(questions)) return null;
 

@@ -26,6 +26,8 @@ function EditQuestionBank() {
             setLoadingFetch(true);
             try {
                 const res = await getDetailQuestion(id);
+                console.log(res.data.data);
+
                 setQuestion(res.data.data);
                 setContent(res.data.data.noi_dung || '');
             } catch (error) {
@@ -45,6 +47,8 @@ function EditQuestionBank() {
             </div>
         );
     if (!question) return <p>Không tìm thấy câu hỏi</p>;
+
+    console.log(question.phan.id_phan);
 
     // 1. Xác định key part
     const partKey = QUESTION_PART[question.phan.id_phan];
