@@ -26,7 +26,6 @@ function CreateMyBlog() {
         setLoading(true);
         try {
             const res = await getAllCategory();
-            console.log(res);
             const options = (res.data.data || []).map((item) => ({
                 value: item.id_danh_muc,
                 label: item.ten_danh_muc,
@@ -61,7 +60,7 @@ function CreateMyBlog() {
                 hinh_anh,
             };
             const res = await createBlog(payload);
-            console.log(res);
+
             // reset form
             setTieuDe('');
             setNoiDung('');
@@ -69,7 +68,7 @@ function CreateMyBlog() {
             setHinhAnh(null);
             setPreviewUrl(null);
             if (fileInputRef.current) fileInputRef.current.value = '';
-            toast.success('Tạo bài viết thành công');
+            toast.success(res.data.message);
         } catch (error) {
             console.error(error);
             toast.error(error?.response?.data?.message || 'Tạo bài viết thất bại');

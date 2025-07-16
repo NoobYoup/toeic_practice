@@ -1,31 +1,150 @@
 import { useParams } from 'react-router-dom';
 import { getDetailBlog } from '@/services/blogService';
+import { createComment, getCommentById, updateComment, deleteComment } from '@/services/commentService';
 import { useState, useEffect } from 'react';
 
 import styles from './DetailBlog.module.scss';
 import classNames from 'classnames/bind';
 import { DEFAULT_AVATAR } from '@/constants/default';
+import { toast } from 'react-toastify';
+import { jwtDecode } from 'jwt-decode';
 
 const cx = classNames.bind(styles);
 
 function DetailBlog() {
     const { id } = useParams();
     const [blog, setBlog] = useState(null);
+
     const [loading, setLoading] = useState(true);
+    const [loadingComment, setLoadingComment] = useState(false);
+    const [loadingReply, setLoadingReply] = useState(false);
+    const [loadingUpdate, setLoadingUpdate] = useState(false);
+    const [loadingDelete, setLoadingDelete] = useState(false);
+
+    const [comment, setComment] = useState('');
+    const [idBaiViet, setIdBaiViet] = useState(null);
+    const [idBinhLuanCha, setIdBinhLuanCha] = useState(1);
+
+    const [listComment, setListComment] = useState([]);
+
+    const [replyingCommentId, setReplyingCommentId] = useState(null);
+    const [replyContent, setReplyContent] = useState('');
+
+    const [editingCommentId, setEditingCommentId] = useState(null);
+    const [editContent, setEditContent] = useState('');
+
+    const token = localStorage.getItem('user_token');
+    const user = token ? jwtDecode(token) : null;
+    const userId = user ? user.id_nguoi_dung : null;
 
     const fetchBlog = async () => {
         setLoading(true);
+
         try {
             const res = await getDetailBlog(id);
             setBlog(res.data.data);
+            setIdBaiViet(res.data.data.id_bai_viet);
         } catch (error) {
             console.log(error);
         }
+
         setLoading(false);
     };
+
+    const fetchComment = async () => {
+        setLoadingComment(true);
+
+        try {
+            const res = await getCommentById(idBaiViet);
+            setListComment(res.data.data);
+        } catch (error) {
+            console.log(error);
+        }
+
+        setLoadingComment(false);
+    };
+
     useEffect(() => {
         fetchBlog();
-    }, [id]);
+        fetchComment();
+    }, [id, idBaiViet]);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoadingComment(true);
+        try {
+            const payload = {
+                id_bai_viet: idBaiViet,
+                noi_dung: comment,
+            };
+            const res = await createComment(payload);
+            toast.success(res.data.message);
+            setComment('');
+            fetchComment();
+        } catch (error) {
+            console.log(error);
+            toast.error(error?.response?.data?.message);
+        }
+        setLoadingComment(false);
+    };
+
+    const handleReply = async (e) => {
+        e.preventDefault();
+        setLoadingReply(true);
+        try {
+            const payload = {
+                id_bai_viet: idBaiViet,
+                noi_dung: replyContent,
+                id_binh_luan_cha: idBinhLuanCha,
+            };
+            const res = await createComment(payload);
+            toast.success(res.data.message);
+            // setReplyContent('');
+            // setReplyingCommentId(null);
+            // setIdBinhLuanCha(null);
+            fetchComment();
+        } catch (error) {
+            console.log(error);
+            toast.error(error?.response?.data?.message);
+        }
+        setLoadingReply(false);
+    };
+
+    const handleUpdate = async (e) => {
+        e.preventDefault();
+        setLoadingUpdate(true);
+        try {
+            const payload = {
+                noi_dung: editContent,
+            };
+            const res = await updateComment(editingCommentId, payload);
+            toast.success(res.data.message);
+            setEditContent('');
+            setEditingCommentId(null);
+            fetchComment();
+        } catch (error) {
+            console.log(error);
+            toast.error(error?.response?.data?.message);
+        }
+        setLoadingUpdate(false);
+    };
+
+    const handleDelete = async (id) => {
+        setLoadingDelete(true);
+        try {
+            const res = await deleteComment(id);
+            toast.success(res.data.message);
+            // setIdBinhLuanCha(null);
+            // setEditingCommentId(null);
+            // setReplyContent('');
+            // setReplyingCommentId(null);
+            fetchComment();
+        } catch (error) {
+            console.log(error);
+            toast.error(error?.response?.data?.message);
+        }
+        setLoadingDelete(false);
+    };
 
     return (
         <>
@@ -40,7 +159,7 @@ function DetailBlog() {
                             <div className={cx('blog-content')}>
                                 <h2 id="intro">{blog?.tieu_de}</h2>
                                 <img
-                                    src={blog?.hinh_anh.url_phuong_tien}
+                                    src={blog?.hinh_anh?.url_phuong_tien}
                                     alt="TOEIC Test"
                                     className="img-fluid rounded shadow mb-4"
                                 />
@@ -50,11 +169,11 @@ function DetailBlog() {
                                 />
                             </div>
 
-                            <div className="author-box">
+                            <div className="author-box mt-3">
                                 <div className="d-flex">
                                     <img src={DEFAULT_AVATAR} alt="Author" className={`${cx('author-img')} me-4`} />
                                     <div>
-                                        <h5 className="fw-bold">Trần Minh Trung</h5>
+                                        <h5 className="fw-bold">{blog?.nguoi_dung.ten_dang_nhap}</h5>
                                         <p className="text-muted">Trùm STU.</p>
                                         <div className="d-flex">
                                             <a href="#" className="me-2 text-primary">
@@ -92,79 +211,157 @@ function DetailBlog() {
                                 </div>
                             </div>
 
-                            {/* <div className={`${cx('comments')}`}>
-                            <h4 className="fw-bold mb-4">Bình luận (4)</h4>
+                            <div className={`${cx('comments')} mb-5`}>
+                                <h4 className="fw-bold mb-4">Bình luận ({listComment.length})</h4>
 
-                            <div className={`${cx('comment')} mb-4`}>
-                                <div className="d-flex">
-                                    <img src={DEFAULT_AVATAR} alt="User" className={`${cx('author-img')} me-3`} />
-                                    <div>
-                                        <h6 className="fw-bold mb-1">Trần Thanh Hà</h6>
-                                        <p className="text-muted small mb-2">05/05/2025 • 10:15</p>
-                                        <p>
-                                            Bài viết rất bổ ích! Tôi đã áp dụng chiến lược scanning trong phần Reading
-                                            và thấy cải thiện rõ rệt về tốc độ làm bài. Cảm ơn tác giả!
-                                        </p>
-                                        <div className="d-flex align-items-center">
-                                            <a href="#" className="text-muted me-3">
-                                                <i className="far fa-thumbs-up me-1"></i> Thích (12)
-                                            </a>
-                                            <a href="#" className="text-muted">
-                                                <i className="far fa-comment me-1"></i> Phản hồi
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="comment mb-4">
-                                <div className="d-flex">
-                                    <img src={DEFAULT_AVATAR} alt="User" className={`${cx('author-img')} me-3`} />
-                                    <div>
-                                        <h6 className="fw-bold mb-1">Lê Minh Đức</h6>
-                                        <p className="text-muted small mb-2">04/05/2025 • 16:23</p>
-                                        <p>
-                                            Tôi sắp thi TOEIC vào tháng tới và đang rất lo lắng về phần nghe. Có thể
-                                            chia sẻ thêm về cách cải thiện kỹ năng nghe cho Part 3 và 4 được không ạ?
-                                        </p>
-                                        <div className="d-flex align-items-center">
-                                            <a href="#" className="text-muted me-3">
-                                                <i className="far fa-thumbs-up me-1"></i> Thích (5)
-                                            </a>
-                                            <a href="#" className="text-muted">
-                                                <i className="far fa-comment me-1"></i> Phản hồi
-                                            </a>
-                                        </div>
-                                    </div>
+                                <div className="comment-input d-flex align-items-start my-4">
+                                    <img
+                                        src={DEFAULT_AVATAR}
+                                        alt="User Avatar"
+                                        className={`${cx('author-img')} me-3`}
+                                        style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover' }}
+                                    />
+                                    <form className="flex-grow-1 d-flex" onSubmit={handleSubmit}>
+                                        <input
+                                            className="form-control me-2"
+                                            rows={2}
+                                            placeholder="Nhập bình luận..."
+                                            style={{ resize: 'none' }}
+                                            value={comment}
+                                            onChange={(e) => setComment(e.target.value)}
+                                        />
+                                        <button
+                                            type="submit"
+                                            className="btn btn-primary align-self-end"
+                                            disabled={loadingComment}
+                                        >
+                                            {loadingComment && <></>}
+                                            Gửi
+                                        </button>
+                                    </form>
                                 </div>
 
-                                <div className="mt-3 ms-5">
-                                    <div className="d-flex">
-                                        <img src={DEFAULT_AVATAR} alt="Author" className={`${cx('author-img')} me-3`} />
-                                        <div>
-                                            <h6 className="fw-bold mb-1">
-                                                Nguyễn Minh Tuấn <span className="badge bg-primary">Tác giả</span>
-                                            </h6>
-                                            <p className="text-muted small mb-2">04/05/2025 • 19:45</p>
-                                            <p>
-                                                Chào bạn Đức, để cải thiện Part 3-4, tôi khuyên bạn nên luyện nghe nói
-                                                từ podcast hoặc TED Talks thường xuyên. Thử luyện tập ghi chú nhanh các
-                                                thông tin quan trọng và tập trung vào ý chính thay vì cố gắng hiểu từng
-                                                từ. Chúc bạn may mắn!
-                                            </p>
-                                            <div className="d-flex align-items-center">
-                                                <a href="#" className="text-muted me-3">
-                                                    <i className="far fa-thumbs-up me-1"></i> Thích (3)
-                                                </a>
-                                                <a href="#" className="text-muted">
-                                                    <i className="far fa-comment me-1"></i> Phản hồi
-                                                </a>
+                                {listComment.map((item) => (
+                                    <div className={`${cx('comment')} mb-4`} key={item.id_binh_luan}>
+                                        <div className="d-flex">
+                                            <img
+                                                src={DEFAULT_AVATAR}
+                                                alt="User"
+                                                className={`${cx('author-img')} me-3`}
+                                            />
+
+                                            <div className="flex-grow-1">
+                                                <h6 className="fw-bold mb-1">{item.id_nguoi_dung}</h6>
+                                                <p className="text-muted small mb-2">
+                                                    {new Date(item.thoi_gian_tao).toLocaleString()}
+                                                </p>
+
+                                                {editingCommentId === item.id_binh_luan ? (
+                                                    <form
+                                                        className="d-flex align-items-center mb-2"
+                                                        onSubmit={handleUpdate}
+                                                    >
+                                                        <input
+                                                            className="form-control me-2"
+                                                            value={editContent}
+                                                            onChange={(e) => setEditContent(e.target.value)}
+                                                        />
+                                                        <button
+                                                            type="submit"
+                                                            className="btn btn-success me-2"
+                                                            disabled={loadingUpdate}
+                                                        >
+                                                            <i className="fas fa-check"></i>
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            className="btn btn-secondary"
+                                                            title="Hủy"
+                                                            onClick={() => setEditingCommentId(null)}
+                                                        >
+                                                            <i className="fas fa-times"></i>
+                                                        </button>
+                                                    </form>
+                                                ) : (
+                                                    <p>{item.noi_dung}</p>
+                                                )}
+                                                <div className="d-flex align-items-center gap-2">
+                                                    <a
+                                                        href="#"
+                                                        className="text-muted"
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            setReplyingCommentId(
+                                                                replyingCommentId === item.id_binh_luan
+                                                                    ? null
+                                                                    : item.id_binh_luan,
+                                                            );
+                                                            setIdBinhLuanCha(item.id_binh_luan);
+                                                            setReplyContent('');
+                                                        }}
+                                                    >
+                                                        <i className="far fa-comment me-1"></i> Phản hồi
+                                                    </a>
+                                                    {item.id_nguoi_dung === userId && (
+                                                        <>
+                                                            <a
+                                                                href="#"
+                                                                className="text-muted ms-2"
+                                                                onClick={(e) => {
+                                                                    e.preventDefault();
+                                                                    setEditingCommentId(item.id_binh_luan);
+                                                                    setEditContent(item.noi_dung);
+                                                                }}
+                                                            >
+                                                                <i className="fas fa-edit"></i> Chỉnh sửa
+                                                            </a>
+                                                            <button
+                                                                type="button"
+                                                                className="text-muted ms-2 border-0 bg-transparent"
+                                                                disabled={loadingDelete}
+                                                                onClick={() => handleDelete(item.id_binh_luan)}
+                                                            >
+                                                                <i className="fas fa-trash-alt"></i> Xóa
+                                                            </button>
+                                                        </>
+                                                    )}
+                                                </div>
+                                                {replyingCommentId === item.id_binh_luan && (
+                                                    <div className="comment-reply-input d-flex align-items-start mt-3">
+                                                        <img
+                                                            src={DEFAULT_AVATAR}
+                                                            alt="User Avatar"
+                                                            className={`${cx('author-img')} me-3`}
+                                                            style={{
+                                                                width: 32,
+                                                                height: 32,
+                                                                borderRadius: '50%',
+                                                                objectFit: 'cover',
+                                                            }}
+                                                        />
+                                                        <form onSubmit={handleReply} className="flex-grow-1 d-flex">
+                                                            <input
+                                                                className="form-control me-2"
+                                                                placeholder="Nhập phản hồi..."
+                                                                value={replyContent}
+                                                                onChange={(e) => setReplyContent(e.target.value)}
+                                                            />
+                                                            <button
+                                                                type="submit"
+                                                                className="btn btn-primary align-self-end"
+                                                                disabled={loadingReply}
+                                                            >
+                                                                {loadingReply && <></>}
+                                                                Gửi
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                ))}
                             </div>
-                        </div> */}
                         </div>
 
                         <div className="col-lg-4">

@@ -36,8 +36,7 @@ function Login({ setIsLogin, onSwitch, onClose, isOpen }) {
             }
 
             localStorage.setItem('user_token', res.data.token);
-            const decoded = jwtDecode(res.data.token);
-            console.log(decoded);
+
             setIsLogin(true);
             onClose();
             // toast.success(res.data.message);

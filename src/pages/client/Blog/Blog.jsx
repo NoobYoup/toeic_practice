@@ -109,6 +109,10 @@ function Blog() {
                                                             src={blog.hinh_anh.url_phuong_tien}
                                                             alt="TOEIC Test"
                                                             className="blog-card-img w-100 mb-2"
+                                                            style={{
+                                                                objectFit: 'cover',
+                                                                height: '200px',
+                                                            }}
                                                         />
                                                     </Link>
                                                     <div className="card-body p-2">

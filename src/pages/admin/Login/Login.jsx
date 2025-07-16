@@ -33,7 +33,6 @@ function Login() {
 
         try {
             const res = await login(form);
-            console.log(res);
 
             // Chỉ cho phép đăng nhập nếu tài khoản là admin
             if (res.data.is_admin === true) {
