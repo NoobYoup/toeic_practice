@@ -22,18 +22,41 @@ function Part4QuestionForm({
 }) {
     // -------------------- EDIT MODE --------------------
     const [audioPreviewEdit, setAudioPreviewEdit] = useState(defaultValues?.am_thanh?.url_phuong_tien);
+    const [imagePreviewEdit, setImagePreviewEdit] = useState(defaultValues?.hinh_anh?.url_phuong_tien);
     const { control, handleSubmit, setValue } = useForm({
         defaultValues:
             mode === 'edit'
-                ? {
-                      am_thanh: null,
-                      cau_hoi: (defaultValues?.cau_hoi || defaultValues?.ds_cau_hoi || []).map((q) => ({
-                          noi_dung: q.noi_dung || '',
-                          dap_an_dung: q.dap_an_dung || 'A',
-                          giai_thich: q.giai_thich || '',
-                          lua_chon: (q.lua_chon || []).map((lc) => ({ noi_dung: lc.noi_dung })),
-                      })),
-                  }
+                ? (() => {
+                      // Nếu có mảng cau_hoi hoặc ds_cau_hoi thì dùng luôn
+                      if (Array.isArray(defaultValues?.cau_hoi) && defaultValues.cau_hoi.length > 0) {
+                          return {
+                              ...defaultValues,
+                              cau_hoi: defaultValues.cau_hoi.map((q) => ({
+                                  noi_dung: q.noi_dung || '',
+                                  dap_an_dung: q.dap_an_dung || 'A',
+                                  giai_thich: q.giai_thich || '',
+                                  lua_chon: Array(4)
+                                      .fill(0)
+                                      .map((_, i) => ({ noi_dung: q.lua_chon?.[i]?.noi_dung || '' })),
+                              })),
+                          };
+                      }
+                      // Nếu là dạng 1 câu hỏi đơn lẻ (API trả về không có cau_hoi)
+                      return {
+                          am_thanh: defaultValues?.am_thanh || null,
+                          hinh_anh: defaultValues?.hinh_anh || null,
+                          cau_hoi: [
+                              {
+                                  noi_dung: defaultValues?.noi_dung || '',
+                                  dap_an_dung: defaultValues?.dap_an_dung || 'A',
+                                  giai_thich: defaultValues?.giai_thich || '',
+                                  lua_chon: Array(4)
+                                      .fill(0)
+                                      .map((_, i) => ({ noi_dung: defaultValues?.lua_chon?.[i]?.noi_dung || '' })),
+                              },
+                          ],
+                      };
+                  })()
                 : {},
     });
     const { fields: questionFields } = useFieldArray({ control, name: 'cau_hoi' });
@@ -42,6 +65,12 @@ function Part4QuestionForm({
         const file = e.target.files?.[0];
         setValue('am_thanh', file);
         if (file) setAudioPreviewEdit(URL.createObjectURL(file));
+    };
+
+    const handleImageInput = (e) => {
+        const file = e.target.files?.[0];
+        setValue('hinh_anh', file);
+        if (file) setImagePreviewEdit(URL.createObjectURL(file));
     };
 
     const submit = (values) => {
@@ -57,8 +86,24 @@ function Part4QuestionForm({
                     </h6>
                     <ul className={cx('requirement-list')}>
                         <li>Bắt buộc có file âm thanh (đoạn hội thoại ngắn)</li>
+                        <li>Hình ảnh (nếu có)</li>
                     </ul>
                 </div>
+                {/* Upload image */}
+                <div className="mb-3">
+                    <label className="form-label">Hình ảnh (tùy chọn)</label>
+                    <input className="form-control" type="file" accept="image/*" onChange={handleImageInput} />
+                </div>
+                {imagePreviewEdit && (
+                    <div className="mb-3 p-3 border rounded bg-light">
+                        <img
+                            src={imagePreviewEdit}
+                            alt="preview"
+                            className="img-thumbnail"
+                            style={{ maxWidth: '240px', objectFit: 'contain' }}
+                        />
+                    </div>
+                )}
                 {/* Upload audio chung */}
                 <div className="mb-3" id="audioSection">
                     <label htmlFor="questionAudio" className="form-label">
