@@ -53,7 +53,7 @@ function PracticeSection() {
                 {!loading && (
                     <>
                         {exams.length === 0 ? (
-                            <p className="text-center">Chưa có đề thi nào.</p>
+                            <p className="text-center text-muted">Chưa có đề thi nào.</p>
                         ) : (
                             <div className="row g-4">
                                 {exams.length > 4

@@ -122,6 +122,16 @@ const getDetailExamPublic = (examId) => {
     return axios.get(`${API}/exams/detail-exam-public/${examId}`);
 };
 
+const getDetailEntryExam = () => {
+    const token = localStorage.getItem('user_token');
+
+    return axios.get(`${API}/exams/detail-entry-exam`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
 export {
     getAllExam,
     getAllQuestionExam,
@@ -133,4 +143,5 @@ export {
     editExam,
     getAllExamPublic,
     getDetailExamPublic,
+    getDetailEntryExam,
 };

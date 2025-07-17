@@ -17,6 +17,15 @@ const getAllBlog = (page) => {
     });
 };
 
+const getAllBlogPublic = (page) => {
+    const params = {
+        page,
+    };
+    return axios.get(`${API}/blogs/public`, {
+        params,
+    });
+};
+
 const createBlog = (data) => {
     const token = localStorage.getItem('user_token');
     const formData = new FormData();
@@ -169,4 +178,5 @@ export {
     updateMyBlog,
     getDetailMyBlog,
     deleteMyBlog,
+    getAllBlogPublic,
 };

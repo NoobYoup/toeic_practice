@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 
 import styles from './DetailBlog.module.scss';
 import classNames from 'classnames/bind';
-import { DEFAULT_AVATAR } from '@/constants/default';
+import { DEFAULT_AVATAR, DEFAULT_BACKGROUND } from '@/constants/default';
 import { toast } from 'react-toastify';
 import { jwtDecode } from 'jwt-decode';
 
@@ -187,7 +187,7 @@ function DetailBlog() {
                             <div className={cx('blog-content')}>
                                 <h2 id="intro">{blog?.tieu_de}</h2>
                                 <img
-                                    src={blog?.hinh_anh?.url_phuong_tien}
+                                    src={blog?.hinh_anh?.url_phuong_tien || DEFAULT_BACKGROUND}
                                     alt="TOEIC Test"
                                     className="img-fluid rounded shadow mb-4"
                                 />

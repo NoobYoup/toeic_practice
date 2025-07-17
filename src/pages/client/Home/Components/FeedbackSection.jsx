@@ -1,5 +1,5 @@
 import { DEFAULT_AVATAR } from '@/constants/default';
-import { getAllBlog } from '@/services/blogService';
+import { getAllBlogPublic } from '@/services/blogService';
 import { useEffect, useState } from 'react';
 
 import styles from './FeedbackSection.module.scss';
@@ -14,8 +14,7 @@ function FeedbackSection() {
     const fetchBlogs = async () => {
         setLoading(true);
         try {
-            const res = await getAllBlog();
-            console.log(res.data.data);
+            const res = await getAllBlogPublic();
             setBlogs(res.data.data);
         } catch (error) {
             console.log(error);
@@ -45,7 +44,7 @@ function FeedbackSection() {
                 {!loading &&
                     (blogs.length === 0 ? (
                         <div className="text-center">
-                            <h5>Không có bài viết nào</h5>
+                            <p className="text-muted">Không có bài viết nào</p>
                         </div>
                     ) : (
                         <div className="row g-4">
@@ -55,7 +54,7 @@ function FeedbackSection() {
                                           <div className={`${cx('testimonial-card')} p-4 h-100`}>
                                               <div className="d-flex align-items-center mb-3">
                                                   <img
-                                                      src={blog.nguoi_dung.ho_so.url_hinh_dai_dien}
+                                                      src={blog.nguoi_dung.ho_so.url_hinh_dai_dien || DEFAULT_AVATAR}
                                                       alt="User"
                                                       className="rounded-circle me-3"
                                                       style={{ width: '40px' }}
@@ -88,7 +87,7 @@ function FeedbackSection() {
                                           >
                                               <div className="d-flex align-items-center mb-3">
                                                   <img
-                                                      src={blog.nguoi_dung.ho_so.url_hinh_dai_dien}
+                                                      src={blog.nguoi_dung.ho_so.url_hinh_dai_dien || DEFAULT_AVATAR}
                                                       alt="User"
                                                       className="rounded-circle me-3"
                                                       style={{ width: '40px' }}
@@ -103,7 +102,11 @@ function FeedbackSection() {
                                               <p className="fw-bold"> {blog.tieu_de}</p>
                                               <p className="mb-2 text-truncate">{blog.noi_dung}</p>
                                               <div className="text-end text-muted">
-                                                  <i className="fas fa-calendar-alt"></i> {blog.thoi_gian_tao}
+                                                  <i className="fas fa-calendar-alt"></i>{' '}
+                                                  {new Date(blog.thoi_gian_tao).toLocaleDateString('vi-VN', {
+                                                      hour: '2-digit',
+                                                      minute: '2-digit',
+                                                  })}
                                               </div>
                                               <Link
                                                   to={`/blog/detail-blog/${blog.id_bai_viet}`}

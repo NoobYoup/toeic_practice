@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { getAllBlog } from '@/services/blogService';
+import { getAllBlogPublic } from '@/services/blogService';
 import { getAllCategoryBlog } from '@/services/categoryBlogService';
 import Select from 'react-select';
 
@@ -24,8 +24,8 @@ function Blog() {
     const fetchBlogs = async () => {
         setLoading(true);
         try {
-            const res = await getAllBlog(currentPage);
-
+            const res = await getAllBlogPublic(currentPage);
+            console.log(res.data.data);
             setBlogs(res.data.data);
             setPagination((prev) => ({
                 ...prev,
@@ -135,7 +135,10 @@ function Blog() {
                                                         <div className="d-flex justify-content-between align-items-center">
                                                             <div className="d-flex align-items-center">
                                                                 <img
-                                                                    src={DEFAULT_AVATAR}
+                                                                    src={
+                                                                        blog.nguoi_dung.ho_so.url_hinh_dai_dien ||
+                                                                        DEFAULT_AVATAR
+                                                                    }
                                                                     alt="Author"
                                                                     className={`${cx('author-img')} me-2`}
                                                                 />
