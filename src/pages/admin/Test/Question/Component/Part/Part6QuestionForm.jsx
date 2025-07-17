@@ -21,6 +21,14 @@ function Part6QuestionForm({
     loading,
 }) {
     const passageOptions = usePassageOptions();
+    // Thêm đoạn văn hiện tại vào passageOptions nếu chưa có (chỉ cho edit mode)
+    const currentPassage = defaultValues?.doan_van
+        ? { value: defaultValues.doan_van.id_doan_van, label: defaultValues.doan_van.tieu_de }
+        : null;
+    const mergedPassageOptions =
+        currentPassage && !passageOptions.some((o) => o.value === currentPassage.value)
+            ? [currentPassage, ...passageOptions]
+            : passageOptions;
     // Xử lý trường hợp questions là 1 object đơn lẻ (edit mode)
     let normalizedQuestions = questions;
     if (!Array.isArray(questions)) {
@@ -45,6 +53,7 @@ function Part6QuestionForm({
                       muc_do_kho: defaultValues?.muc_do_kho || '',
                       trang_thai: defaultValues?.trang_thai || '',
                       id_doan_van: defaultValues?.doan_van?.id_doan_van || '',
+
                       cau_hoi: normalizedQuestions.map((q) => ({
                           noi_dung: q.noi_dung ?? '',
                           dap_an_dung: q.dap_an_dung || 'A',
@@ -74,10 +83,10 @@ function Part6QuestionForm({
                             render={({ field }) => (
                                 <Select
                                     {...field}
-                                    options={passageOptions}
-                                    value={passageOptions.find((o) => String(o.value) === String(field.value))}
+                                    options={mergedPassageOptions}
+                                    value={mergedPassageOptions.find((o) => String(o.value) === String(field.value))}
                                     onChange={(val) => field.onChange(val?.value)}
-                                    // isDisabled={true}
+                                    isDisabled={true}
                                 />
                             )}
                         />
@@ -142,6 +151,7 @@ function Part6QuestionForm({
                                         { value: 'luu_tru', label: 'Lưu trữ' },
                                     ].find((o) => o.value === field.value)}
                                     onChange={(val) => field.onChange(val?.value)}
+                                    isDisabled={true}
                                 />
                             )}
                         />
@@ -152,10 +162,10 @@ function Part6QuestionForm({
                     const currentDapAnDung = watch(`cau_hoi.${idx}.dap_an_dung`);
                     return (
                         <div key={idx} className="border rounded p-3 mb-4">
-                            <div className="d-flex justify-content-between align-items-center mb-2">
+                            {/* <div className="d-flex justify-content-between align-items-center mb-2">
                                 <h6 className="mb-0">Câu {idx + 1}</h6>
-                            </div>
-                            {/* Hiển thị nội dung câu hỏi nếu có */}
+                            </div> */}
+                            {/* Hiển thị nội dung câu hỏi nếu có
                             <Controller
                                 control={control}
                                 name={`cau_hoi.${idx}.noi_dung`}
@@ -169,7 +179,7 @@ function Part6QuestionForm({
                                         />
                                     </div>
                                 )}
-                            />
+                            /> */}
                             {/* Render 4 đáp án A-D bằng component con */}
                             {['A', 'B', 'C', 'D'].map((optionLetter, index) => (
                                 <Controller
@@ -208,7 +218,7 @@ function Part6QuestionForm({
                 })}
                 <div className="text-end">
                     <button type="submit" className="btn btn-success" disabled={loading}>
-                        {loading ? <span className="spinner-border spinner-border-sm me-2"></span> : null}
+                        {loading ? <span className="fa fa-spinner fa-spin me-2"></span> : null}
                         Lưu thay đổi
                     </button>
                 </div>

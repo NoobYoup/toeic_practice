@@ -48,8 +48,6 @@ function EditQuestionBank() {
         );
     if (!question) return <p>Không tìm thấy câu hỏi</p>;
 
-    console.log(question.phan.id_phan);
-
     // 1. Xác định key part
     const partKey = QUESTION_PART[question.phan.id_phan];
 
@@ -67,15 +65,16 @@ function EditQuestionBank() {
         return <p>Không có form phù hợp cho part {partKey}</p>;
     }
 
-    // Chuẩn bị prop questions cho Part 6 (và các part khác nếu cần)
+    // Chuẩn bị prop questions cho Part 6 và Part 7 (và các part khác nếu cần)
     let questionsProp = undefined;
-    if (partKey === 'part6') {
+    if (partKey === 'part6' || partKey === 'part7') {
         questionsProp = [
             {
                 noi_dung: question.noi_dung,
                 dap_an_dung: question.dap_an_dung,
                 giai_thich: question.giai_thich,
                 lua_chon: question.lua_chon,
+                id_doan_van: question.doan_van.id_doan_van,
             },
         ];
     }
@@ -83,7 +82,11 @@ function EditQuestionBank() {
     const handleSubmit = async (values) => {
         setLoadingSubmit(true);
         try {
-            const res = await editQuestion(id, { data: values });
+            // Thêm id_cau_hoi vào payload
+            const payload = { ...values, id_cau_hoi: question.id_cau_hoi };
+            console.log(payload);
+
+            const res = await editQuestion(id, { data: payload });
             toast.success(res.data.message);
             // navigate(`/admin/test/question/detail-question/${id}`);
         } catch (error) {
