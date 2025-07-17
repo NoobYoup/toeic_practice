@@ -25,6 +25,7 @@ function Blog() {
         setLoading(true);
         try {
             const res = await getAllBlog(currentPage);
+
             setBlogs(res.data.data);
             setPagination((prev) => ({
                 ...prev,
@@ -77,9 +78,9 @@ function Blog() {
                         <div className="row">
                             <div className="col-md-12">
                                 <div className="d-flex flex-wrap justify-content-between align-items-center mb-4">
-                                    <div className="mb-3 mb-md-0">
+                                    {/* <div className="mb-3 mb-md-0">
                                         <span className="me-2">Hiển thị 1-9 của 42 bài viết</span>
-                                    </div>
+                                    </div> */}
                                     <div className="d-flex">
                                         <div className="me-3">
                                             <Select
@@ -120,7 +121,7 @@ function Blog() {
                                                             to={`/blog/detail-blog/${blog.id_bai_viet}`}
                                                             className={cx('category-badge')}
                                                         >
-                                                            {blog.id_danh_muc}
+                                                            {blog.danh_muc_bai_viet.ten_danh_muc}
                                                         </Link>
                                                         <h3 className={cx('card-title')}>
                                                             <Link
@@ -139,7 +140,7 @@ function Blog() {
                                                                     className={`${cx('author-img')} me-2`}
                                                                 />
                                                                 <span className="text-muted small">
-                                                                    {blog.id_nguoi_dung}
+                                                                    {blog.nguoi_dung.ten_dang_nhap}
                                                                 </span>
                                                             </div>
                                                             <small className="text-muted">

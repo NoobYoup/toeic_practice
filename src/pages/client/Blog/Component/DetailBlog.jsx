@@ -42,6 +42,7 @@ function DetailBlog() {
 
         try {
             const res = await getDetailBlog(id);
+            console.log(res);
             setBlog(res.data.data);
             setIdBaiViet(res.data.data.id_bai_viet);
         } catch (error) {
@@ -56,7 +57,7 @@ function DetailBlog() {
 
         try {
             const res = await getCommentById(idBaiViet);
-
+            console.log(res);
             setListComment(res.data.data);
         } catch (error) {
             console.log(error);
@@ -201,7 +202,7 @@ function DetailBlog() {
                                     <img src={DEFAULT_AVATAR} alt="Author" className={`${cx('author-img')} me-4`} />
                                     <div>
                                         <h5 className="fw-bold">{blog?.nguoi_dung.ten_dang_nhap}</h5>
-                                        <p className="text-muted">Trùm STU.</p>
+                                        {/* <p className="text-muted">Trùm STU.</p> */}
                                         <div className="d-flex">
                                             <a href="#" className="me-2 text-primary">
                                                 <i className="fab fa-facebook"></i>
@@ -272,13 +273,13 @@ function DetailBlog() {
                                     <div className={`${cx('comment')} mb-4`} key={item.id_binh_luan}>
                                         <div className="d-flex">
                                             <img
-                                                src={DEFAULT_AVATAR}
+                                                src={item.nguoi_dung.ho_so.url_hinh_dai_dien || DEFAULT_AVATAR}
                                                 alt="User"
                                                 className={`${cx('author-img')} me-3`}
                                             />
 
                                             <div className="flex-grow-1">
-                                                <h6 className="fw-bold mb-1">{item.id_nguoi_dung}</h6>
+                                                <h6 className="fw-bold mb-1">{item.nguoi_dung.ten_dang_nhap}</h6>
                                                 <p className="text-muted small mb-2">
                                                     {new Date(item.thoi_gian_tao).toLocaleString()}
                                                 </p>
