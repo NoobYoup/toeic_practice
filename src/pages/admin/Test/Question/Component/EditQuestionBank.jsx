@@ -26,8 +26,6 @@ function EditQuestionBank() {
             setLoadingFetch(true);
             try {
                 const res = await getDetailQuestion(id);
-                console.log(res.data.data);
-
                 setQuestion(res.data.data);
                 // XÓA: setContent(res.data.data.noi_dung || '');
             } catch (error) {
@@ -84,7 +82,6 @@ function EditQuestionBank() {
         try {
             // Thêm id_cau_hoi vào payload
             const payload = { ...values, id_cau_hoi: question.id_cau_hoi };
-            console.log(payload);
 
             const res = await editQuestion(id, { data: payload });
             toast.success(res.data.message);

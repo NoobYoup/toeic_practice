@@ -54,7 +54,7 @@ function RolePermission() {
     return (
         <div className="container-fluid">
             <div className="d-flex justify-content-between align-items-center mb-4">
-                <h2>Quản lý vai trò</h2>
+                <h2>Quản lý quyền</h2>
                 {user.permissions.includes('PERMISSION_CREATE') ? (
                     <Link to="create-permission" className="btn btn-primary">
                         <i className="fas fa-plus-circle me-2"></i>Thêm quyền

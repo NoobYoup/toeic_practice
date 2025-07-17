@@ -65,9 +65,7 @@ function PracticeSection() {
                                                           to={`/detail-test/${exam.id_bai_thi}`}
                                                           className="text-decoration-none"
                                                       >
-                                                          <h5 className="mb-2 text-truncate" title={exam.ten_bai_thi}>
-                                                              {exam.ten_bai_thi}
-                                                          </h5>
+                                                          <h5 className="mb-2 text-truncate">{exam.ten_bai_thi}</h5>
                                                       </Link>
                                                       <p className="card-text text-muted mb-3">
                                                           {exam.la_bai_thi_dau_vao
@@ -80,17 +78,14 @@ function PracticeSection() {
                                                               <div className="col-6 d-flex align-items-center">
                                                                   <i className="far fa-clock text-muted me-2"></i>
                                                                   <span className="text-muted">
-                                                                      {exam.thoi_gian_bai_thi ||
-                                                                          exam.thoi_gian_thi ||
-                                                                          '--'}{' '}
-                                                                      phút
+                                                                      {exam.thoi_gian_bai_thi} phút
                                                                   </span>
                                                               </div>
-                                                              {/* Tạm thời hiển thị điểm tối đa ở đây */}
+
                                                               <div className="col-6 d-flex align-items-center">
                                                                   <i className="far fa-list-alt text-muted me-2"></i>
                                                                   <span className="text-muted">
-                                                                      {exam.diem_toi_da || '--'} điểm
+                                                                      {exam.muc_do_diem} điểm
                                                                   </span>
                                                               </div>
                                                           </div>
@@ -128,9 +123,7 @@ function PracticeSection() {
                                                           to={`/detail-test/${exam.id_bai_thi}`}
                                                           className="text-decoration-none"
                                                       >
-                                                          <h5 className="mb-2 text-truncate" title={exam.ten_bai_thi}>
-                                                              {exam.ten_bai_thi}
-                                                          </h5>
+                                                          <h5 className="mb-2 text-truncate">{exam.ten_bai_thi}</h5>
                                                       </Link>
                                                       <p className="card-text text-muted mb-3">
                                                           {exam.la_bai_thi_dau_vao
@@ -143,17 +136,14 @@ function PracticeSection() {
                                                               <div className="col-6 d-flex align-items-center">
                                                                   <i className="far fa-clock text-muted me-2"></i>
                                                                   <span className="text-muted">
-                                                                      {exam.thoi_gian_bai_thi ||
-                                                                          exam.thoi_gian_thi ||
-                                                                          '--'}{' '}
-                                                                      phút
+                                                                      {exam.thoi_gian_bai_thi} phút
                                                                   </span>
                                                               </div>
                                                               {/* Tạm thời hiển thị điểm tối đa ở đây */}
                                                               <div className="col-6 d-flex align-items-center">
                                                                   <i className="far fa-list-alt text-muted me-2"></i>
                                                                   <span className="text-muted">
-                                                                      {exam.diem_toi_da || '--'} điểm
+                                                                      {exam.muc_do_diem} điểm
                                                                   </span>
                                                               </div>
                                                           </div>
