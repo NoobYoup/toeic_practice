@@ -138,6 +138,30 @@ function DetailQuesionBank() {
                         <></>
                     )}
 
+                    {/* Hiển thị hình ảnh minh họa đoạn văn nếu có */}
+                    {questionData?.doan_van?.danh_sach_phuong_tien?.length > 0 && (
+                        <div className="card mb-4">
+                            <div className="card-header">
+                                <h5 className="mb-0">
+                                    <i className="fas fa-images me-2"></i>Hình ảnh minh họa đoạn văn
+                                </h5>
+                            </div>
+                            <div className="card-body d-flex flex-wrap gap-3">
+                                {questionData.doan_van.danh_sach_phuong_tien
+                                    .filter((pt) => pt.loai_phuong_tien === 'hinh_anh')
+                                    .map((pt) => (
+                                        <img
+                                            key={pt.id_phuong_tien}
+                                            src={pt.url_phuong_tien}
+                                            alt="Đoạn văn minh họa"
+                                            className="img-fluid rounded border"
+                                            style={{ maxWidth: '300px', maxHeight: '300px', objectFit: 'contain' }}
+                                        />
+                                    ))}
+                            </div>
+                        </div>
+                    )}
+
                     {/* Media Content */}
                     {(questionData?.hinh_anh || questionData?.am_thanh) && (
                         <div className="card mb-4">
