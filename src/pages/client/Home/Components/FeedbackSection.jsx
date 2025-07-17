@@ -80,7 +80,7 @@ function FeedbackSection() {
                                       </div>
                                   ))
                                 : blogs.map((blog) => (
-                                      <div className="col-lg-4 col-md-6" key={blog.id_bai_viets}>
+                                      <div className="col-lg-4 col-md-6" key={blog.id_bai_viet}>
                                           <div
                                               className={`${cx(
                                                   'testimonial-card',
@@ -106,7 +106,7 @@ function FeedbackSection() {
                                                   <i className="fas fa-calendar-alt"></i> {blog.thoi_gian_tao}
                                               </div>
                                               <Link
-                                                  to={`/blog/${blog.id_bai_viets}`}
+                                                  to={`/blog/detail-blog/${blog.id_bai_viet}`}
                                                   className="btn btn-primary w-100 "
                                               >
                                                   Xem chi tiết

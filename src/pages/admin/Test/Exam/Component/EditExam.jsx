@@ -37,7 +37,7 @@ function EditExam() {
                 const data = res.data.data;
                 setTenBaiThi(data.ten_bai_thi || '');
                 setThoiGianBaiThi(data.thoi_gian_bai_thi || data.thoi_gian_thi || '');
-                setNamXuatBan(data.nam_xuat_ban ? new Date(data.nam_xuat_ban).getFullYear().toString() : '');
+                setNamXuatBan(data.nam_xuat_ban);
                 setLaBaiThiDauVao(Boolean(data.la_bai_thi_dau_vao));
                 setContent(data.mo_ta || '');
                 // Nếu API trả về danh sách câu hỏi => lưu để hiển thị

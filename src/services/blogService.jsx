@@ -146,6 +146,15 @@ const getDetailMyBlog = (id) => {
     });
 };
 
+const deleteMyBlog = (id) => {
+    const token = localStorage.getItem('user_token');
+    return axios.delete(`${API}/blogs/delete/${id}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
 export {
     getAllBlog,
     createBlog,
@@ -159,4 +168,5 @@ export {
     getMyBlog,
     updateMyBlog,
     getDetailMyBlog,
+    deleteMyBlog,
 };

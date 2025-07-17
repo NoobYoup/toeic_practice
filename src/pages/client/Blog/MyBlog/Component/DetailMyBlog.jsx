@@ -1,10 +1,10 @@
-import { DEFAULT_AVATAR, DEFAULT_BACKGROUND } from '@/constants/default';
+import { DEFAULT_AVATAR } from '@/constants/default';
 import styles from '@/pages/client/Blog/Component/DetailBlog.module.scss';
 import classNames from 'classnames/bind';
-import { Link, useParams } from 'react-router-dom';
-import { getDetailMyBlog } from '@/services/blogService';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { deleteMyBlog, getDetailMyBlog } from '@/services/blogService';
 import { useState, useEffect } from 'react';
-import { jwtDecode } from 'jwt-decode';
+import { toast } from 'react-toastify';
 
 const cx = classNames.bind(styles);
 
@@ -12,10 +12,7 @@ function DetailMyBlog() {
     const { id } = useParams();
     const [blog, setBlog] = useState(null);
     const [loading, setLoading] = useState(false);
-
-    const token = localStorage.getItem('user_token');
-    const user = jwtDecode(token);
-
+    const navigate = useNavigate();
     const fetchBlog = async () => {
         setLoading(true);
         try {
@@ -30,6 +27,17 @@ function DetailMyBlog() {
     useEffect(() => {
         fetchBlog();
     }, [id]);
+
+    const handleDeleteBlog = async () => {
+        try {
+            const res = await deleteMyBlog(id);
+            toast.success(res.data.message);
+            navigate('/my-blog');
+        } catch (error) {
+            console.log(error);
+            toast.error(error?.response?.data?.message);
+        }
+    };
 
     return (
         <>
@@ -173,14 +181,15 @@ function DetailMyBlog() {
 
                         <div className="col-lg-4">
                             <div className={`${cx('toc')}`}>
-                                {user?.permissions?.includes('BLOG_UPDATE') && (
-                                    <Link
-                                        to={`/my-blog/edit/${blog?.id_bai_viet}`}
-                                        className="btn btn-success text-white mb-3"
-                                    >
-                                        <i className="fas fa-edit"></i> Chỉnh sửa bài viết
-                                    </Link>
-                                )}
+                                <Link
+                                    to={`/my-blog/edit/${blog?.id_bai_viet}`}
+                                    className="btn btn-success text-white mb-3"
+                                >
+                                    <i className="fas fa-edit"></i> Chỉnh sửa bài viết
+                                </Link>
+                                <button onClick={handleDeleteBlog} className="btn btn-danger text-white ms-2 mb-3">
+                                    <i className="fas fa-trash"></i> Xóa bài viết
+                                </button>
                                 <h5 className="fw-bold mb-3">Thông tin bài viết</h5>
                                 <ul>
                                     <li>

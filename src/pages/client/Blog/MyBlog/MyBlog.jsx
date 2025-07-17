@@ -35,8 +35,8 @@ function MyBlog() {
     return (
         <>
             <div className="container min-vh-100">
-                <div className="d-flex justify-content-between align-items-center mb-4">
-                    <h1 className="mb-0">Bài viết của tôi</h1>
+                <div className="d-flex justify-content-between align-items-center my-4">
+                    <h1 className="my-0">Bài viết của tôi</h1>
 
                     <Link to="create" className="btn btn-primary">
                         Thêm bài viết
@@ -58,6 +58,7 @@ function MyBlog() {
                                                 src={blog.hinh_anh.url_phuong_tien}
                                                 alt="TOEIC Test"
                                                 className="blog-card-img w-100 mb-2"
+                                                style={{ height: '200px', objectFit: 'cover' }}
                                             />
                                         </Link>
                                         <div className="card-body p-2">

@@ -54,7 +54,7 @@ function EditBlog() {
             setCategoryOptions(options);
         } catch (error) {
             console.error(error);
-            toast.error(error?.response?.data?.message || 'Lấy danh mục thất bại');
+            toast.error(error?.response?.data?.message);
         }
         setLoading(false);
     };
