@@ -38,7 +38,7 @@ function Login({ setIsLogin, onSwitch, onClose, isOpen }) {
             localStorage.setItem('user_token', res.data.token);
 
             setIsLogin(true);
-            onClose();
+            // onClose();
             window.location.reload();
             // toast.success(res.data.message);
         } catch (err) {
@@ -71,10 +71,10 @@ function Login({ setIsLogin, onSwitch, onClose, isOpen }) {
             if (res.status === 200) {
                 localStorage.setItem('user_token', res.data.token);
                 setIsLogin(true);
-                onClose();
-                navigate('/');
-                // toast.success('Đăng nhập thành công');
-                toast.success(res.data.message);
+                // onClose();
+                // navigate('/');
+
+                window.location.reload();
             }
         } catch (error) {
             console.log(error);

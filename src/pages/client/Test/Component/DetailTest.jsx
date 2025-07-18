@@ -2,10 +2,12 @@ import classNames from 'classnames/bind';
 import styles from './DetailTest.module.scss';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { getDetailExamPublic } from '@/services/examService';
+import { getDetailExamPublic, checkEntryExam } from '@/services/examService';
 import Login from '@/components/client/Modal/Login';
 import Register from '@/components/client/Modal/Register';
 import ForgotPassword from '@/components/client/Modal/ForgotPassword';
+import EntranceExamModal from '@/components/client/Modal/EntranceExamModal';
+import { toast } from 'react-toastify';
 
 const cx = classNames.bind(styles);
 
@@ -14,6 +16,7 @@ function DetailTest() {
 
     const [exam, setExam] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [loadingCheckEntry, setLoadingCheckEntry] = useState(false);
     const [currentModal, setCurrentModal] = useState(null);
     const [isLogin, setIsLogin] = useState(!!localStorage.getItem('user_token'));
     const [startRequested, setStartRequested] = useState(false);
@@ -25,7 +28,6 @@ function DetailTest() {
             setLoading(true);
             try {
                 const res = await getDetailExamPublic(id);
-                console.log(res.data.data);
                 setExam(res.data.data);
             } catch (err) {
                 console.log(err);
@@ -35,14 +37,28 @@ function DetailTest() {
         fetchExam();
     }, [id]);
 
-    const handleStartTest = () => {
+    const handleStartTest = async () => {
         const token = localStorage.getItem('user_token');
         if (!token) {
             setCurrentModal('login');
             setStartRequested(true); // gắn cờ
         } else {
-            navigate(`/test/${exam.id_bai_thi}`, { state: { examId: exam.id_bai_thi } });
+            // check xem người dùng đã làm bài đầu vào chưa
+            setLoadingCheckEntry(true);
+            try {
+                const res = await checkEntryExam(exam.id_bai_thi);
+                if (res.status === 200) {
+                    navigate(`/test/${exam.id_bai_thi}`, { state: { examId: exam.id_bai_thi } });
+                } else {
+                    setCurrentModal('entrance-exam');
+                }
+            } catch (error) {
+                console.log(error);
+                toast.error(error.response.data.message);
+                setCurrentModal('entrance-exam');
+            }
         }
+        setLoadingCheckEntry(false);
     };
 
     // Tự động điều hướng sau khi đã đăng nhập và người dùng có yêu cầu làm bài
@@ -174,7 +190,12 @@ function DetailTest() {
                                             <hr className="my-4" />
                                         </div>
                                         <div className="mt-auto">
-                                            <button className="btn btn-primary w-100 btn-lg" onClick={handleStartTest}>
+                                            <button
+                                                className="btn btn-primary w-100 btn-lg"
+                                                onClick={handleStartTest}
+                                                disabled={loadingCheckEntry}
+                                            >
+                                                {loadingCheckEntry && <i className="fas fa-spinner fa-spin me-2"></i>}
                                                 Bắt đầu làm bài
                                             </button>
                                         </div>
@@ -281,6 +302,16 @@ function DetailTest() {
                 isOpen={currentModal === 'forgot'}
                 onSwitch={(modal) => setCurrentModal(modal)}
                 onClose={() => setCurrentModal(null)}
+            />
+
+            <EntranceExamModal
+                key="entrance-exam"
+                isOpen={currentModal === 'entrance-exam'}
+                onClose={() => setCurrentModal(null)}
+                onStart={() => {
+                    setCurrentModal(null);
+                    navigate(`/test/${exam.id_bai_thi}`, { state: { examId: exam.id_bai_thi } });
+                }}
             />
         </>
     );

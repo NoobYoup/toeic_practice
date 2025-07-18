@@ -96,6 +96,16 @@ const getAvailableParts = (id_bai_lam) => {
     });
 };
 
+const submitExamToTest = (payload) => {
+    const token = localStorage.getItem('user_token');
+
+    return axios.post(`${API}/results/submit-exam-test`, payload, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
 export {
     submitResult,
     getDetailResult,
@@ -106,4 +116,5 @@ export {
     getDetailPartUser,
     getQuestionIndex,
     getAvailableParts,
+    submitExamToTest,
 };

@@ -52,6 +52,7 @@ function ResultTest() {
             let res;
             if (partId === 1) {
                 res = await getDetailFirstUser(id);
+                console.log(res.data.data);
             } else {
                 res = await getDetailPartUser(id, partId);
             }

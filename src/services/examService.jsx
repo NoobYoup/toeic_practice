@@ -148,6 +148,19 @@ const getAllExamUser = (page = 1, filters = {}) => {
     });
 };
 
+const checkEntryExam = (id) => {
+    const token = localStorage.getItem('user_token');
+    return axios.post(
+        `${API}/exams/check-entry-exam/${id}`,
+        {},
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        },
+    );
+};
+
 export {
     getAllExam,
     getAllQuestionExam,
@@ -161,4 +174,5 @@ export {
     getDetailExamPublic,
     getDetailEntryExam,
     getAllExamUser,
+    checkEntryExam,
 };

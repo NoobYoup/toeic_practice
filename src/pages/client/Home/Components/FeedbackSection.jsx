@@ -15,7 +15,6 @@ function FeedbackSection() {
         setLoading(true);
         try {
             const res = await getAllBlogPublic();
-            console.log(res.data.data);
             setBlogs(res.data.data);
         } catch (error) {
             console.log(error);
