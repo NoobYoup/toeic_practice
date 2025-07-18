@@ -20,6 +20,7 @@ function ListTest() {
             setLoading(true);
             try {
                 const response = await getAllExamPublic(page);
+                console.log(response.data.data);
                 setExams(response.data.data);
 
                 // Extract unique years from dsNamXuatBan if available
@@ -46,24 +47,6 @@ function ListTest() {
                                 Lựa chọn từ hơn 300+ đề thi và bài luyện tập được thiết kế theo chuẩn ETS
                             </p>
                         </div>
-                        {/* <div class="col-lg-4 text-center text-lg-end">
-                            <div class="bg-opacity-20 rounded p-3">
-                                <div class="d-flex justify-content-around">
-                                    <div class="text-center">
-                                        <div class="h4 fw-bold mb-0">350+</div>
-                                        <small>Đề thi</small>
-                                    </div>
-                                    <div class="text-center">
-                                        <div class="h4 fw-bold mb-0">10K+</div>
-                                        <small>Câu hỏi</small>
-                                    </div>
-                                    <div class="text-center">
-                                        <div class="h4 fw-bold mb-0">95%</div>
-                                        <small>Độ chính xác</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> */}
                     </div>
                 </div>
             </section>
@@ -107,7 +90,20 @@ function ListTest() {
                                 <div className="row g-4">
                                     {exams.map((exam) => (
                                         <div className="col-lg-3 col-md-6" key={exam.id_bai_thi}>
-                                            <div className="test-card card h-100 border-0 shadow-sm p-2">
+                                            <div className="test-card card h-100 border-0 shadow-sm p-2 position-relative">
+                                                {exam.goi_y_luyen_tap === true && (
+                                                    <span
+                                                        className="badge rounded-pill bg-danger text-light"
+                                                        style={{
+                                                            position: 'absolute',
+                                                            top: '12px',
+                                                            right: '12px',
+                                                            zIndex: '2',
+                                                        }}
+                                                    >
+                                                        Đề xuất
+                                                    </span>
+                                                )}
                                                 <div className="card-body d-flex flex-column">
                                                     <Link
                                                         to={`/detail-test/${exam.id_bai_thi}`}

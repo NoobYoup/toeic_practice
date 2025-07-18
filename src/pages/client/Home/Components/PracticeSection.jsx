@@ -59,7 +59,20 @@ function PracticeSection() {
                                 {exams.length > 4
                                     ? exams.slice(0, 4).map((exam) => (
                                           <div className="col-lg-3 col-md-6" key={exam.id_bai_thi}>
-                                              <div className="test-card card h-100 border-0 shadow-sm p-2">
+                                              <div className="test-card card h-100 border-0 shadow-sm p-2 position-relative">
+                                                  {exam.goi_y_luyen_tap === true && (
+                                                      <span
+                                                          className="badge rounded-pill bg-danger text-light"
+                                                          style={{
+                                                              position: 'absolute',
+                                                              top: '12px',
+                                                              right: '12px',
+                                                              zIndex: '2',
+                                                          }}
+                                                      >
+                                                          Đề xuất
+                                                      </span>
+                                                  )}
                                                   <div className="card-body d-flex flex-column">
                                                       <Link
                                                           to={`/detail-test/${exam.id_bai_thi}`}
