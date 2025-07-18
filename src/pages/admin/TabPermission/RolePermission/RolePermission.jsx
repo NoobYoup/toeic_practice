@@ -9,6 +9,7 @@ const cx = classNames.bind(styles);
 
 function RolePermission() {
     const [permissionTable, setPermissionTable] = useState([]);
+    const [initialPermissionTable, setInitialPermissionTable] = useState([]); // Lưu dữ liệu ban đầu
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
 
@@ -35,6 +36,8 @@ function RolePermission() {
             });
             const tableData = flat;
             setPermissionTable(Array.isArray(tableData) ? tableData : []);
+            // Lưu lại bản deep copy làm dữ liệu gốc
+            setInitialPermissionTable(JSON.parse(JSON.stringify(Array.isArray(tableData) ? tableData : [])));
         } catch (err) {
             console.error(err);
         }
@@ -78,15 +81,39 @@ function RolePermission() {
                 return acc;
             }, {});
 
+            // So sánh thay đổi từng role
+            let hasChange = false;
             for (const roleKey of rolesList) {
-                const ds_ma_quyen = permissionTable.filter((p) => p.roles[roleKey]).map((p) => p.ma_quyen);
-                const roleId = roleIdMap[roleKey];
-                if (!roleId) continue;
-                const payload = { ds_ma_quyen };
+                // Lấy danh sách quyền hiện tại và ban đầu cho role này
+                const currentPerms = permissionTable
+                    .filter((p) => p.roles[roleKey])
+                    .map((p) => p.ma_quyen)
+                    .sort();
+                const initialPerms = initialPermissionTable
+                    .filter((p) => p.roles[roleKey])
+                    .map((p) => p.ma_quyen)
+                    .sort();
 
-                const res = await updatePermissionTable(roleId, payload);
-
-                toast.success(res.data?.message);
+                // So sánh
+                const isChanged = JSON.stringify(currentPerms) !== JSON.stringify(initialPerms);
+                if (isChanged) {
+                    hasChange = true;
+                    const roleId = roleIdMap[roleKey];
+                    if (!roleId) continue;
+                    const payload = { ds_ma_quyen: currentPerms };
+                    try {
+                        await updatePermissionTable(roleId, payload);
+                        toast.success(`Cập nhật quyền cho ${ROLE_LABEL[roleKey] || roleKey} thành công!`);
+                    } catch {
+                        toast.error(`Cập nhật quyền cho ${ROLE_LABEL[roleKey] || roleKey} thất bại!`);
+                    }
+                }
+            }
+            if (!hasChange) {
+                toast.info('Không có thay đổi nào để lưu.');
+            } else {
+                // Sau khi lưu thành công, cập nhật lại dữ liệu gốc
+                setInitialPermissionTable(JSON.parse(JSON.stringify(permissionTable)));
             }
         } catch (err) {
             console.error(err);
