@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { getDetailBlog } from '@/services/blogService';
+import { getDetailBlogPublic } from '@/services/blogService';
 import { createComment, getCommentById, updateComment, deleteComment } from '@/services/commentService';
 import { useState, useEffect } from 'react';
 
@@ -41,7 +41,8 @@ function DetailBlog() {
         setLoading(true);
 
         try {
-            const res = await getDetailBlog(id);
+            const res = await getDetailBlogPublic(id);
+            console.log(res.data.data);
             setBlog(res.data.data);
             setIdBaiViet(res.data.data.id_bai_viet);
         } catch (error) {

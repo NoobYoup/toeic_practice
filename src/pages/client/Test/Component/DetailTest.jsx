@@ -25,6 +25,7 @@ function DetailTest() {
             setLoading(true);
             try {
                 const res = await getDetailExamPublic(id);
+                console.log(res.data.data);
                 setExam(res.data.data);
             } catch (err) {
                 console.log(err);

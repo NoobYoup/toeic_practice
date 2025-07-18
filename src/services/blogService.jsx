@@ -164,6 +164,10 @@ const deleteMyBlog = (id) => {
     });
 };
 
+const getDetailBlogPublic = (id) => {
+    return axios.get(`${API}/blogs/detail-public/${id}`);
+};
+
 export {
     getAllBlog,
     createBlog,
@@ -179,4 +183,5 @@ export {
     getDetailMyBlog,
     deleteMyBlog,
     getAllBlogPublic,
+    getDetailBlogPublic,
 };
