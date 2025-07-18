@@ -3,8 +3,6 @@ import styles from '../Blog.module.scss';
 import classNames from 'classnames/bind';
 import { getMyBlog } from '@/services/blogService';
 import { useState, useEffect } from 'react';
-import ReactPaginate from 'react-paginate';
-import { jwtDecode } from 'jwt-decode';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import { toast } from 'react-toastify';
@@ -63,7 +61,7 @@ function MyBlog() {
                                         </Link>
                                         <div className="card-body p-2">
                                             <a href="#" className={cx('category-badge')}>
-                                                {blog.id_danh_muc}
+                                                {blog.danh_muc_bai_viet.ten_danh_muc}
                                             </a>
                                             <h3 className={cx('card-title')}>
                                                 <Link
@@ -77,11 +75,13 @@ function MyBlog() {
                                             <div className="d-flex justify-content-between align-items-center">
                                                 <div className="d-flex align-items-center">
                                                     <img
-                                                        src={DEFAULT_AVATAR}
+                                                        src={blog.nguoi_dung.ho_so.url_hinh_dai_dien || DEFAULT_AVATAR}
                                                         alt="Author"
                                                         className={`${cx('author-img')} me-2`}
                                                     />
-                                                    <span className="text-muted small">{blog.id_nguoi_dung}</span>
+                                                    <span className="text-muted small">
+                                                        {blog.nguoi_dung.ho_so.ho_ten}
+                                                    </span>
                                                 </div>
                                                 <small className="text-muted">
                                                     {format(new Date(blog.thoi_gian_tao), 'dd/MM/yyyy', { locale: vi })}

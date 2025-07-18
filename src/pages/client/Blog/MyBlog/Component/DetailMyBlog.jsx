@@ -30,9 +30,11 @@ function DetailMyBlog() {
 
     const handleDeleteBlog = async () => {
         try {
-            const res = await deleteMyBlog(id);
-            toast.success(res.data.message);
-            navigate('/my-blog');
+            if (window.confirm('Bạn có chắc chắn muốn xóa bài viết này không?')) {
+                const res = await deleteMyBlog(id);
+                toast.success(res.data.message);
+                navigate('/my-blog');
+            }
         } catch (error) {
             console.log(error);
             toast.error(error?.response?.data?.message);
@@ -64,10 +66,14 @@ function DetailMyBlog() {
 
                             <div className="author-box">
                                 <div className="d-flex">
-                                    <img src={DEFAULT_AVATAR} alt="Author" className={`${cx('author-img')} me-4`} />
+                                    <img
+                                        src={blog?.nguoi_dung.ho_so.url_hinh_dai_dien || DEFAULT_AVATAR}
+                                        alt="Author"
+                                        className={`${cx('author-img')} me-4`}
+                                    />
                                     <div>
-                                        <h5 className="fw-bold">Trần Minh Trung</h5>
-                                        <p className="text-muted">Trùm STU.</p>
+                                        <h5 className="fw-bold">{blog?.nguoi_dung.ho_so.ho_ten}</h5>
+                                        <p className="text-muted">{blog?.nguoi_dung.ten_dang_nhap}</p>
                                         <div className="d-flex">
                                             <a href="#" className="me-2 text-primary">
                                                 <i className="fab fa-facebook"></i>

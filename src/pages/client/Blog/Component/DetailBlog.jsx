@@ -42,7 +42,6 @@ function DetailBlog() {
 
         try {
             const res = await getDetailBlog(id);
-            console.log(res);
             setBlog(res.data.data);
             setIdBaiViet(res.data.data.id_bai_viet);
         } catch (error) {
@@ -57,7 +56,6 @@ function DetailBlog() {
 
         try {
             const res = await getCommentById(idBaiViet);
-            console.log(res);
             setListComment(res.data.data);
         } catch (error) {
             console.log(error);
@@ -199,10 +197,14 @@ function DetailBlog() {
 
                             <div className="author-box mt-3">
                                 <div className="d-flex">
-                                    <img src={DEFAULT_AVATAR} alt="Author" className={`${cx('author-img')} me-4`} />
+                                    <img
+                                        src={blog?.nguoi_dung?.ho_so?.url_hinh_dai_dien || DEFAULT_AVATAR}
+                                        alt="Author"
+                                        className={`${cx('author-img')} me-4`}
+                                    />
                                     <div>
-                                        <h5 className="fw-bold">{blog?.nguoi_dung.ten_dang_nhap}</h5>
-                                        {/* <p className="text-muted">Trùm STU.</p> */}
+                                        <h5 className="fw-bold">{blog?.nguoi_dung?.ho_so?.ho_ten}</h5>
+                                        <p className="text-muted">{blog?.nguoi_dung?.ten_dang_nhap}</p>
                                         <div className="d-flex">
                                             <a href="#" className="me-2 text-primary">
                                                 <i className="fab fa-facebook"></i>

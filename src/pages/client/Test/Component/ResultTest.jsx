@@ -32,11 +32,11 @@ function ResultTest() {
     const checkAndShowCongrats = useCallback(
         (data) => {
             if (data?.da_hoan_thanh === true) {
-                // const congratsKey = `congrats_shown_${id}`;
-                // if (!localStorage.getItem(congratsKey)) {
-                setShowCongrats(true);
-                // localStorage.setItem(congratsKey, '1');
-                // }
+                const congratsKey = `modal_chuc_mung_${id}`;
+                if (!localStorage.getItem(congratsKey)) {
+                    setShowCongrats(true);
+                    localStorage.setItem(congratsKey, '1');
+                }
             }
         },
         [id],

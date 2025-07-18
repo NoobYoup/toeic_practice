@@ -29,39 +29,142 @@ function Test() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [answers, setAnswers] = useState({});
 
-    /* ------------------------------------------------------------ */
-    /* FETCH EXAM                                                   */
-    /* ------------------------------------------------------------ */
+    const [lastPathname, setLastPathname] = useState(location.pathname);
+    const [pendingPath, setPendingPath] = useState(null);
+
+    // Cảnh báo khi rời trang nếu đã có đáp án
+    useEffect(() => {
+        const handleBeforeUnload = (e) => {
+            if (Object.keys(answers).length > 0) {
+                clearDraft(); // Xóa localStorage trước khi rời đi
+                e.preventDefault();
+                // Chrome requires returnValue to be set
+                e.returnValue = '';
+            }
+        };
+        if (Object.keys(answers).length > 0) {
+            window.addEventListener('beforeunload', handleBeforeUnload);
+        }
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
+    }, [answers]);
+
+    // Lưu đáp án và thời gian còn lại vào localStorage
+    useEffect(() => {
+        if (!examId) return;
+        if (Object.keys(answers).length === 0 || !remainingSeconds) return;
+        const draftKey = `toeic_exam_${examId}_draft`;
+        const draftData = {
+            answers,
+            remainingSeconds,
+            savedAt: Date.now(),
+        };
+        localStorage.setItem(draftKey, JSON.stringify(draftData));
+    }, [answers, remainingSeconds, examId]);
+
+    // Hàm xóa dữ liệu tạm khi nộp bài thành công hoặc hết giờ
+    const clearDraft = () => {
+        if (!examId) return;
+        const draftKey = `toeic_exam_${examId}_draft`;
+        localStorage.removeItem(draftKey);
+    };
+
+    // Theo dõi pathname, chặn chuyển route nếu đã có đáp án
+    useEffect(() => {
+        if (pendingPath && location.pathname !== pendingPath) {
+            // Đã có pendingPath, thực hiện chuyển trang
+            navigate(pendingPath, { replace: true });
+            setLastPathname(pendingPath);
+            setPendingPath(null);
+            return;
+        }
+        if (location.pathname !== lastPathname) {
+            if (Object.keys(answers).length > 0) {
+                const confirmLeave = window.confirm('Bạn có chắc chắn muốn rời khỏi trang? Đáp án tạm thời sẽ bị xóa.');
+                if (confirmLeave) {
+                    clearDraft();
+                    setPendingPath(location.pathname);
+                } else {
+                    // Quay lại trang cũ
+                    navigate(lastPathname, { replace: true });
+                }
+            } else {
+                setLastPathname(location.pathname);
+            }
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [location.pathname]);
+
+    // Lắng nghe sự kiện back/forward trên trình duyệt
+    useEffect(() => {
+        const handlePopState = () => {
+            if (Object.keys(answers).length > 0) {
+                const confirmLeave = window.confirm('Bạn có chắc chắn muốn rời khỏi trang? Đáp án tạm thời sẽ bị xóa.');
+                if (confirmLeave) {
+                    clearDraft();
+                } else {
+                    // Ngăn back/forward bằng cách push lại pathname hiện tại
+                    navigate(location.pathname, { replace: true });
+                }
+            }
+        };
+        window.addEventListener('popstate', handlePopState);
+        return () => {
+            window.removeEventListener('popstate', handlePopState);
+        };
+    }, [answers, location.pathname]);
+
+    // load bài làm
+    const fetchExam = async () => {
+        setLoading(true);
+        try {
+            const res = await getDetailExamPublic(examId);
+
+            setExam(res.data.data);
+        } catch (err) {
+            // eslint-disable-next-line no-console
+            console.error(err);
+        }
+        setLoading(false);
+    };
+
     useEffect(() => {
         if (!examId) {
             setLoading(false);
             return;
         }
-        const fetchExam = async () => {
-            setLoading(true);
-            try {
-                const res = await getDetailExamPublic(examId);
-
-                setExam(res.data.data);
-            } catch (err) {
-                // eslint-disable-next-line no-console
-                console.error(err);
-            }
-            setLoading(false);
-        };
         fetchExam();
     }, [examId]);
 
-    /* ------------------------------------------------------------ */
-    /* COUNTDOWN TIMER                                              */
-    /* ------------------------------------------------------------ */
+    // Khi load xong exam, kiểm tra và load dữ liệu tạm nếu có
     useEffect(() => {
-        if (!exam) return;
+        if (!examId || !exam) return;
+        const draftKey = `toeic_exam_${examId}_draft`;
+        const draftStr = localStorage.getItem(draftKey);
+        if (draftStr) {
+            try {
+                const draft = JSON.parse(draftStr);
+                if (draft && draft.remainingSeconds > 0 && draft.answers) {
+                    setAnswers(draft.answers);
+                    setRemainingSeconds(draft.remainingSeconds);
+                    return; // Nếu có dữ liệu tạm thì không set lại timer mặc định
+                }
+            } catch {
+                // Nếu lỗi parse thì bỏ qua
+            }
+        }
+        // Nếu không có dữ liệu tạm thì set timer mặc định
         const durationMinutes = exam.thoi_gian_bai_thi || exam.thoi_gian_thi;
-        if (!durationMinutes) return;
+        if (durationMinutes) {
+            setRemainingSeconds(durationMinutes * 60);
+        }
+    }, [examId, exam]);
 
-        setRemainingSeconds(durationMinutes * 60);
-
+    // thời gian đếm ngược
+    useEffect(() => {
+        if (!exam || remainingSeconds == null) return;
+        if (remainingSeconds <= 0) return;
         const intervalId = setInterval(() => {
             setRemainingSeconds((prev) => {
                 if (prev === null) return prev;
@@ -73,9 +176,8 @@ function Test() {
                 return prev - 1;
             });
         }, 1000);
-
         return () => clearInterval(intervalId);
-    }, [exam]);
+    }, [exam, remainingSeconds]);
 
     const formatTime = (seconds) => {
         const m = Math.floor(seconds / 60)
@@ -238,6 +340,8 @@ function Test() {
             const res = await submitExamToResult(payload); // POST tới /api/results/submit-from-fe
             toast.success('Nộp bài thành công! Kết quả của bạn đã được lưu.');
 
+            clearDraft(); // Xóa dữ liệu tạm khi nộp bài thành công
+
             navigate(`/result-test/${res.data.data.id_bai_lam_nguoi_dung}`, { state: { result: res.data.data } });
         } catch (err) {
             console.error(err);
@@ -247,6 +351,12 @@ function Test() {
 
         setIsSubmitting(false);
     };
+
+    useEffect(() => {
+        if (remainingSeconds === 0) {
+            clearDraft(); // Xóa dữ liệu tạm khi hết giờ
+        }
+    }, [remainingSeconds]);
 
     if (loading) {
         return (
