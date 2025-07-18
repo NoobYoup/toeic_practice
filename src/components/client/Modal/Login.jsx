@@ -39,6 +39,7 @@ function Login({ setIsLogin, onSwitch, onClose, isOpen }) {
 
             setIsLogin(true);
             onClose();
+            window.location.reload();
             // toast.success(res.data.message);
         } catch (err) {
             const apiErrors = err.response?.data?.errors;

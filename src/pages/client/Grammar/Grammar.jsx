@@ -30,6 +30,7 @@ function Grammar() {
     const fetchGrammarHome = async () => {
         setLoading(true);
         try {
+            // Log params để debug
             const res = await getGrammarHome(currentPage, filters);
             setGrammars(res.data.data);
             setPagination((prev) => ({
@@ -60,10 +61,10 @@ function Grammar() {
     // Khi chọn danh mục, lưu vào localStorage, reset về trang 1
     const handleSelectChange = (selectedOption) => {
         setCurrentPage(1);
-        setFilters({
-            ...filters,
+        setFilters((prev) => ({
+            ...prev,
             danh_muc: selectedOption.value,
-        });
+        }));
     };
 
     const handlePageClick = (data) => {
@@ -99,6 +100,9 @@ function Grammar() {
                             />
                         </div>
                         <div className={cx('blog-content')}>
+                            {(!grammars || grammars.length === 0) && (
+                                <p className="text-center text-muted">Không có ngữ pháp nào.</p>
+                            )}
                             {grammars &&
                                 grammars.length > 0 &&
                                 grammars.map((grammar) => (

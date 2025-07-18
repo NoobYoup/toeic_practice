@@ -2,6 +2,7 @@ import { Link, NavLink } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import './Header.scss';
 import { AnimatePresence } from 'framer-motion';
+import { jwtDecode } from 'jwt-decode';
 
 import Login from '../Modal/Login.jsx';
 import Register from '../Modal/Register.jsx';
@@ -26,7 +27,6 @@ function Header() {
     const closeModal = () => setCurrentModal(null);
 
     const token = localStorage.getItem('user_token');
-
     // Hàm gọi API lấy thông tin người dùng
     const fetchUser = async () => {
         if (!token) return;

@@ -9,6 +9,7 @@ import Register from '@/components/client/Modal/Register';
 import ForgotPassword from '@/components/client/Modal/ForgotPassword';
 import { getDetailEntryExam } from '@/services/examService';
 import { toast } from 'react-toastify';
+import { jwtDecode } from 'jwt-decode';
 
 function HeroSection() {
     const [showExamModal, setShowExamModal] = useState(false);
@@ -19,6 +20,9 @@ function HeroSection() {
     const [isLogin, setIsLogin] = useState(!!localStorage.getItem('user_token'));
 
     const [entryExam, setEntryExam] = useState(null);
+    const token = localStorage.getItem('user_token');
+    const decodedToken = jwtDecode(token);
+    console.log(decodedToken);
 
     const handleShowExamModal = async () => {
         if (!isLogin) {
@@ -59,18 +63,24 @@ function HeroSection() {
                 <div className="row align-items-center">
                     <div className="col-lg-6 hero-text">
                         <h1 className="mb-4">Chinh phục TOEIC cùng chúng tôi</h1>
-                        <p className="lead mb-4">Hãy làm bài thi đầu vào để kiểm tra năng lực của bạn.</p>
-                        <div className="d-flex flex-wrap">
-                            <button
-                                type="button"
-                                className="btn btn-light btn-lg me-3 mb-3"
-                                onClick={handleShowExamModal}
-                                disabled={loadingExam}
-                            >
-                                {loadingExam && <i className="fas fa-spinner fa-spin me-2"></i>}
-                                Làm bài thi đầu vào
-                            </button>
-                        </div>
+                        {decodedToken.da_hoan_thanh_bai_dau_vao === true ? (
+                            <></>
+                        ) : (
+                            <>
+                                <p className="lead mb-4">Hãy làm bài thi đầu vào để kiểm tra năng lực của bạn.</p>
+                                <div className="d-flex flex-wrap">
+                                    <button
+                                        type="button"
+                                        className="btn btn-light btn-lg me-3 mb-3"
+                                        onClick={handleShowExamModal}
+                                        disabled={loadingExam}
+                                    >
+                                        {loadingExam && <i className="fas fa-spinner fa-spin me-2"></i>}
+                                        Làm bài thi đầu vào
+                                    </button>
+                                </div>
+                            </>
+                        )}
                     </div>
                     <div className="col-lg-6 mt-5 mt-lg-0 text-center">
                         <img
