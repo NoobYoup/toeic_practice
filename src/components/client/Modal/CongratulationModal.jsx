@@ -1,8 +1,8 @@
-import { useRef, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { useEffect, useRef } from 'react';
 
-function EntranceExamModal({ examInfo = {}, isOpen, onClose, onStart }) {
+function CongratulationModal({ isOpen, onClose, totalScore, readingScore, listeningScore }) {
     const modalRef = useRef(null);
 
     const handleClickOutside = (e) => {
@@ -20,17 +20,12 @@ function EntranceExamModal({ examInfo = {}, isOpen, onClose, onStart }) {
         };
     }, [isOpen]);
 
-    const {
-        title = 'Đề thi đầu vào',
-        description = 'Bài test đánh giá trình độ đầu vào của bạn trước khi bắt đầu luyện thi TOEIC.',
-    } = examInfo;
-
     return (
         <AnimatePresence>
             {isOpen && (
                 <motion.div
                     className="modal d-block"
-                    key="entrance-exam-modal"
+                    key="congratulation-modal"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -43,22 +38,29 @@ function EntranceExamModal({ examInfo = {}, isOpen, onClose, onStart }) {
                         initial={{ y: '-30px', opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         exit={{ y: '-30px', opacity: 0 }}
-                        transition={{ duration: 0.3 }}
+                        transition={{ duration: 0.2 }}
                     >
                         <div className="modal-content border-0 p-4" ref={modalRef}>
                             <button type="button" className="btn-close ms-auto" onClick={onClose}></button>
-                            <h2 className="text-center mb-3">{title}</h2>
-                            <p className="text-muted text-center mb-4">{description}</p>
+                            <h2 className=" text-center fw-bold mb-3" style={{ color: '#2563eb' }}>
+                                Chúc mừng bạn đã hoàn thành bài thi đầu vào
+                            </h2>
 
-                            <div className="alert alert-info text-center mb-4" role="alert">
-                                Lưu ý: Bạn chỉ có thể làm bài 1 lần duy nhất. Hãy chắc chắn bạn đã sẵn sàng trước khi
-                                bắt đầu.
+                            <h2 className="text-center mb-3">Tổng điểm: {totalScore}</h2>
+                            <div className="d-flex justify-content-around">
+                                <p className="fs-5 text-muted text-center mb-4">Reading: {readingScore}</p>
+                                <p className="fs-5 text-muted text-center mb-4">Listening: {listeningScore}</p>
                             </div>
 
+                            {/* <div className="alert alert-info text-center mb-4" role="alert">
+                                Lưu ý: Bạn chỉ có thể làm bài 1 lần duy nhất. Hãy chắc chắn bạn đã sẵn sàng trước khi
+                                bắt đầu.
+                            </div> */}
+
                             <div className="d-grid gap-2 col-6 mx-auto">
-                                <button className="btn btn-primary btn-lg" onClick={onStart}>
-                                    Bắt đầu làm bài
-                                </button>
+                                <Link to="/list-test" className="btn btn-primary btn-lg">
+                                    Xem đề thi gợi ý
+                                </Link>
                             </div>
                         </div>
                     </motion.div>
@@ -68,11 +70,4 @@ function EntranceExamModal({ examInfo = {}, isOpen, onClose, onStart }) {
     );
 }
 
-EntranceExamModal.propTypes = {
-    examInfo: PropTypes.object,
-    isOpen: PropTypes.bool.isRequired,
-    onClose: PropTypes.func.isRequired,
-    onStart: PropTypes.func.isRequired,
-};
-
-export default EntranceExamModal;
+export default CongratulationModal;

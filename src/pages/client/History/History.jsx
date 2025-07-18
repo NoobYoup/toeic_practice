@@ -23,7 +23,6 @@ function History() {
         setLoading(true);
         try {
             const res = await getAllExamSubmit(decoded.id_nguoi_dung, currentPage);
-            console.log(res.data.data);
             setExamSubmit(res.data.data);
             setPagination((prev) => ({
                 ...prev,
@@ -110,7 +109,7 @@ function History() {
 
                             <div className="p-3 border-bottom">
                                 <div className="row align-items-center">
-                                    <div className="col-md-6">
+                                    {/* <div className="col-md-6">
                                         <div className="input-group">
                                             <span className="input-group-text">
                                                 <i className="fas fa-search"></i>
@@ -121,8 +120,8 @@ function History() {
                                                 placeholder="Tìm kiếm bài thi..."
                                             />
                                         </div>
-                                    </div>
-                                    <div className="col-md-6 text-end">
+                                    </div> */}
+                                    <div className="col-md-12 text-end">
                                         <select className="form-select d-inline-block w-auto">
                                             <option>Sắp xếp theo ngày</option>
                                             <option>Sắp xếp theo điểm</option>
@@ -157,17 +156,14 @@ function History() {
                                                 </div>
                                                 <div className="col-md-4">
                                                     <div className={cx('skill-breakdown')}>
-                                                        <div className="d-flex align-items-center mb-2">
+                                                        <div className="d-flex align-items-center">
                                                             <small className="text-muted me-2">Listening:</small>
                                                             <strong>{exam.diem_nghe}</strong>
                                                         </div>
 
-                                                        <div className="d-flex align-items-center mb-2">
+                                                        <div className="d-flex align-items-center">
                                                             <small className="text-muted me-2">Reading:</small>
                                                             <strong>{exam.diem_doc}</strong>
-                                                        </div>
-                                                        <div className="progress-bar-custom">
-                                                            <div className="progress-fill bg-success"></div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -177,8 +173,6 @@ function History() {
                                                         locale: vi,
                                                     })}
                                                     <br />
-                                                    {/* <i className="fas fa-clock me-1"></i> */}
-                                                    {/* {format(new Date(exam.created_at), 'HH:mm', { locale: vi })} */}
                                                 </div>
                                                 <div className="col-md-2">
                                                     <div className={cx('action-buttons')}>

@@ -11,6 +11,8 @@ import 'dayjs/locale/vi';
 
 import styles from './ResultTest.module.scss';
 import classNames from 'classnames/bind';
+import CongratulationModal from '@/components/client/Modal/CongratulationModal.jsx';
+import { useCallback } from 'react';
 
 const cx = classNames.bind(styles);
 
@@ -23,6 +25,22 @@ function ResultTest() {
     // Persist global question numbering across part fetches
     const globalIndexRef = useRef({});
     const [questionIndexMap, setQuestionIndexMap] = useState(null);
+
+    const [showCongrats, setShowCongrats] = useState(false);
+
+    // Kiểm tra và hiển thị modal chúc mừng nếu là bài thi đầu vào và chưa từng hiện
+    const checkAndShowCongrats = useCallback(
+        (data) => {
+            if (data?.da_hoan_thanh === true) {
+                // const congratsKey = `congrats_shown_${id}`;
+                // if (!localStorage.getItem(congratsKey)) {
+                setShowCongrats(true);
+                // localStorage.setItem(congratsKey, '1');
+                // }
+            }
+        },
+        [id],
+    );
 
     // Parts list fetched from backend
     const [parts, setParts] = useState([]);
@@ -38,6 +56,7 @@ function ResultTest() {
                 res = await getDetailPartUser(id, partId);
             }
             const prevResult = result;
+            checkAndShowCongrats(res.data?.data);
 
             setResult(res.data?.data);
             setActivePart(partId);
@@ -180,6 +199,14 @@ function ResultTest() {
 
     return (
         <>
+            <CongratulationModal
+                isOpen={showCongrats}
+                onClose={() => setShowCongrats(false)}
+                totalScore={processedData?.score}
+                readingScore={processedData?.readingScore}
+                listeningScore={processedData?.listeningScore}
+            />
+
             <div className="container-fluid min-vh-100 p-0">
                 {loading || !processedData ? (
                     <div className="text-center py-5">
