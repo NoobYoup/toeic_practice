@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import { DEFAULT_AVATAR } from '@/constants/default';
@@ -32,7 +32,9 @@ function Sidebar() {
     return (
         <>
             <div className="d-flex flex-column p-3">
-                <h5 className="text-white mb-4">Admin Panel</h5>
+                <Link to="/admin/dashboard" className="text-white mb-4 fw-bold fs-3">
+                    Admin Panel
+                </Link>
                 <ul className="nav nav-pills flex-column mb-auto">
                     <li className="nav-item">
                         <NavLink to="/admin/dashboard" className="nav-link">

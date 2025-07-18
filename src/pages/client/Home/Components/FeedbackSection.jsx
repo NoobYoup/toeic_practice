@@ -51,7 +51,7 @@ function FeedbackSection() {
                         <div className="row g-4">
                             {blogs.length > 4
                                 ? blogs.slice(0, 4).map((blog) => (
-                                      <div className="col-lg-4 col-md-6">
+                                      <div className="col-lg-3 col-md-6">
                                           <div className={`${cx('testimonial-card')} p-4 h-100`}>
                                               <div className="d-flex align-items-center mb-3">
                                                   <img
@@ -80,7 +80,7 @@ function FeedbackSection() {
                                       </div>
                                   ))
                                 : blogs.map((blog) => (
-                                      <div className="col-lg-4 col-md-6" key={blog.id_bai_viet}>
+                                      <div className="col-lg-3 col-md-6" key={blog.id_bai_viet}>
                                           <div
                                               className={`${cx(
                                                   'testimonial-card',

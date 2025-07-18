@@ -23,6 +23,7 @@ function History() {
         setLoading(true);
         try {
             const res = await getAllExamSubmit(decoded.id_nguoi_dung, currentPage);
+            console.log(res.data.data);
             setExamSubmit(res.data.data);
             setPagination((prev) => ({
                 ...prev,
@@ -64,73 +65,40 @@ function History() {
                     </div>
                 ) : (
                     <>
-                        {/* <div className="row g-4 mb-4">
+                        <div className="row g-4 mb-4">
                             <div className="col-lg-3 col-md-6">
                                 <div className={`${cx('stat-card')} text-center`}>
-                                    <div className={`${cx('stat-number')} text-primary`}>24</div>
+                                    <div className={`${cx('stat-number')} text-primary`}>{examSubmit.length}</div>
                                     <div className={cx('stat-label')}>Tổng bài thi</div>
                                 </div>
                             </div>
                             <div className="col-lg-3 col-md-6">
                                 <div className={`${cx('stat-card')} text-center`}>
-                                    <div className={`${cx('stat-number')} text-success`}>785</div>
-                                    <div className={cx('stat-label')}>Điểm cao nhất</div>
+                                    <div className={`${cx('stat-number')} text-success`}>
+                                        {examSubmit.reduce((max, exam) => Math.max(max, exam.tong_diem), 0)}
+                                    </div>
+                                    <div className={cx('stat-label')}>Tổng điểm cao nhất</div>
                                 </div>
                             </div>
                             <div className="col-lg-3 col-md-6">
                                 <div className={`${cx('stat-card')} text-center`}>
-                                    <div className={`${cx('stat-number')} text-warning`}>658</div>
-                                    <div className={cx('stat-label')}>Điểm trung bình</div>
+                                    <div className={`${cx('stat-number')} text-warning`}>
+                                        {examSubmit.reduce((max, exam) => Math.max(max, exam.diem_doc), 0)}
+                                    </div>
+                                    <div className={cx('stat-label')}>Điểm Reading cao nhất</div>
                                 </div>
                             </div>
                             <div className="col-lg-3 col-md-6">
                                 <div className={`${cx('stat-card')} text-center`}>
-                                    <div className={`${cx('stat-number')} text-info`}>18h 32m</div>
-                                    <div className={cx('stat-label')}>Thời gian luyện tập</div>
+                                    <div className={`${cx('stat-number')} text-info`}>
+                                        {examSubmit.reduce((max, exam) => Math.max(max, exam.diem_nghe), 0)}
+                                    </div>
+                                    <div className={cx('stat-label')}>Điểm Listening cao nhất</div>
                                 </div>
                             </div>
-                        </div> */}
+                        </div>
 
                         <div className={cx('test-history-card')}>
-                            {/* <div className={`${cx('filter-tabs')}  d-flex`}>
-                                <a href="#" className={`${cx('filter-tab')} active`} data-filter="all">
-                                    Tất cả
-                                </a>
-                                <a href="#" className={`${cx('filter-tab')}`} data-filter="full">
-                                    Full Test
-                                </a>
-                                <a href="#" className={`${cx('filter-tab')}`} data-filter="mini">
-                                    Mini Test
-                                </a>
-                                <a href="#" className={`${cx('filter-tab')}`} data-filter="practice">
-                                    Practice
-                                </a>
-                            </div> */}
-
-                            <div className="p-3 border-bottom">
-                                <div className="row align-items-center">
-                                    {/* <div className="col-md-6">
-                                        <div className="input-group">
-                                            <span className="input-group-text">
-                                                <i className="fas fa-search"></i>
-                                            </span>
-                                            <input
-                                                type="text"
-                                                className="form-control"
-                                                placeholder="Tìm kiếm bài thi..."
-                                            />
-                                        </div>
-                                    </div> */}
-                                    <div className="col-md-12 text-end">
-                                        <select className="form-select d-inline-block w-auto">
-                                            <option>Sắp xếp theo ngày</option>
-                                            <option>Sắp xếp theo điểm</option>
-                                            <option>Sắp xếp theo loại bài thi</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
                             <div className={cx('test-results')}>
                                 {examSubmit.length === 0 ? (
                                     <div className="text-center text-muted">Chưa có bài thi</div>
@@ -144,9 +112,13 @@ function History() {
                                                     </div>
                                                 </div>
                                                 <div className="col-md-3">
-                                                    <h6 className="mb-1 fw-bold">TOEIC Full Test #15</h6>
+                                                    <h6 className="mb-1 fw-bold">
+                                                        {exam.bai_thi_nguoi_dung.ten_bai_thi}
+                                                    </h6>
                                                     <span className={cx('test-type-badge', 'test-type-full')}>
-                                                        Full Test
+                                                        {exam.bai_thi_nguoi_dung.la_bai_thi_dau_vao === true
+                                                            ? 'Bài thi đầu vào'
+                                                            : 'Full Test'}
                                                     </span>
                                                     <div className="mt-2">
                                                         <span className={cx('time-badge')}>
