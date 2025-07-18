@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import Select from 'react-select';
-import { getAllExamPublic } from '@/services/examService.jsx';
+import { getAllExamPublic, getAllExamUser } from '@/services/examService.jsx';
 
 import styles from './ListTest.module.scss';
 import classNames from 'classnames/bind';
@@ -9,32 +9,40 @@ const cx = classNames.bind(styles);
 function ListTest() {
     const [exams, setExams] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [page] = useState(1);
+    const [page, setPage] = useState(1);
     const [publicationYears, setPublicationYears] = useState([]);
-    // const [totalPages] = useState(1); // chưa sử dụng tới
+    const [filters, setFilters] = useState({});
 
-    // Hiện tại chưa cần bộ lọc nên bỏ qua
+    const token = localStorage.getItem('user_token');
+
+    const fetchExams = async () => {
+        setLoading(true);
+        try {
+            const response = token ? await getAllExamUser(page, filters) : await getAllExamPublic(page, filters);
+            setExams(response.data.data);
+
+            // Extract unique years from dsNamXuatBan if available
+            if (response.data.dsNamXuatBan && Array.isArray(response.data.dsNamXuatBan)) {
+                const years = response.data.dsNamXuatBan.map((item) => item.nam_xuat_ban).sort((a, b) => b - a); // Sort in descending order (newest first)
+                setPublicationYears(years);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+        setLoading(false);
+    };
 
     useEffect(() => {
-        const fetchExams = async () => {
-            setLoading(true);
-            try {
-                const response = await getAllExamPublic(page);
-                console.log(response.data.data);
-                setExams(response.data.data);
-
-                // Extract unique years from dsNamXuatBan if available
-                if (response.data.dsNamXuatBan && Array.isArray(response.data.dsNamXuatBan)) {
-                    const years = response.data.dsNamXuatBan.map((item) => item.nam_xuat_ban).sort((a, b) => b - a); // Sort in descending order (newest first)
-                    setPublicationYears(years);
-                }
-            } catch (error) {
-                console.log(error);
-            }
-            setLoading(false);
-        };
         fetchExams();
-    }, [page]);
+    }, [page, filters, token]);
+
+    const handleSelectChange = (selectedOption) => {
+        setPage(1);
+        setFilters((prev) => ({
+            ...prev,
+            nam_xuat_ban: selectedOption.value,
+        }));
+    };
 
     return (
         <>
@@ -64,7 +72,11 @@ function ListTest() {
                                             value: year.toString(),
                                         })),
                                     ]}
-                                    defaultValue={{ label: 'Tất cả năm xuất bản', value: '' }}
+                                    value={{
+                                        label: filters.nam_xuat_ban ? filters.nam_xuat_ban : 'Tất cả năm xuất bản',
+                                        value: filters.nam_xuat_ban,
+                                    }}
+                                    onChange={handleSelectChange}
                                     placeholder="Chọn năm xuất bản"
                                     isSearchable={false}
                                     className="basic-single"

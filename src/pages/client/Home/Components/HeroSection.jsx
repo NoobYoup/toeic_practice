@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { DEFAULT_BACKGROUND } from '@/constants/default';
 import './HeroSection.scss';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import EntranceExamModal from '@/components/client/Modal/EntranceExamModal';
 import Login from '@/components/client/Modal/Login';
@@ -20,9 +20,17 @@ function HeroSection() {
     const [isLogin, setIsLogin] = useState(!!localStorage.getItem('user_token'));
 
     const [entryExam, setEntryExam] = useState(null);
+
     const token = localStorage.getItem('user_token');
-    const decodedToken = jwtDecode(token);
-    console.log(decodedToken);
+    let decodedToken = null;
+    if (typeof token === 'string' && token) {
+        try {
+            decodedToken = jwtDecode(token);
+        } catch {
+            decodedToken = null;
+        }
+    }
+    // console.log(decodedToken);
 
     const handleShowExamModal = async () => {
         if (!isLogin) {
@@ -63,7 +71,7 @@ function HeroSection() {
                 <div className="row align-items-center">
                     <div className="col-lg-6 hero-text">
                         <h1 className="mb-4">Chinh phục TOEIC cùng chúng tôi</h1>
-                        {decodedToken.da_hoan_thanh_bai_dau_vao === true ? (
+                        {decodedToken && decodedToken.da_hoan_thanh_bai_dau_vao === true ? (
                             <></>
                         ) : (
                             <>

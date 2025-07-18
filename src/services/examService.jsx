@@ -132,6 +132,22 @@ const getDetailEntryExam = () => {
     });
 };
 
+const getAllExamUser = (page = 1, filters = {}) => {
+    const token = localStorage.getItem('user_token');
+
+    const params = {
+        page,
+        ...filters,
+    };
+
+    return axios.get(`${API}/exams/get-all-exam-user`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        params,
+    });
+};
+
 export {
     getAllExam,
     getAllQuestionExam,
@@ -144,4 +160,5 @@ export {
     getAllExamPublic,
     getDetailExamPublic,
     getDetailEntryExam,
+    getAllExamUser,
 };
