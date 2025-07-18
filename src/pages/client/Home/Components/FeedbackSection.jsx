@@ -58,7 +58,7 @@ function FeedbackSection() {
                                                       src={blog.nguoi_dung.ho_so.url_hinh_dai_dien || DEFAULT_AVATAR}
                                                       alt="User"
                                                       className="rounded-circle me-3"
-                                                      style={{ width: '40px' }}
+                                                      style={{ width: '40px', height: '40px', objectFit: 'cover' }}
                                                   />
                                                   <div>
                                                       <h6 className="mb-0 fw-bold">Nguyễn Văn A</h6>
@@ -91,7 +91,7 @@ function FeedbackSection() {
                                                       src={blog.nguoi_dung.ho_so.url_hinh_dai_dien || DEFAULT_AVATAR}
                                                       alt="User"
                                                       className="rounded-circle me-3"
-                                                      style={{ width: '40px' }}
+                                                      style={{ width: '40px', height: '40px', objectFit: 'cover' }}
                                                   />
                                                   <div>
                                                       <h6 className="mb-0 fw-bold">{blog.nguoi_dung.ho_so.ho_ten}</h6>
