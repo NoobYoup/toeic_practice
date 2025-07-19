@@ -51,8 +51,7 @@ function EntranceExamModal({ examInfo = {}, isOpen, onClose, onStart }) {
                             <p className="text-muted text-center mb-4">{description}</p>
 
                             <div className="alert alert-info text-center mb-4" role="alert">
-                                Lưu ý: Bạn chỉ có thể làm bài 1 lần duy nhất. Hãy chắc chắn bạn đã sẵn sàng trước khi
-                                bắt đầu.
+                                Lưu ý: Bạn phải hoàn thành bài thi đầu vào trước khi làm các đề thi khác.
                             </div>
 
                             <div className="d-grid gap-2 col-6 mx-auto">

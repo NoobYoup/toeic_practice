@@ -1,20 +1,17 @@
 import { useEffect, useState, useRef } from 'react';
-import { login, loginGoogle } from '@/services/authService.jsx';
-import { jwtDecode } from 'jwt-decode';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
-import { useNavigate } from 'react-router-dom';
 import { motion as Motion, AnimatePresence } from 'framer-motion';
-import { toast } from 'react-toastify';
+import { useAuth } from '@/contexts/AuthContext';
 
 const API_GOOGLE = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
-function Login({ setIsLogin, onSwitch, onClose, isOpen }) {
+function Login({ onSwitch, onClose, isOpen }) {
+    const { login, loginGoogle } = useAuth();
     const [form, setForm] = useState({ identifier: '', mat_khau: '' });
     const [errors, setErrors] = useState({});
     const [loadingAPI, setLoadingAPI] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const modalRef = useRef(null);
-    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -26,21 +23,8 @@ function Login({ setIsLogin, onSwitch, onClose, isOpen }) {
         setLoadingAPI(true);
         try {
             setErrors({});
-            const res = await login(form);
-
-            // Nếu tài khoản là admin thì không cho đăng nhập ở client
-            if (res.data.is_admin === true) {
-                toast.error('Bạn không có quyền truy cập tại đây');
-                setLoadingAPI(false);
-                return;
-            }
-
-            localStorage.setItem('user_token', res.data.token);
-
-            setIsLogin(true);
-            // onClose();
-            window.location.reload();
-            // toast.success(res.data.message);
+            await login(form);
+            onClose();
         } catch (err) {
             const apiErrors = err.response?.data?.errors;
             const generalMsg = err.response?.data?.message;
@@ -54,38 +38,23 @@ function Login({ setIsLogin, onSwitch, onClose, isOpen }) {
                 });
                 setErrors(newErrors);
             } else if (generalMsg) {
-                // setErrors({ general: generalMsg });
-                toast.error(generalMsg);
+                setErrors({ general: generalMsg });
             } else {
-                // setErrors({ general: 'Đăng nhập thất bại.' });
-                toast.error(err.response?.data?.message);
+                setErrors({ general: 'Đăng nhập thất bại.' });
             }
         }
         setLoadingAPI(false);
     };
 
     const handleLoginGoogle = async (credentialResponse) => {
-        const token = credentialResponse.credential;
         try {
-            const res = await loginGoogle(token);
-            if (res.status === 200) {
-                localStorage.setItem('user_token', res.data.token);
-                setIsLogin(true);
-                // onClose();
-                // navigate('/');
-
-                window.location.reload();
-            }
+            await loginGoogle(credentialResponse);
+            onClose();
         } catch (error) {
             console.log(error);
             setErrors({ general: 'Đăng nhập Google thất bại.' });
         }
     };
-
-    useEffect(() => {
-        const token = localStorage.getItem('user_token');
-        setIsLogin(!!token);
-    }, [setIsLogin]);
 
     // Clear error messages every time this modal is reopened
     useEffect(() => {

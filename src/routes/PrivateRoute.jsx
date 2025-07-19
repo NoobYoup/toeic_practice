@@ -1,27 +1,25 @@
 import { Navigate, Outlet } from 'react-router-dom';
-import dayjs from 'dayjs';
-import { jwtDecode } from 'jwt-decode';
-// import { toast } from 'react-toastify';
+import { useAuth } from '@/contexts/AuthContext';
 
 function PrivateRoute() {
-    const token = localStorage.getItem('user_token');
-    if (!token) {
+    const { isAuthenticated, loading } = useAuth();
+
+    if (loading) {
+        return (
+            <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '200px' }}>
+                <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        );
+    }
+
+    if (!isAuthenticated) {
         const toastMsg = 'Bạn phải đăng nhập để truy cập được';
-        // toast.warn(toastMsg);
         return <Navigate to="/" replace state={{ toastMsg }} />;
     }
-    try {
-        const decoded = jwtDecode(token);
-        if (decoded.exp && dayjs.unix(decoded.exp).isBefore(dayjs())) {
-            throw new Error('Token expired');
-        }
-        return <Outlet />;
-    } catch {
-        localStorage.removeItem('user_token');
-        const toastMsg = 'Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại';
-        // toast.warn(toastMsg);
-        return <Navigate to="/" replace state={{ toastMsg }} />;
-    }
+
+    return <Outlet />;
 }
 
 export default PrivateRoute;

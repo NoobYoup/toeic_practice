@@ -1,8 +1,7 @@
 import { Link, NavLink } from 'react-router-dom';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import './Header.scss';
 import { AnimatePresence } from 'framer-motion';
-import { jwtDecode } from 'jwt-decode';
 
 import Login from '../Modal/Login.jsx';
 import Register from '../Modal/Register.jsx';
@@ -10,74 +9,19 @@ import ForgotPassword from '../Modal/ForgotPassword.jsx';
 import VerifyOTP from '../Modal/VerifyOTP.jsx';
 import ResetPassword from '../Modal/ResetPassword.jsx';
 
-import { getProfile } from '@/services/userService.jsx';
+import { useAuth } from '@/contexts/AuthContext';
 
 const DEFAULT_AVATAR = '/images/logo_black.png';
 
 function Header() {
-    const [isLogin, setIsLogin] = useState(false);
+    const { user, isAuthenticated, logout } = useAuth();
     const [email, setEmail] = useState('');
     const [currentModal, setCurrentModal] = useState(null);
-    const cachedProfile = localStorage.getItem('user_profile');
-    const [profile, setProfile] = useState(cachedProfile ? JSON.parse(cachedProfile) : null);
     // Refs for navbar collapse and toggler button
     const navRef = useRef(null);
     const togglerRef = useRef(null);
 
     const closeModal = () => setCurrentModal(null);
-
-    const token = localStorage.getItem('user_token');
-    // Hàm gọi API lấy thông tin người dùng
-    const fetchUser = async () => {
-        if (!token) return;
-
-        try {
-            const res = await getProfile(token);
-            const newProfile = res.data.data;
-            // Chỉ cập nhật state nếu dữ liệu thực sự thay đổi để tránh flicker
-            if (
-                !profile ||
-                profile.ho_so?.url_hinh_dai_dien !== newProfile.ho_so?.url_hinh_dai_dien ||
-                profile.ho_so?.ho_ten !== newProfile.ho_so?.ho_ten
-            ) {
-                setProfile(newProfile);
-                localStorage.setItem('user_profile', JSON.stringify(newProfile));
-            }
-            setIsLogin(true);
-        } catch (err) {
-            console.log(err);
-            setIsLogin(false);
-            localStorage.removeItem('user_token');
-            localStorage.removeItem('user_profile');
-        }
-    };
-
-    // Lần đầu tải component hoặc khi token thay đổi
-    useEffect(() => {
-        fetchUser();
-    }, [token]);
-
-    // Lắng nghe sự kiện profileUpdated để cập nhật header khi người dùng thay đổi thông tin
-    useEffect(() => {
-        const handleProfileUpdated = () => {
-            const cached = localStorage.getItem('user_profile');
-            if (cached) {
-                const data = JSON.parse(cached);
-                setProfile(data);
-            }
-        };
-
-        window.addEventListener('profileUpdated', handleProfileUpdated);
-        return () => window.removeEventListener('profileUpdated', handleProfileUpdated);
-    }, [token]);
-
-    const handleLogout = () => {
-        localStorage.removeItem('user_token');
-        setIsLogin(false);
-        setProfile(null);
-        localStorage.removeItem('user_profile');
-        window.location.reload();
-    };
 
     // Manage body overflow when any modal is open
     useEffect(() => {
@@ -175,7 +119,7 @@ function Header() {
                             </li>
                         </ul>
 
-                        {!isLogin ? (
+                        {!isAuthenticated ? (
                             <div className="d-flex">
                                 <button
                                     type="button"
@@ -195,9 +139,9 @@ function Header() {
                                     aria-expanded="false"
                                 >
                                     <div className="user-avatar">
-                                        <img src={profile?.ho_so?.url_hinh_dai_dien || DEFAULT_AVATAR} alt="Avatar" />
+                                        <img src={user?.ho_so?.url_hinh_dai_dien || DEFAULT_AVATAR} alt="Avatar" />
                                     </div>
-                                    <span className="user-name">{profile?.ho_so?.ho_ten}</span>
+                                    <span className="user-name">{user?.ho_so?.ho_ten}</span>
                                 </div>
 
                                 <ul className="dropdown-menu dropdown-menu-end mt-2" aria-labelledby="userDropdown">
@@ -223,7 +167,7 @@ function Header() {
                                         <hr className="dropdown-divider" />
                                     </li>
                                     <li>
-                                        <a className="dropdown-item logout" href="#" onClick={() => handleLogout()}>
+                                        <a className="dropdown-item logout" href="#" onClick={logout}>
                                             <i className="fas fa-sign-out-alt"></i> Đăng xuất
                                         </a>
                                     </li>
@@ -235,13 +179,7 @@ function Header() {
             </nav>
 
             <AnimatePresence>
-                <Login
-                    key="login"
-                    isOpen={currentModal === 'login'}
-                    onSwitch={setCurrentModal}
-                    onClose={closeModal}
-                    setIsLogin={setIsLogin}
-                />
+                <Login key="login" isOpen={currentModal === 'login'} onSwitch={setCurrentModal} onClose={closeModal} />
                 <Register
                     key="register"
                     isOpen={currentModal === 'register'}

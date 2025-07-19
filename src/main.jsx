@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.jsx';
+import AppProvider from '@/contexts/AppProvider.jsx';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
@@ -9,6 +10,8 @@ import '@/styles/index.scss';
 
 createRoot(document.getElementById('root')).render(
     <StrictMode>
-        <App />
+        <AppProvider>
+            <App />
+        </AppProvider>
     </StrictMode>,
 );

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { DEFAULT_BACKGROUND } from '@/constants/default';
 import './HeroSection.scss';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import EntranceExamModal from '@/components/client/Modal/EntranceExamModal';
 import Login from '@/components/client/Modal/Login';
@@ -9,31 +9,22 @@ import Register from '@/components/client/Modal/Register';
 import ForgotPassword from '@/components/client/Modal/ForgotPassword';
 import { getDetailEntryExam } from '@/services/examService';
 import { toast } from 'react-toastify';
-import { jwtDecode } from 'jwt-decode';
+import { useAuth } from '@/contexts/AuthContext';
 
 function HeroSection() {
+    const { isAuthenticated, userToken } = useAuth();
     const [showExamModal, setShowExamModal] = useState(false);
     const navigate = useNavigate();
     const [currentModal, setCurrentModal] = useState(null);
 
     const [loadingExam, setLoadingExam] = useState(false);
-    const [isLogin, setIsLogin] = useState(!!localStorage.getItem('user_token'));
-
     const [entryExam, setEntryExam] = useState(null);
 
-    const token = localStorage.getItem('user_token');
-    let decodedToken = null;
-    if (typeof token === 'string' && token) {
-        try {
-            decodedToken = jwtDecode(token);
-        } catch {
-            decodedToken = null;
-        }
-    }
-    // console.log(decodedToken);
+    // kiểm tra xem user đã làm bài thi đầu vào chưa
+    const showEntryExamButton = !isAuthenticated || (isAuthenticated && !userToken?.da_hoan_thanh_bai_dau_vao);
 
     const handleShowExamModal = async () => {
-        if (!isLogin) {
+        if (!isAuthenticated) {
             setCurrentModal('login');
         } else {
             setLoadingExam(true);
@@ -51,19 +42,7 @@ function HeroSection() {
     const handleStartExam = async () => {
         setShowExamModal(false);
         navigate(`/test/${entryExam.id_bai_thi}`, { state: { examId: entryExam.id_bai_thi } });
-
-        // if (startRequested && isLogin && entryExam) {
-        //     navigate(`/test/${entryExam.id_bai_thi}`, { state: { examId: entryExam.id_bai_thi } });
-        //     setStartRequested(false); // gắn cờ
-        // }
     };
-
-    // useEffect(() => {
-    //     if (startRequested && isLogin && entryExam) {
-    //         navigate(`/test/${entryExam.id_bai_thi}`, { state: { examId: entryExam.id_bai_thi } });
-    //         setStartRequested(false); // gắn cờ
-    //     }
-    // }, [startRequested, isLogin, entryExam, navigate]);
 
     return (
         <section className="hero-section">
@@ -71,9 +50,7 @@ function HeroSection() {
                 <div className="row align-items-center">
                     <div className="col-lg-6 hero-text">
                         <h1 className="mb-4">Chinh phục TOEIC cùng chúng tôi</h1>
-                        {decodedToken && decodedToken.da_hoan_thanh_bai_dau_vao === true ? (
-                            <></>
-                        ) : (
+                        {showEntryExamButton && (
                             <>
                                 <p className="lead mb-4">Hãy làm bài thi đầu vào để kiểm tra năng lực của bạn.</p>
                                 <div className="d-flex flex-wrap">
@@ -114,7 +91,6 @@ function HeroSection() {
                 isOpen={currentModal === 'login'}
                 onSwitch={(modal) => setCurrentModal(modal)}
                 onClose={() => setCurrentModal(null)}
-                setIsLogin={setIsLogin}
             />
 
             <Register
@@ -122,7 +98,6 @@ function HeroSection() {
                 isOpen={currentModal === 'register'}
                 onSwitch={(modal) => setCurrentModal(modal)}
                 onClose={() => setCurrentModal(null)}
-                setIsLogin={setIsLogin}
             />
 
             <ForgotPassword

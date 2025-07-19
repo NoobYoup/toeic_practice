@@ -42,7 +42,6 @@ function DetailBlog() {
 
         try {
             const res = await getDetailBlogPublic(id);
-            console.log(res.data.data);
             setBlog(res.data.data);
             setIdBaiViet(res.data.data.id_bai_viet);
         } catch (error) {

@@ -2,26 +2,46 @@ import classNames from 'classnames/bind';
 import styles from './DetailTest.module.scss';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { getDetailExamPublic, checkEntryExam } from '@/services/examService';
+import { getDetailExamPublic, checkEntryExam, getDetailEntryExam } from '@/services/examService';
 import Login from '@/components/client/Modal/Login';
 import Register from '@/components/client/Modal/Register';
 import ForgotPassword from '@/components/client/Modal/ForgotPassword';
 import EntranceExamModal from '@/components/client/Modal/EntranceExamModal';
+
 import { toast } from 'react-toastify';
+import { useAuth } from '@/contexts/AuthContext';
 
 const cx = classNames.bind(styles);
 
 function DetailTest() {
     const { id } = useParams();
+    const { isAuthenticated, userToken } = useAuth();
 
     const [exam, setExam] = useState(null);
     const [loading, setLoading] = useState(true);
     const [loadingCheckEntry, setLoadingCheckEntry] = useState(false);
     const [currentModal, setCurrentModal] = useState(null);
-    const [isLogin, setIsLogin] = useState(!!localStorage.getItem('user_token'));
     const [startRequested, setStartRequested] = useState(false);
 
     const navigate = useNavigate();
+
+    // Helper function để kiểm tra và điều hướng đến bài thi
+    const checkAndNavigateToExam = async () => {
+        setLoadingCheckEntry(true);
+        try {
+            const res = await checkEntryExam(exam.id_bai_thi);
+            if (res.status === 200) {
+                navigate(`/test/${exam.id_bai_thi}`, { state: { examId: exam.id_bai_thi } });
+            } else {
+                toast.error('Bạn không thể làm bài thi này');
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error(error.response?.data?.message || 'Có lỗi xảy ra');
+        } finally {
+            setLoadingCheckEntry(false);
+        }
+    };
 
     useEffect(() => {
         const fetchExam = async () => {
@@ -38,36 +58,42 @@ function DetailTest() {
     }, [id]);
 
     const handleStartTest = async () => {
-        const token = localStorage.getItem('user_token');
-        if (!token) {
+        if (!isAuthenticated) {
             setCurrentModal('login');
-            setStartRequested(true); // gắn cờ
-        } else {
-            // check xem người dùng đã làm bài đầu vào chưa
-            setLoadingCheckEntry(true);
-            try {
-                const res = await checkEntryExam(exam.id_bai_thi);
-                if (res.status === 200) {
-                    navigate(`/test/${exam.id_bai_thi}`, { state: { examId: exam.id_bai_thi } });
-                } else {
-                    setCurrentModal('entrance-exam');
-                }
-            } catch (error) {
-                console.log(error);
-                toast.error(error.response.data.message);
-                setCurrentModal('entrance-exam');
-            }
+            setStartRequested(true);
+            return;
         }
-        setLoadingCheckEntry(false);
+
+        // Nếu đã đăng nhập, kiểm tra xem đã làm bài đầu vào chưa
+        if (!userToken?.da_hoan_thanh_bai_dau_vao) {
+            // Chưa làm bài đầu vào thì chỉ mở modal
+            setCurrentModal('entrance-exam');
+            return;
+        }
+
+        // Đã làm bài đầu vào, kiểm tra quyền làm bài thi này
+        await checkAndNavigateToExam();
     };
 
-    // Tự động điều hướng sau khi đã đăng nhập và người dùng có yêu cầu làm bài
+    // Tự động xử lý sau khi đã đăng nhập và người dùng có yêu cầu làm bài
     useEffect(() => {
-        if (startRequested && isLogin && exam) {
-            navigate(`/test/${exam.id_bai_thi}`, { state: { examId: exam.id_bai_thi } });
-            setStartRequested(false); // gắn cờ
-        }
-    }, [startRequested, isLogin, exam, navigate]);
+        const handleAfterLogin = async () => {
+            if (startRequested && isAuthenticated && exam) {
+                setStartRequested(false); // Reset cờ
+
+                // Kiểm tra lại xem đã làm bài đầu vào chưa
+                if (!userToken?.da_hoan_thanh_bai_dau_vao) {
+                    // Chưa làm bài đầu vào thì điều hướng đến trang làm bài đầu vào
+                    setCurrentModal('entrance-exam');
+                } else {
+                    // Đã làm bài đầu vào, kiểm tra xem có thể làm bài thi này không
+                    checkAndNavigateToExam();
+                }
+            }
+        };
+
+        handleAfterLogin();
+    }, [startRequested, isAuthenticated, exam, userToken, navigate]);
 
     return (
         <>
@@ -286,7 +312,6 @@ function DetailTest() {
                 isOpen={currentModal === 'login'}
                 onSwitch={(modal) => setCurrentModal(modal)}
                 onClose={() => setCurrentModal(null)}
-                setIsLogin={setIsLogin}
             />
 
             <Register
@@ -294,7 +319,6 @@ function DetailTest() {
                 isOpen={currentModal === 'register'}
                 onSwitch={(modal) => setCurrentModal(modal)}
                 onClose={() => setCurrentModal(null)}
-                setIsLogin={setIsLogin}
             />
 
             <ForgotPassword
@@ -308,9 +332,16 @@ function DetailTest() {
                 key="entrance-exam"
                 isOpen={currentModal === 'entrance-exam'}
                 onClose={() => setCurrentModal(null)}
-                onStart={() => {
+                onStart={async () => {
                     setCurrentModal(null);
-                    navigate(`/test/${exam.id_bai_thi}`, { state: { examId: exam.id_bai_thi } });
+                    try {
+                        const res = await getDetailEntryExam();
+                        const entryExam = res.data.data;
+                        navigate(`/test/${entryExam.id_bai_thi}`, { state: { examId: entryExam.id_bai_thi } });
+                    } catch (error) {
+                        console.log(error);
+                        toast.error('Không thể lấy thông tin bài thi đầu vào');
+                    }
                 }}
             />
         </>

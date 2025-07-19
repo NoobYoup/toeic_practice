@@ -102,7 +102,7 @@ function Footer() {
                     <div className="col-md-6 text-center text-md-end">
                         <p className="mb-0">
                             Thiết kế bởi{' '}
-                            <a href="#" className="text-primary text-decoration-underline">
+                            <a href="https://github.com/NoobYoup" className="text-primary text-decoration-underline">
                                 Youp
                             </a>
                         </p>

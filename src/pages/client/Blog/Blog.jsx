@@ -25,7 +25,6 @@ function Blog() {
         setLoading(true);
         try {
             const res = await getAllBlogPublic(currentPage);
-            console.log(res.data.data);
             setBlogs(res.data.data);
             setPagination((prev) => ({
                 ...prev,
