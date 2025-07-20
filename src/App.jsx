@@ -23,10 +23,7 @@ import Test from './pages/client/Test';
 import ListTest from './pages/client/Test/Component/ListTest.jsx';
 import DetailTest from './pages/client/Test/Component/DetailTest.jsx';
 import ResultTest from './pages/client/Test/Component/ResultTest.jsx';
-import Course from './pages/client/Course/Course.jsx';
 import History from './pages/client/History/History.jsx';
-import Archive from './pages/client/Archive/Archive.jsx';
-import SettingUser from './pages/client/Setting/Setting.jsx';
 
 import Login from './pages/admin/Login';
 import AdminLayout from './layouts/AdminLayout.jsx';
@@ -101,7 +98,6 @@ function App() {
                         <Route path="/grammar" element={<Grammar />} />
                         <Route path="/list-test" element={<ListTest />} />
                         <Route path="/detail-test/:id" element={<DetailTest />} />
-                        <Route path="/course" element={<Course />} />
                     </Route>
 
                     {/* Private Client Routes (yêu cầu user_token) */}
@@ -111,8 +107,6 @@ function App() {
                             <Route path="/test/:id" element={<Test />} />
                             <Route path="/result-test/:id" element={<ResultTest />} />
                             <Route path="/history" element={<History />} />
-                            <Route path="/archive" element={<Archive />} />
-                            <Route path="/setting" element={<SettingUser />} />
 
                             <Route path="/my-account" element={<Account />} />
 

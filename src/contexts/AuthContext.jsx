@@ -46,16 +46,13 @@ export const AuthProvider = ({ children }) => {
                 return;
             }
 
-            // Lưu token vào state
-            setUserToken(decoded);
-            console.log(decoded);
-
             // Lấy thông tin user từ API
             const res = await getProfile(token);
             const userData = res.data.data;
 
             setUser(userData);
             setIsAuthenticated(true);
+            setUserToken(decoded);
             localStorage.setItem('user_profile', JSON.stringify(userData));
         } catch (error) {
             console.error('Auth check failed:', error);

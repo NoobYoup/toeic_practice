@@ -1,15 +1,13 @@
 import styles from './Test.module.scss';
 import classNames from 'classnames/bind';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getDetailExamPublic } from '@/services/examService';
 import { submitExamToResult } from '@/services/resultService';
 import { jwtDecode } from 'jwt-decode';
-import Part1Test from './Part/Part1Test.jsx';
-import Part2Test from './Part/Part2Test.jsx';
+import PartWrapper from './Part/PartWrapper.jsx';
 import Part3Test from './Part/Part3Test.jsx';
 import Part4Test from './Part/Part4Test.jsx';
-import Part5Test from './Part/Part5Test.jsx';
 import Part6Test from './Part/Part6Test.jsx';
 import Part7Test from './Part/Part7Test.jsx';
 import { toast } from 'react-toastify';
@@ -63,12 +61,12 @@ function Test() {
         localStorage.setItem(draftKey, JSON.stringify(draftData));
     }, [answers, remainingSeconds, examId]);
 
-    // Hàm xóa dữ liệu tạm khi nộp bài thành công hoặc hết giờ
-    const clearDraft = () => {
+    // Hàm xóa dữ liệu tạm khi nộp bài thành công hoặc hết giờ - tối ưu bằng useCallback
+    const clearDraft = useCallback(() => {
         if (!examId) return;
         const draftKey = `toeic_exam_${examId}_draft`;
         localStorage.removeItem(draftKey);
-    };
+    }, [examId]);
 
     // Theo dõi pathname, chặn chuyển route nếu đã có đáp án
     useEffect(() => {
@@ -113,6 +111,7 @@ function Test() {
         return () => {
             window.removeEventListener('popstate', handlePopState);
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [answers, location.pathname]);
 
     // load bài làm
@@ -135,6 +134,7 @@ function Test() {
             return;
         }
         fetchExam();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [examId]);
 
     // Khi load xong exam, kiểm tra và load dữ liệu tạm nếu có
@@ -161,143 +161,8 @@ function Test() {
         }
     }, [examId, exam]);
 
-    // thời gian đếm ngược
-    useEffect(() => {
-        if (!exam || remainingSeconds == null) return;
-        if (remainingSeconds <= 0) return;
-        const intervalId = setInterval(() => {
-            setRemainingSeconds((prev) => {
-                if (prev === null) return prev;
-                if (prev <= 1) {
-                    clearInterval(intervalId);
-                    handleSubmit(); // tự động nộp bài khi hết thời gian
-                    return 0;
-                }
-                return prev - 1;
-            });
-        }, 1000);
-        return () => clearInterval(intervalId);
-    }, [exam, remainingSeconds]);
-
-    const formatTime = (seconds) => {
-        const m = Math.floor(seconds / 60)
-            .toString()
-            .padStart(2, '0');
-        const s = (seconds % 60).toString().padStart(2, '0');
-        return `${m}:${s}`;
-    };
-
-    /* ------------------------------------------------------------ */
-    /* TÍNH THÔNG TIN MỖI PART                                      */
-    /* ------------------------------------------------------------ */
-    const questionCounts = {};
-    if (exam && Array.isArray(exam.cau_hoi_cua_bai_thi)) {
-        exam.cau_hoi_cua_bai_thi.forEach((item) => {
-            const pId = item.cau_hoi.id_phan;
-            questionCounts[pId] = (questionCounts[pId] || 0) + 1;
-        });
-    }
-
-    const partInfos = [];
-    let currentNumber = 1;
-    for (let part = 1; part <= 7; part += 1) {
-        const count = questionCounts[part] || 0;
-        if (count > 0) {
-            partInfos.push({ part, count, start: currentNumber, end: currentNumber + count - 1 });
-            currentNumber += count;
-        }
-    }
-
-    const listeningParts = partInfos.filter((p) => p.part <= 4);
-    const readingParts = partInfos.filter((p) => p.part >= 5);
-    const listeningTotal = listeningParts.reduce((sum, p) => sum + p.count, 0);
-    const readingTotal = readingParts.reduce((sum, p) => sum + p.count, 0);
-
-    /* ------------------------------------------------------------ */
-    /* MAP GLOBAL QUESTION NUMBER -> QUESTION ID                    */
-    /* ------------------------------------------------------------ */
-
-    const numberToQuestionId = useMemo(() => {
-        if (!exam || !Array.isArray(exam.cau_hoi_cua_bai_thi)) return {};
-        const byPart = {};
-        exam.cau_hoi_cua_bai_thi.forEach((item) => {
-            const part = item.cau_hoi.id_phan;
-            if (!byPart[part]) byPart[part] = [];
-            byPart[part].push(item.cau_hoi);
-        });
-        const map = {};
-        let num = 1;
-        for (let part = 1; part <= 7; part += 1) {
-            if (byPart[part]) {
-                byPart[part].forEach((q) => {
-                    map[num] = q.id_cau_hoi;
-                    num += 1;
-                });
-            }
-        }
-        return map;
-    }, [exam]);
-
-    const handleJumpToQuestion = (part, number) => {
-        if (currentPart !== part) {
-            setCurrentPart(part);
-        }
-        setScrollTarget(number);
-    };
-
-    useEffect(() => {
-        if (scrollTarget != null) {
-            const el = document.getElementById(`question-${scrollTarget}`);
-            if (el) {
-                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-            setScrollTarget(null);
-        }
-    }, [currentPart, scrollTarget]);
-
-    /* ------------------------------------------------------------ */
-    /* HANDLE ANSWER SELECTION                                     */
-    /* ------------------------------------------------------------ */
-
-    const handleAnswerSelect = (questionId, choiceLetter) => {
-        setAnswers((prev) => ({ ...prev, [questionId]: choiceLetter }));
-    };
-
-    const renderCurrentPart = () => {
-        const props = { exam, selectedAnswers: answers, onSelectAnswer: handleAnswerSelect };
-        switch (currentPart) {
-            case 1:
-                return <Part1Test {...props} />;
-            case 2:
-                return <Part2Test {...props} />;
-            case 3:
-                return <Part3Test {...props} />;
-            case 4:
-                return <Part4Test {...props} />;
-            case 5:
-                return <Part5Test {...props} />;
-            case 6:
-                return <Part6Test {...props} />;
-            case 7:
-                return <Part7Test {...props} />;
-            default:
-                return null;
-        }
-    };
-
-    const buildAnswerPayload = () => {
-        // Build payload for ALL questions, even those without a selected answer
-        if (!exam || !Array.isArray(exam.cau_hoi_cua_bai_thi)) return [];
-        return exam.cau_hoi_cua_bai_thi.map((item) => {
-            const qId = item.cau_hoi.id_cau_hoi;
-            return {
-                id_cau_hoi: qId,
-                ky_tu_lua_chon: answers[qId] || '', // empty string if user did not choose
-            };
-        });
-    };
-
-    const handleSubmit = async () => {
+    // xử lý nộp bài
+    const handleSubmit = useCallback(async () => {
         if (!exam || !Array.isArray(exam.cau_hoi_cua_bai_thi)) return;
 
         const token = localStorage.getItem('user_token');
@@ -350,6 +215,133 @@ function Test() {
         }
 
         setIsSubmitting(false);
+    }, [exam, answers, navigate, clearDraft]); // Dependencies cho useCallback
+
+    // thời gian đếm ngược - tối ưu dependencies
+    useEffect(() => {
+        if (!exam || remainingSeconds == null || remainingSeconds <= 0) return;
+
+        const intervalId = setInterval(() => {
+            setRemainingSeconds((prev) => {
+                if (prev === null || prev <= 1) {
+                    clearInterval(intervalId);
+                    handleSubmit(); // tự động nộp bài khi hết thời gian
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(intervalId);
+    }, [exam, remainingSeconds, handleSubmit]); // Thêm handleSubmit vào dependencies
+
+    const formatTime = (seconds) => {
+        const m = Math.floor(seconds / 60)
+            .toString()
+            .padStart(2, '0');
+        const s = (seconds % 60).toString().padStart(2, '0');
+        return `${m}:${s}`;
+    };
+
+    // tính thông tin mỗi part
+    const { partInfos, listeningParts, readingParts, listeningTotal, readingTotal } = useMemo(() => {
+        if (!exam || !Array.isArray(exam.cau_hoi_cua_bai_thi)) {
+            return { partInfos: [], listeningParts: [], readingParts: [], listeningTotal: 0, readingTotal: 0 };
+        }
+
+        // Tính số lượng câu hỏi mỗi part
+        const questionCounts = {};
+        exam.cau_hoi_cua_bai_thi.forEach((item) => {
+            const pId = item.cau_hoi.id_phan;
+            questionCounts[pId] = (questionCounts[pId] || 0) + 1;
+        });
+
+        // Tạo thông tin cho từng part
+        const partInfos = [];
+        let currentNumber = 1;
+        for (let part = 1; part <= 7; part += 1) {
+            const count = questionCounts[part] || 0;
+            if (count > 0) {
+                partInfos.push({ part, count, start: currentNumber, end: currentNumber + count - 1 });
+                currentNumber += count;
+            }
+        }
+
+        // Phân loại Listening và Reading
+        const listeningParts = partInfos.filter((p) => p.part <= 4);
+        const readingParts = partInfos.filter((p) => p.part >= 5);
+        const listeningTotal = listeningParts.reduce((sum, p) => sum + p.count, 0);
+        const readingTotal = readingParts.reduce((sum, p) => sum + p.count, 0);
+
+        return { partInfos, listeningParts, readingParts, listeningTotal, readingTotal };
+    }, [exam]);
+
+    // map global question number -> question id
+    const numberToQuestionId = useMemo(() => {
+        if (!exam || !Array.isArray(exam.cau_hoi_cua_bai_thi)) return {};
+        const byPart = {};
+        exam.cau_hoi_cua_bai_thi.forEach((item) => {
+            const part = item.cau_hoi.id_phan;
+            if (!byPart[part]) byPart[part] = [];
+            byPart[part].push(item.cau_hoi);
+        });
+        const map = {};
+        let num = 1;
+        for (let part = 1; part <= 7; part += 1) {
+            if (byPart[part]) {
+                byPart[part].forEach((q) => {
+                    map[num] = q.id_cau_hoi;
+                    num += 1;
+                });
+            }
+        }
+        return map;
+    }, [exam]);
+
+    const handleJumpToQuestion = (part, number) => {
+        if (currentPart !== part) {
+            setCurrentPart(part);
+        }
+        setScrollTarget(number);
+    };
+
+    useEffect(() => {
+        if (scrollTarget != null) {
+            const el = document.getElementById(`question-${scrollTarget}`);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            setScrollTarget(null);
+        }
+    }, [currentPart, scrollTarget]);
+
+    // xử lý chọn đáp án
+    const handleAnswerSelect = (questionId, choiceLetter) => {
+        setAnswers((prev) => ({ ...prev, [questionId]: choiceLetter }));
+    };
+
+    // render component tương ứng với part hiện tại
+    const renderCurrentPart = () => {
+        const props = { exam, selectedAnswers: answers, onSelectAnswer: handleAnswerSelect };
+
+        // Các part đơn giản sử dụng PartWrapper
+        if ([1, 2, 5].includes(currentPart)) {
+            return <PartWrapper partId={currentPart} {...props} />;
+        }
+
+        // Các part phức tạp sử dụng component riêng
+        switch (currentPart) {
+            case 3:
+                return <Part3Test {...props} />;
+            case 4:
+                return <Part4Test {...props} />;
+            case 6:
+                return <Part6Test {...props} />;
+            case 7:
+                return <Part7Test {...props} />;
+            default:
+                return null;
+        }
     };
 
     useEffect(() => {
@@ -420,76 +412,65 @@ function Test() {
                                 </div>
 
                                 <div className={`${cx('question-nav')}`}>
-                                    {/* Listening */}
-                                    {listeningParts.length > 0 && (
-                                        <>
-                                            <h5 className="mb-3">Listening ({listeningTotal} câu)</h5>
-                                            {listeningParts.map((p) => (
-                                                <div key={`part-${p.part}`} className="mb-3">
-                                                    <div className="mb-2">
-                                                        <strong>
-                                                            Part {p.part}: Questions {p.start}-{p.end}
-                                                        </strong>
-                                                    </div>
-                                                    <div className="mb-2">
-                                                        {Array.from({ length: p.count }).map((_, idx) => {
-                                                            const number = p.start + idx;
-                                                            const qId = numberToQuestionId[number];
-                                                            const answered = !!answers[qId];
-                                                            return (
-                                                                <button
-                                                                    type="button"
-                                                                    key={number}
-                                                                    className={cx('question-number', 'border-0', {
-                                                                        answered: answered,
-                                                                    })}
-                                                                    onClick={() => handleJumpToQuestion(p.part, number)}
-                                                                >
-                                                                    {number}
-                                                                </button>
-                                                            );
-                                                        })}
-                                                    </div>
-                                                </div>
-                                            ))}
-                                            <hr />
-                                        </>
-                                    )}
+                                    {/* Hàm helper để render navigation cho từng section */}
+                                    {(() => {
+                                        const renderPartNavigation = (parts, title, total) => {
+                                            if (parts.length === 0) return null;
 
-                                    {/* Reading */}
-                                    {readingParts.length > 0 && (
-                                        <>
-                                            <h5 className="mb-3">Reading ({readingTotal} câu)</h5>
-                                            {readingParts.map((p) => (
-                                                <div key={`part-${p.part}`} className="mb-3">
-                                                    <div className="mb-2">
-                                                        <strong>
-                                                            Part {p.part}: Questions {p.start}-{p.end}
-                                                        </strong>
-                                                    </div>
-                                                    <div className="mb-2">
-                                                        {Array.from({ length: p.count }).map((_, idx) => {
-                                                            const number = p.start + idx;
-                                                            const qId = numberToQuestionId[number];
-                                                            const answered = !!answers[qId];
-                                                            return (
-                                                                <button
-                                                                    type="button"
-                                                                    key={number}
-                                                                    className={cx('question-number', 'border-0', {
-                                                                        answered: answered,
-                                                                    })}
-                                                                    onClick={() => handleJumpToQuestion(p.part, number)}
-                                                                >
-                                                                    {number}
-                                                                </button>
-                                                            );
-                                                        })}
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </>
-                                    )}
+                                            return (
+                                                <>
+                                                    <h5 className="mb-3">
+                                                        {title} ({total} câu)
+                                                    </h5>
+                                                    {parts.map((p) => (
+                                                        <div key={`part-${p.part}`} className="mb-3">
+                                                            <div className="mb-2">
+                                                                <strong>
+                                                                    Part {p.part}: Questions {p.start}-{p.end}
+                                                                </strong>
+                                                            </div>
+                                                            <div className="mb-2">
+                                                                {Array.from({ length: p.count }).map((_, idx) => {
+                                                                    const number = p.start + idx;
+                                                                    const qId = numberToQuestionId[number];
+                                                                    const answered = !!answers[qId];
+                                                                    return (
+                                                                        <button
+                                                                            type="button"
+                                                                            key={number}
+                                                                            className={cx(
+                                                                                'question-number',
+                                                                                'border-0',
+                                                                                {
+                                                                                    answered: answered,
+                                                                                },
+                                                                            )}
+                                                                            onClick={() =>
+                                                                                handleJumpToQuestion(p.part, number)
+                                                                            }
+                                                                        >
+                                                                            {number}
+                                                                        </button>
+                                                                    );
+                                                                })}
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                    {title === 'Listening' && <hr />}
+                                                </>
+                                            );
+                                        };
+
+                                        return (
+                                            <>
+                                                {/* Listening Section */}
+                                                {renderPartNavigation(listeningParts, 'Listening', listeningTotal)}
+
+                                                {/* Reading Section */}
+                                                {renderPartNavigation(readingParts, 'Reading', readingTotal)}
+                                            </>
+                                        );
+                                    })()}
                                 </div>
                             </div>
                         </div>
