@@ -96,14 +96,23 @@ function Footer() {
                 </div>
                 <hr className="my-4 border-secondary" />
                 <div className="row">
-                    <div className="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                        <p className="mb-0">&copy; 2025 TOEIC Master. Tất cả quyền được bảo lưu.</p>
-                    </div>
-                    <div className="col-md-6 text-center text-md-end">
+                    <div className="col-md-4 text-center ">
                         <p className="mb-0">
-                            Thiết kế bởi{' '}
+                            Frontend by{' '}
                             <a href="https://github.com/NoobYoup" className="text-primary text-decoration-underline">
                                 Youp
+                            </a>
+                        </p>
+                    </div>
+
+                    <div className="col-md-4 text-center  mb-3 mb-md-0">
+                        <p className="mb-0">&copy; 2025 TOEIC Master</p>
+                    </div>
+                    <div className="col-md-4 text-center ">
+                        <p className="mb-0">
+                            Backend by{' '}
+                            <a href="https://github.com/thanhzanh" className="text-primary text-decoration-underline">
+                                Danh
                             </a>
                         </p>
                     </div>
