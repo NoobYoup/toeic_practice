@@ -1,7 +1,5 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { format } from 'date-fns';
-import { vi } from 'date-fns/locale';
 import { getProfile } from '@/services/userService.jsx';
 
 import Dashboard from './Components/Dashboard';
@@ -63,12 +61,6 @@ function Account() {
                                                 <i className="fas fa-map-marker-alt me-2"></i>
                                                 <span>{profile.ho_so.dia_chi}</span>
                                             </div>
-                                            {/* <div className="d-flex align-items-center">
-                                                <i className="fas fa-trophy me-2"></i>
-                                                <span>
-                                                    Điểm TOEIC cao nhất: <strong>785</strong>
-                                                </span>
-                                            </div> */}
                                         </div>
                                     </div>
                                 </div>

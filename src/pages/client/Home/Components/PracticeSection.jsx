@@ -186,11 +186,13 @@ function PracticeSection() {
                                               </div>
                                           </div>
                                       ))}
-                                <div className="text-center">
-                                    <Link to={`/list-test`} className="btn btn-outline-primary">
-                                        Xem thêm
-                                    </Link>
-                                </div>
+                                {exams.length > 4 && (
+                                    <div className="text-center">
+                                        <Link to={`/list-test`} className="btn btn-outline-primary">
+                                            Xem thêm
+                                        </Link>
+                                    </div>
+                                )}
                             </div>
                         )}
 
