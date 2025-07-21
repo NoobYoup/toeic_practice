@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { useEffect, useState, useMemo, useRef } from 'react';
+import { useEffect, useState, useMemo, useRef, useCallback } from 'react';
 import {
     getDetailFirstUser,
     getDetailPartUser,
@@ -12,7 +12,9 @@ import 'dayjs/locale/vi';
 import styles from './ResultTest.module.scss';
 import classNames from 'classnames/bind';
 import CongratulationModal from '@/components/client/Modal/CongratulationModal.jsx';
-import { useCallback } from 'react';
+import QuestionResult from './QuestionResult.jsx';
+import AudioGroupResult from './AudioGroupResult.jsx';
+import PassageGroupResult from './PassageGroupResult.jsx';
 
 const cx = classNames.bind(styles);
 
@@ -22,7 +24,7 @@ function ResultTest() {
     const [result, setResult] = useState(null);
     const [loading, setLoading] = useState(true);
     const [activePart, setActivePart] = useState(1);
-    // Persist global question numbering across part fetches
+    // lưu số thứ tự câu hỏi
     const globalIndexRef = useRef({});
     const [questionIndexMap, setQuestionIndexMap] = useState(null);
 
@@ -42,10 +44,10 @@ function ResultTest() {
         [id],
     );
 
-    // Parts list fetched from backend
+    // danh sách phần
     const [parts, setParts] = useState([]);
 
-    // Fetch a specific part's data and merge into state
+    // load api từ backend dữ liệu phần
     const fetchPartData = async (partId) => {
         setLoading(true);
         try {
@@ -69,7 +71,7 @@ function ResultTest() {
         setLoading(false);
     };
 
-    // Pre-fetch global question index once on mount or when id changes
+    // lấy số thứ tự câu hỏi
     useEffect(() => {
         const fetchQuestionIndex = async () => {
             try {
@@ -80,8 +82,8 @@ function ResultTest() {
                         mapping[item.id_cau_hoi] = item.thu_tu;
                     }
                 });
-                globalIndexRef.current = mapping; // Seed global mapping
-                setQuestionIndexMap(mapping); // trigger re-render
+                globalIndexRef.current = mapping;
+                setQuestionIndexMap(mapping); // lưu số thứ tự câu hỏi
             } catch (error) {
                 console.error('Lỗi khi lấy thứ tự câu hỏi:', error);
             }
@@ -89,24 +91,24 @@ function ResultTest() {
         fetchQuestionIndex();
     }, [id]);
 
-    // Process data once result or questionIndexMap is available
+    // xử lý dữ liệu
     const processedData = useMemo(() => {
         if (!result) return null;
 
         const {
             cau_tra_loi: answers,
-            bai_thi_nguoi_dung: { cau_hoi_cua_bai_thi: examQuestions, ten_bai_thi, so_luong_cau_hoi },
+            bai_thi_nguoi_dung: { cau_hoi_cua_bai_thi, ten_bai_thi, so_luong_cau_hoi },
             thoi_gian_ket_thuc,
             tong_diem,
             diem_nghe,
             diem_doc,
         } = result;
 
-        // Map questionId -> question detail + part info for quick lookup
+        // ánh xạ id câu hỏi -> chi tiết câu hỏi + thông tin phần
         const questionMap = {};
         const partMap = {};
 
-        // Pre-fill partMap with static parts to ensure consistent ordering and indexing
+        // lưu thông tin phần
         parts.forEach((p) => {
             partMap[p.id_phan] = {
                 id_phan: p.id_phan,
@@ -117,22 +119,22 @@ function ResultTest() {
             };
         });
 
-        // Build maps but skip questions that are null (e.g. chưa được seed từ backend)
-        examQuestions.forEach((item) => {
-            if (!item?.cau_hoi || !item.cau_hoi?.phan) return; // safeguard
+        // lưu thông tin câu hỏi
+        cau_hoi_cua_bai_thi.forEach((item) => {
+            if (!item?.cau_hoi || !item.cau_hoi?.phan) return; // bảo vệ
             questionMap[item.cau_hoi.id_cau_hoi] = item.cau_hoi;
 
-            const { id_phan, ten_phan, loai_phan } = item.cau_hoi.phan;
-            // partMap was pre-filled; just increase total
+            const { id_phan } = item.cau_hoi.phan;
+            // partMap đã được lưu trước; chỉ tăng tổng số câu hỏi của phần đó
             partMap[id_phan].total += 1;
         });
 
-        // Counters
+        // đếm số câu trả lời đúng, sai, bỏ trống
         let correct = 0;
         let incorrect = 0;
         let blank = 0;
 
-        // Build enriched answers list
+        // lưu thông tin câu hỏi
         const questionsDetail = answers.map((ans) => {
             const q = questionMap[ans.id_cau_hoi];
             const partId = q?.phan?.id_phan;
@@ -169,15 +171,15 @@ function ResultTest() {
             readingScore: diem_doc,
             counts: { correct, incorrect, blank },
             parts: Object.values(partMap).sort((a, b) => a.id_phan - b.id_phan),
-            examQuestions,
+            cau_hoi_cua_bai_thi,
             questionsDetail,
             totalQuestions: so_luong_cau_hoi,
         };
     }, [result, questionIndexMap, parts]);
 
-    // Set default active part once data loaded
+    // lấy phần mặc định
 
-    // Fetch available parts when component mounts or id changes
+    // lấy danh sách phần
     useEffect(() => {
         const loadParts = async () => {
             try {
@@ -230,9 +232,6 @@ function ResultTest() {
                                         <button className="btn btn-light btn-lg me-2" onClick={() => window.print()}>
                                             <i className="fas fa-print me-2"></i>In kết quả
                                         </button>
-                                        <button className="btn btn-outline-light btn-lg">
-                                            <i className="fas fa-share me-2"></i>Chia sẻ
-                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -273,76 +272,8 @@ function ResultTest() {
                                         const orderedQuestionsInPart = [...questionsInPart].sort(
                                             (a, b) => a.globalIndex - b.globalIndex,
                                         );
-                                        return orderedQuestionsInPart.map((item, idx) => (
-                                            <div
-                                                className={`${cx('results-container')} p-4 mb-4`}
-                                                key={item.id_cau_tra_loi}
-                                            >
-                                                <div className="d-flex justify-content-between">
-                                                    <h6>Câu {item.globalIndex}:</h6>
-                                                    {item.lua_chon_da_chon === null && (
-                                                        <span className="badge bg-warning px-3 py-2 mb-3 d-flex align-items-center">
-                                                            Bỏ trống
-                                                        </span>
-                                                    )}
-                                                </div>
-
-                                                {item.question.hinh_anh && (
-                                                    <div className="mb-4 text-center">
-                                                        <img
-                                                            src={item.question.hinh_anh.url_phuong_tien}
-                                                            alt={`Question ${item.globalIndex} Image`}
-                                                            className="img-fluid rounded"
-                                                        />
-                                                    </div>
-                                                )}
-
-                                                {item.question.noi_dung && (
-                                                    <h5 className={`${cx('question-text')}`}>
-                                                        {item.question.noi_dung}
-                                                    </h5>
-                                                )}
-
-                                                <div className={`${cx('answer-options')}`}>
-                                                    {item.question.lua_chon.map((choice) => {
-                                                        const isUserChoice =
-                                                            choice.ky_tu_lua_chon === item.lua_chon_da_chon;
-                                                        const isCorrectChoice =
-                                                            choice.ky_tu_lua_chon === item.question.dap_an_dung;
-                                                        return (
-                                                            <div
-                                                                key={choice.ky_tu_lua_chon}
-                                                                className={cx('answer-option', {
-                                                                    correct: isCorrectChoice,
-                                                                    'user-incorrect': isUserChoice && !item.la_dung,
-                                                                })}
-                                                            >
-                                                                <strong>{choice.ky_tu_lua_chon}.</strong>{' '}
-                                                                {choice.noi_dung}
-                                                                {/* {isUserChoice && (
-                                                                    <span className="badge bg-danger ms-2">
-                                                                        Bạn chọn
-                                                                    </span>
-                                                                )}
-                                                                {isCorrectChoice && (
-                                                                    <span className="badge bg-success ms-2">
-                                                                        Đáp án đúng
-                                                                    </span>
-                                                                )} */}
-                                                            </div>
-                                                        );
-                                                    })}
-                                                </div>
-
-                                                {item.question.giai_thich && (
-                                                    <div className={`${cx('explanation-box')}`}>
-                                                        <h6>
-                                                            <i className="fas fa-lightbulb me-2"></i>Giải thích
-                                                        </h6>
-                                                        <p className="mb-0">{item.question.giai_thich}</p>
-                                                    </div>
-                                                )}
-                                            </div>
+                                        return orderedQuestionsInPart.map((item) => (
+                                            <QuestionResult key={item.id_cau_tra_loi} item={item} cx={cx} />
                                         ));
                                     }
 
@@ -365,88 +296,9 @@ function ResultTest() {
                                             .map(([audioId, group]) => ({ ...group, audioId }))
                                             .sort((a, b) => a.questions[0].globalIndex - b.questions[0].globalIndex);
 
-                                        return audioGroups.map((group) => {
-                                            group.questions.sort((a, b) => a.globalIndex - b.globalIndex);
-                                            return (
-                                                <div
-                                                    key={group.audioId}
-                                                    className={`${cx('results-container')} p-4 mb-4`}
-                                                >
-                                                    {group.audioUrl && (
-                                                        <audio controls src={group.audioUrl} className="w-100 mb-3" />
-                                                    )}
-
-                                                    {group.questions.map((item) => {
-                                                        return (
-                                                            <div className="mb-3" key={item.id_cau_tra_loi}>
-                                                                <div className="d-flex justify-content-between">
-                                                                    <h6>Câu {item.globalIndex}:</h6>
-                                                                    {item.lua_chon_da_chon === null && (
-                                                                        <span className="badge bg-warning px-3 py-2 mb-3 d-flex align-items-center">
-                                                                            Bỏ trống
-                                                                        </span>
-                                                                    )}
-                                                                </div>
-
-                                                                {item.question.noi_dung && (
-                                                                    <h5 className={`${cx('question-text')}`}>
-                                                                        {item.question.noi_dung}
-                                                                    </h5>
-                                                                )}
-
-                                                                <div className={`${cx('answer-options')}`}>
-                                                                    {item.question.lua_chon.map((choice) => {
-                                                                        const isUserChoice =
-                                                                            choice.ky_tu_lua_chon ===
-                                                                            item.lua_chon_da_chon;
-                                                                        const isCorrectChoice =
-                                                                            choice.ky_tu_lua_chon ===
-                                                                            item.question.dap_an_dung;
-                                                                        return (
-                                                                            <div
-                                                                                key={choice.ky_tu_lua_chon}
-                                                                                className={cx('answer-option', {
-                                                                                    correct: isCorrectChoice,
-                                                                                    'user-incorrect':
-                                                                                        isUserChoice && !item.la_dung,
-                                                                                })}
-                                                                            >
-                                                                                <strong>
-                                                                                    {choice.ky_tu_lua_chon}.
-                                                                                </strong>{' '}
-                                                                                {choice.noi_dung}
-                                                                                {/* {isUserChoice && (
-                                                                                <span className="badge bg-danger ms-2">
-                                                                                    Bạn chọn
-                                                                                </span>
-                                                                            )}
-                                                                            {isCorrectChoice && (
-                                                                                <span className="badge bg-success ms-2">
-                                                                                    Đáp án đúng
-                                                                                </span>
-                                                                            )} */}
-                                                                            </div>
-                                                                        );
-                                                                    })}
-                                                                </div>
-
-                                                                {item.question.giai_thich && (
-                                                                    <div className={`${cx('explanation-box')}`}>
-                                                                        <h6>
-                                                                            <i className="fas fa-lightbulb me-2"></i>
-                                                                            Giải thích
-                                                                        </h6>
-                                                                        <p className="mb-0">
-                                                                            {item.question.giai_thich}
-                                                                        </p>
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                        );
-                                                    })}
-                                                </div>
-                                            );
-                                        });
+                                        return audioGroups.map((group) => (
+                                            <AudioGroupResult key={group.audioId} group={group} cx={cx} />
+                                        ));
                                     }
 
                                     // Passage grouped (Part 6, 7)
@@ -464,170 +316,11 @@ function ResultTest() {
 
                                     // rely on globalIndex
                                     return Object.values(passageMap).map((group, idxGroup) => (
-                                        <div
-                                            className="card border-0 shadow mb-4"
-                                            style={{ borderRadius: '10px' }}
+                                        <PassageGroupResult
                                             key={group.passage?.id_doan_van || `group-${idxGroup}`}
-                                        >
-                                            <div className="card-body">
-                                                <div className="row p-2">
-                                                    <div className="col-lg-8 bg-secondary-subtle rounded-3 p-4">
-                                                        {group.passage && (
-                                                            <div className="mb-4">
-                                                                {group.passage.tieu_de && (
-                                                                    <h6
-                                                                        className="mb-2"
-                                                                        dangerouslySetInnerHTML={{
-                                                                            __html: group.passage.tieu_de,
-                                                                        }}
-                                                                    ></h6>
-                                                                )}
-
-                                                                {/* Nội dung đoạn văn */}
-                                                                {group.passage.noi_dung && (
-                                                                    <div
-                                                                        className="mb-2"
-                                                                        dangerouslySetInnerHTML={{
-                                                                            __html: group.passage.noi_dung,
-                                                                        }}
-                                                                    ></div>
-                                                                )}
-
-                                                                {/* Passage media */}
-                                                                {Array.isArray(group.passage.danh_sach_phuong_tien) &&
-                                                                    group.passage.danh_sach_phuong_tien.length > 0 && (
-                                                                        <div className="d-flex flex-wrap gap-3 mb-2">
-                                                                            {group.passage.danh_sach_phuong_tien.map(
-                                                                                (media) => {
-                                                                                    const isImage =
-                                                                                        /\.(jpeg|jpg|gif|png)$/.test(
-                                                                                            media.url_phuong_tien,
-                                                                                        );
-                                                                                    const isAudio =
-                                                                                        /\.(mp3|wav|ogg)$/.test(
-                                                                                            media.url_phuong_tien,
-                                                                                        );
-
-                                                                                    if (isImage) {
-                                                                                        return (
-                                                                                            <img
-                                                                                                key={
-                                                                                                    media.id_phuong_tien
-                                                                                                }
-                                                                                                src={
-                                                                                                    media.url_phuong_tien
-                                                                                                }
-                                                                                                alt="passage"
-                                                                                                className="img-fluid rounded border"
-                                                                                                style={{
-                                                                                                    maxWidth: '100%',
-                                                                                                }}
-                                                                                            />
-                                                                                        );
-                                                                                    }
-
-                                                                                    if (isAudio) {
-                                                                                        return (
-                                                                                            <audio
-                                                                                                key={
-                                                                                                    media.id_phuong_tien
-                                                                                                }
-                                                                                                controls
-                                                                                                className="w-100"
-                                                                                            >
-                                                                                                <source
-                                                                                                    src={
-                                                                                                        media.url_phuong_tien
-                                                                                                    }
-                                                                                                    type="audio/mpeg"
-                                                                                                />
-                                                                                                Audio not supported.
-                                                                                            </audio>
-                                                                                        );
-                                                                                    }
-
-                                                                                    return null;
-                                                                                },
-                                                                            )}
-                                                                        </div>
-                                                                    )}
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                    <div className="col-lg-4">
-                                                        {group.questions
-                                                            .sort((a, b) => a.globalIndex - b.globalIndex)
-                                                            .map((item) => {
-                                                                return (
-                                                                    <div
-                                                                        key={item.id_cau_tra_loi}
-                                                                        id={`question-${item.globalIndex}`}
-                                                                        className="mb-4"
-                                                                    >
-                                                                        <div className="d-flex justify-content-between">
-                                                                            <h6 className="mb-2">
-                                                                                Câu {item.globalIndex}:
-                                                                            </h6>
-                                                                            {item.lua_chon_da_chon === null && (
-                                                                                <span className="badge bg-warning px-3 py-2 mb-3 d-flex align-items-center">
-                                                                                    Bỏ trống
-                                                                                </span>
-                                                                            )}
-                                                                        </div>
-
-                                                                        {/* Question content */}
-                                                                        {item.question.noi_dung && (
-                                                                            <p
-                                                                                className="fw-semibold"
-                                                                                dangerouslySetInnerHTML={{
-                                                                                    __html: item.question.noi_dung,
-                                                                                }}
-                                                                            ></p>
-                                                                        )}
-
-                                                                        <div className={`${cx('answer-options')}`}>
-                                                                            {item.question.lua_chon.map((choice) => {
-                                                                                const isUserChoice =
-                                                                                    choice.ky_tu_lua_chon ===
-                                                                                    item.lua_chon_da_chon;
-                                                                                const isCorrectChoice =
-                                                                                    choice.ky_tu_lua_chon ===
-                                                                                    item.question.dap_an_dung;
-                                                                                return (
-                                                                                    <div
-                                                                                        key={choice.ky_tu_lua_chon}
-                                                                                        className={cx('answer-option', {
-                                                                                            correct: isCorrectChoice,
-                                                                                            'user-incorrect':
-                                                                                                isUserChoice &&
-                                                                                                !item.la_dung,
-                                                                                        })}
-                                                                                    >
-                                                                                        <strong>
-                                                                                            {choice.ky_tu_lua_chon}.
-                                                                                        </strong>{' '}
-                                                                                        {choice.noi_dung}
-                                                                                        {/* {isUserChoice && (
-                                                                                        <span className="badge bg-danger ms-2">
-                                                                                            Bạn chọn
-                                                                                        </span>
-                                                                                    )}
-                                                                                    {isCorrectChoice && (
-                                                                                        <span className="badge bg-success ms-2">
-                                                                                            Đáp án đúng
-                                                                                        </span>
-                                                                                    )} */}
-                                                                                    </div>
-                                                                                );
-                                                                            })}
-                                                                        </div>
-                                                                    </div>
-                                                                );
-                                                            })}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                            group={group}
+                                            cx={cx}
+                                        />
                                     ));
                                 })()}
                             </div>

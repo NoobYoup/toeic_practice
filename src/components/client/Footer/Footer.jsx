@@ -105,7 +105,7 @@ function Footer() {
                         </p>
                     </div>
 
-                    <div className="col-md-4 text-center  mb-3 mb-md-0">
+                    <div className="col-md-4 text-center mb-0">
                         <p className="mb-0">&copy; 2025 TOEIC Master</p>
                     </div>
                     <div className="col-md-4 text-center ">

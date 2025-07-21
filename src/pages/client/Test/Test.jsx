@@ -1,5 +1,3 @@
-import styles from './Test.module.scss';
-import classNames from 'classnames/bind';
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getDetailExamPublic } from '@/services/examService';
@@ -12,6 +10,8 @@ import Part6Test from './Part/Part6Test.jsx';
 import Part7Test from './Part/Part7Test.jsx';
 import { toast } from 'react-toastify';
 import { chamDiemToeic } from '@/utils/toeicScoring';
+import styles from './Test.module.scss';
+import classNames from 'classnames/bind';
 
 const cx = classNames.bind(styles);
 
@@ -276,7 +276,7 @@ function Test() {
         return { partInfos, listeningParts, readingParts, listeningTotal, readingTotal };
     }, [exam]);
 
-    // map global question number -> question id
+    // ánh xạ số thứ tự câu hỏi -> id câu hỏi
     const numberToQuestionId = useMemo(() => {
         if (!exam || !Array.isArray(exam.cau_hoi_cua_bai_thi)) return {};
         const byPart = {};
@@ -298,6 +298,7 @@ function Test() {
         return map;
     }, [exam]);
 
+    // xử lý chuyển câu hỏi
     const handleJumpToQuestion = (part, number) => {
         if (currentPart !== part) {
             setCurrentPart(part);
