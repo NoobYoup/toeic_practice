@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 import { jwtDecode } from 'jwt-decode';
 import styles from './Exam.module.scss';
 import { getAllExam, deleteExam } from '@/services/examService';
-import { getMe } from '@/services/userService';
+import { getDetailUser } from '@/services/userService';
 import classNames from 'classnames/bind';
 import { useState, useEffect } from 'react';
 
@@ -15,7 +15,7 @@ const cx = classNames.bind(styles);
 
 function Exam() {
     const [exams, setExams] = useState([]);
-    const [currentUser, setCurrentUser] = useState(null);
+    const [creatorNames, setCreatorNames] = useState({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [filters, setFilters] = useState({});
@@ -33,7 +33,28 @@ function Exam() {
         setLoading(true);
         try {
             const res = await getAllExam(currentPage, filters);
+
             setExams(res.data.data);
+            // Lấy danh sách id người tạo duy nhất
+            const creatorIds = [...new Set(res.data.data.map((item) => item.nguoi_tao))];
+
+            // Gọi API lấy tên cho từng id
+            const nameResults = await Promise.all(
+                creatorIds.map((id) =>
+                    getDetailUser(id).then((res) => ({
+                        id,
+                        name: res.data.data.user.nguoi_dung.ten_dang_nhap,
+                    })),
+                ),
+            );
+
+            // Tạo map id → tên
+            const nameMap = {};
+            nameResults.forEach(({ id, name }) => {
+                nameMap[id] = name;
+            });
+            setCreatorNames(nameMap);
+
             setPagination((prev) => ({
                 ...prev,
                 total: res.data.pagination.total,
@@ -66,19 +87,8 @@ function Exam() {
         setLoading(false);
     };
 
-    const fetchCurrentUser = async () => {
-        try {
-            const res = await getMe();
-
-            setCurrentUser(res.data);
-        } catch (err) {
-            console.error('Failed to fetch current user', err);
-        }
-    };
-
     useEffect(() => {
         fetchExams();
-        fetchCurrentUser();
     }, [currentPage, filters]);
 
     const handlePageClick = (data) => {
@@ -194,14 +204,18 @@ function Exam() {
                                             <tr key={exam.id_bai_thi}>
                                                 <td>{exam.id_bai_thi}</td>
                                                 <td>{exam.ten_bai_thi}</td>
-                                                <td>{exam.mo_ta}</td>
+                                                <td>
+                                                    {exam.mo_ta && exam.mo_ta.length > 20
+                                                        ? exam.mo_ta.slice(0, 20) + '...'
+                                                        : exam.mo_ta}
+                                                </td>
                                                 <td>{exam.muc_do_diem}</td>
                                                 <td>{exam.so_luong_cau_hoi}</td>
                                                 <td>{exam.nam_xuat_ban}</td>
                                                 <td>{exam.la_bai_thi_dau_vao ? 'Có' : 'Không'}</td>
                                                 <td>{exam.loai_bai_thi === 'tu_do' ? 'Tự do' : 'Chuẩn'}</td>
                                                 <td>{exam.trang_thai === 'da_xuat_ban' ? 'Đã xuất bản' : 'Nháp'}</td>
-                                                <td>{currentUser?.id_vai_tro}</td>
+                                                <td>{creatorNames[exam.nguoi_tao] || '...'}</td>
                                                 <td>
                                                     {format(new Date(exam.thoi_gian_tao), 'dd/MM/yyyy HH:mm', {
                                                         locale: vi,
