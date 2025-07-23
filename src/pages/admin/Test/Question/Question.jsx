@@ -109,6 +109,7 @@ function Question() {
 
     const handleDelete = async (id) => {
         try {
+            window.confirm('Bạn có chắc chắn muốn xóa câu hỏi này không?');
             const res = await deleteQuestion(id);
             toast.success(res.data.message);
             fetchQuestions();

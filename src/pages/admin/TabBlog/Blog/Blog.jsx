@@ -47,6 +47,7 @@ function Blog() {
 
     const handleDeleteBlog = async (blogId) => {
         try {
+            window.confirm('Bạn có chắc chắn muốn xóa bài viết này không?');
             const res = await deleteBlog(blogId);
             toast.success(res.data.message);
             await fetchBlogs();

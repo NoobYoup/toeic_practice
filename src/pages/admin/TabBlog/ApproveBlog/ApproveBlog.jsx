@@ -47,6 +47,7 @@ function ApproveBlog() {
     const handleApproveBlog = async (id) => {
         setLoading(true);
         try {
+            window.confirm('Bạn có chắc chắn muốn duyệt bài viết này không?');
             const res = await approvedBlog(id);
             toast.success(res.data.message || 'Duyệt bài viết thành công');
             fetchBlogPending();
@@ -61,6 +62,7 @@ function ApproveBlog() {
     const handleRejectBlog = async (id) => {
         setLoading(true);
         try {
+            window.confirm('Bạn có chắc chắn muốn từ chối bài viết này không?');
             const res = await rejectedBlog(id);
             toast.success(res.data.message);
             fetchBlogPending();

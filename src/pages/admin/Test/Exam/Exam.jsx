@@ -101,6 +101,7 @@ function Exam() {
 
     const handleDeleteExam = async (examId) => {
         try {
+            window.confirm('Bạn có chắc chắn muốn xóa đề thi này không?');
             const res = await deleteExam(examId);
             toast.success(res.data.message);
             await fetchExams();

@@ -64,6 +64,7 @@ function Grammar() {
 
     const handleDeleteGrammar = async (id) => {
         try {
+            window.confirm('Bạn có chắc chắn muốn xóa danh mục ngữ pháp này không?');
             const res = await deleteGrammar(id);
             toast.success(res.data.message);
             fetchGrammars();

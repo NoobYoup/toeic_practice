@@ -40,6 +40,7 @@ function CategoryGrammar() {
 
     const handleDeleteCategoryGrammar = async (id) => {
         try {
+            window.confirm('Bạn có chắc chắn muốn xóa danh mục ngữ pháp này không?');
             const res = await deleteCategoryGrammar(id);
             toast.success(res.data.message);
             fetchAllCategoryGrammar();

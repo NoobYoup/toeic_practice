@@ -44,7 +44,7 @@ function User() {
     }, [search, page]);
 
     const handleDelete = async (id) => {
-        if (window.confirm('Bạn có chắc muốn xóa người dùng này?')) {
+        if (window.confirm('Bạn có chắc chắn muốn xóa người dùng này không?')) {
             try {
                 await deleteUser(id);
                 setUsers(users.filter((user) => user.id_nguoi_dung !== id));

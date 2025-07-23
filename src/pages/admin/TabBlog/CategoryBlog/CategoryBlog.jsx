@@ -42,6 +42,7 @@ function CategoryBlog() {
 
     const handleDeleteCategoryBlog = async (roleId) => {
         try {
+            window.confirm('Bạn có chắc chắn muốn xóa danh mục bài viết này không?');
             const res = await deleteCategoryBlog(roleId);
             toast.success(res.data.message);
             await fetchCategoryBlog();

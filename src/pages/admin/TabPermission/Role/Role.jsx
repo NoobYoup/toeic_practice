@@ -42,6 +42,7 @@ function Role() {
 
     const handleDeleteRole = async (roleId) => {
         try {
+            window.confirm('Bạn có chắc chắn muốn xóa vai trò này không?');
             const res = await deleteRole(roleId);
             toast.success(res.data.message);
             await fetchAllRole();

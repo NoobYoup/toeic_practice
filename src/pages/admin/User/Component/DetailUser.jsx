@@ -40,7 +40,7 @@ function DetailUser() {
     }, [id]); // Re-run when ID changes
 
     const handleDelete = async () => {
-        if (window.confirm('Bạn có chắc muốn xóa người dùng này?')) {
+        if (window.confirm('Bạn có chắc chắn muốn xóa người dùng này không?')) {
             try {
                 await deleteUser(id);
                 navigate('/admin/user'); // Redirect to user list after deletion

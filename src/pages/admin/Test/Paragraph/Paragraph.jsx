@@ -57,6 +57,7 @@ function Paragraph() {
     const handleDelete = async (id) => {
         setLoading(true);
         try {
+            window.confirm('Bạn có chắc chắn muốn xóa đoạn văn này không?');
             await deletePassage(id);
             fetchPassages();
             toast.success('Xóa đoạn văn thành công!');

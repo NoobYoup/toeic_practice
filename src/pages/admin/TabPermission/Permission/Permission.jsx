@@ -42,6 +42,7 @@ function RolePermission() {
 
     const handleDeletePermission = async (permissionId) => {
         try {
+            window.confirm('Bạn có chắc chắn muốn xóa quyền này không?');
             const res = await deletePermission(permissionId);
             toast.success(res.data.message);
             await fetchAllPermission();
