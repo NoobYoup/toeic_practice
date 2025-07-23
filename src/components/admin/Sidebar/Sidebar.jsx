@@ -111,6 +111,11 @@ function Sidebar() {
                     </a>
                     <ul className="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
                         <li>
+                            <NavLink to={`/admin/profile/${user?.id_nguoi_dung}`} className="dropdown-item">
+                                Thông tin tài khoản
+                            </NavLink>
+                        </li>
+                        <li>
                             <hr className="dropdown-divider" />
                         </li>
                         <li>
