@@ -14,6 +14,7 @@ function EditParagraph() {
         tieu_de: '',
         noi_dung: '',
         id_phan: '7',
+        danh_sach_phuong_tien: [],
     });
     const [fetching, setFetching] = useState(true);
 
@@ -30,9 +31,10 @@ function EditParagraph() {
                     tieu_de: data.tieu_de,
                     noi_dung: data.noi_dung,
                     id_phan: String(data.id_phan),
+                    danh_sach_phuong_tien: data.danh_sach_phuong_tien || [],
                 });
             } catch (error) {
-                toast.error('Không thể tải thông tin đoạn văn!');
+                toast.error(error?.response?.data?.message || 'Không thể tải thông tin đoạn văn!');
             }
             setFetching(false);
         }
@@ -120,6 +122,23 @@ function EditParagraph() {
                                     placeholder: 'Nội dung đoạn văn',
                                 }}
                             />
+                        </div>
+
+                        <div className="mb-3">
+                            {passageData.danh_sach_phuong_tien && passageData.danh_sach_phuong_tien.length > 0 && (
+                                <div className="mb-3">
+                                    {passageData.danh_sach_phuong_tien.map((item) =>
+                                        item.loai_phuong_tien === 'hinh_anh' ? (
+                                            <img
+                                                key={item.id_phuong_tien}
+                                                src={item.url_phuong_tien}
+                                                alt="Image Passage"
+                                                style={{ maxWidth: 400, marginRight: 8, marginBottom: 8 }}
+                                            />
+                                        ) : null,
+                                    )}
+                                </div>
+                            )}
                         </div>
 
                         <div className="text-end">
