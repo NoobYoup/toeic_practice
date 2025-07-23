@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import { getAllGrammar, deleteGrammar } from '@/services/grammarService';
+import { getDetailUser } from '@/services/userService';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import ReactPaginate from 'react-paginate';
 
 function Grammar() {
+    const [creatorNames, setCreatorNames] = useState({});
+
     const [grammars, setGrammars] = useState([]);
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
@@ -23,6 +26,26 @@ function Grammar() {
         try {
             const res = await getAllGrammar(page);
             setGrammars(res.data.data);
+            // Lấy danh sách id người tạo duy nhất
+            const creatorIds = [...new Set(res.data.data.map((item) => item.nguoi_tao))];
+
+            // Gọi API lấy tên cho từng id
+            const nameResults = await Promise.all(
+                creatorIds.map((id) =>
+                    getDetailUser(id).then((res) => ({
+                        id,
+                        name: res.data.data.user.nguoi_dung.ten_dang_nhap,
+                    })),
+                ),
+            );
+
+            // Tạo map id → tên
+            const nameMap = {};
+            nameResults.forEach(({ id, name }) => {
+                nameMap[id] = name;
+            });
+            setCreatorNames(nameMap);
+
             setPagination((prev) => ({
                 ...prev,
                 limit: res.data.data.limit,
@@ -102,11 +125,23 @@ function Grammar() {
                                             <tr key={grammar.id_tai_lieu}>
                                                 <td>{grammar.id_tai_lieu}</td>
                                                 <td>{grammar.tieu_de}</td>
-                                                <td>{grammar.noi_dung}</td>
-                                                <td>{grammar.vi_du}</td>
-                                                <td>{grammar.ghi_chu}</td>
+                                                <td>
+                                                    {grammar.noi_dung && grammar.noi_dung.length > 20
+                                                        ? grammar.noi_dung.slice(0, 20) + '...'
+                                                        : grammar.noi_dung}
+                                                </td>
+                                                <td>
+                                                    {grammar.vi_du && grammar.vi_du.length > 20
+                                                        ? grammar.vi_du.slice(0, 20) + '...'
+                                                        : grammar.vi_du}
+                                                </td>
+                                                <td>
+                                                    {grammar.ghi_chu && grammar.ghi_chu.length > 20
+                                                        ? grammar.ghi_chu.slice(0, 20) + '...'
+                                                        : grammar.ghi_chu}
+                                                </td>
                                                 <td>{grammar.id_danh_muc}</td>
-                                                <td>{grammar.nguoi_tao}</td>
+                                                <td>{creatorNames[grammar.nguoi_tao] || '...'}</td>
                                                 <td>{new Date(grammar.thoi_gian_tao).toLocaleDateString()}</td>
                                                 <td>{new Date(grammar.thoi_gian_cap_nhat).toLocaleDateString()}</td>
 
