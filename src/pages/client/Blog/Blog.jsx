@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { getAllBlogPublic } from '@/services/blogService';
-import { getAllCategoryBlog } from '@/services/categoryBlogService';
 import Select from 'react-select';
 
 import styles from './Blog.module.scss';
@@ -21,35 +20,50 @@ function Blog() {
     });
     const [currentPage, setCurrentPage] = useState(1);
     const [categories, setCategories] = useState([]);
+    const [filters, setFilters] = useState({
+        id_danh_muc: null,
+    });
     const fetchBlogs = async () => {
         setLoading(true);
         try {
-            const res = await getAllBlogPublic(currentPage);
-            console.log(res.data.data);
+            const res = await getAllBlogPublic(currentPage, filters);
             setBlogs(res.data.data);
             setPagination((prev) => ({
                 ...prev,
                 total: res.data.pagination.total,
                 limit: res.data.pagination.limit,
             }));
+            setCategories(res.data.categoryBlogs);
         } catch (error) {
             console.log(error);
         }
         setLoading(false);
     };
 
-    const fetchCategories = async () => {
-        const res = await getAllCategoryBlog();
-        setCategories(res.data.data);
-    };
-
     useEffect(() => {
         fetchBlogs();
-        fetchCategories();
-    }, [currentPage]);
+    }, [currentPage, filters]);
 
     const handlePageClick = (data) => {
         setCurrentPage(data.selected + 1);
+    };
+
+    const categoryOptions = [
+        { value: '', label: 'Tất cả danh mục' },
+        ...(Array.isArray(categories) ? categories : []).map((category) => ({
+            value: category.id_danh_muc,
+            label: category.ten_danh_muc,
+        })),
+    ];
+
+    const selectedCategory = categoryOptions.find((opt) => String(opt.value) === String(filters.id_danh_muc ?? ''));
+
+    const handleSelectChange = (selectedOption) => {
+        setCurrentPage(1);
+        setFilters({
+            ...filters,
+            id_danh_muc: selectedOption.value,
+        });
     };
 
     return (
@@ -81,20 +95,12 @@ function Blog() {
                                     {/* <div className="mb-3 mb-md-0">
                                         <span className="me-2">Hiển thị 1-9 của 42 bài viết</span>
                                     </div> */}
-                                    <div className="d-flex">
+                                    <div className="d-flex w-50 w-md-25">
                                         <div className="me-3">
                                             <Select
-                                                options={categories.map((category) => ({
-                                                    value: category.id_danh_muc,
-                                                    label: category.ten_danh_muc,
-                                                }))}
-                                                // onChange={(selectedOption) => {
-                                                //     setCurrentPage(1);
-                                                //     setFilters({
-                                                //         ...filters,
-                                                //         id_danh_muc: selectedOption.value,
-                                                //     });
-                                                // }}
+                                                options={categoryOptions}
+                                                value={selectedCategory}
+                                                onChange={handleSelectChange}
                                             />
                                         </div>
                                     </div>

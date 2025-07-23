@@ -99,7 +99,6 @@ function Information() {
 
         try {
             const res = await updateProfile(formData, selectedFile, token);
-            console.log(res);
             setProfile((prev) => ({
                 ...prev,
                 ten_dang_nhap: formData.ten_dang_nhap,

@@ -164,7 +164,6 @@ function ResultTest() {
 
         return {
             examName: ten_bai_thi,
-
             finishedAt: thoi_gian_ket_thuc,
             score: tong_diem,
             listeningScore: diem_nghe,
@@ -265,10 +264,7 @@ function ResultTest() {
                                     const isPassageGrouped = activePart === 6 || activePart === 7;
 
                                     if (!isAudioGrouped && !isPassageGrouped) {
-                                        // Render as before
-                                        // Find global index of each question in the full question list for stable numbering
-                                        // Đảm bảo thứ tự câu hỏi đúng thứ tự xuất hiện trong danh sách gốc
-                                        // Order by global index to ensure consistent numbering
+                                        // sắp xếp câu hỏi theo số thứ tự câu hỏi
                                         const orderedQuestionsInPart = [...questionsInPart].sort(
                                             (a, b) => a.globalIndex - b.globalIndex,
                                         );
@@ -291,7 +287,7 @@ function ResultTest() {
                                             groupMap[audioId].questions.push(q);
                                         });
 
-                                        // We'll rely on each question's own globalIndex and render groups in the correct order
+                                        // sắp xếp câu hỏi theo số thứ tự câu hỏi
                                         const audioGroups = Object.entries(groupMap)
                                             .map(([audioId, group]) => ({ ...group, audioId }))
                                             .sort((a, b) => a.questions[0].globalIndex - b.questions[0].globalIndex);
@@ -314,7 +310,7 @@ function ResultTest() {
                                         passageMap[passageId].questions.push(q);
                                     });
 
-                                    // rely on globalIndex
+                                    // sắp xếp câu hỏi theo số thứ tự câu hỏi
                                     return Object.values(passageMap).map((group, idxGroup) => (
                                         <PassageGroupResult
                                             key={group.passage?.id_doan_van || `group-${idxGroup}`}

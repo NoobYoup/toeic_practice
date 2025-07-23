@@ -17,9 +17,10 @@ const getAllBlog = (page) => {
     });
 };
 
-const getAllBlogPublic = (page) => {
+const getAllBlogPublic = (page, filters) => {
     const params = {
         page,
+        ...filters,
     };
     return axios.get(`${API}/blogs/public`, {
         params,

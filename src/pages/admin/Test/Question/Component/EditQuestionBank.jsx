@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { getDetailQuestion, editQuestion } from '@/services/questionService';
 import { toast } from 'react-toastify';
 import { QUESTION_PART } from '@/constants/question';
@@ -18,8 +16,6 @@ function EditQuestionBank() {
     const [loadingFetch, setLoadingFetch] = useState(true);
     const [loadingSubmit, setLoadingSubmit] = useState(false);
     const [question, setQuestion] = useState(null);
-    // XÓA: const [content, setContent] = useState('');
-    // XÓA: const navigate = useNavigate();
 
     useEffect(() => {
         const fetchQuestionDetail = async () => {
@@ -27,7 +23,6 @@ function EditQuestionBank() {
             try {
                 const res = await getDetailQuestion(id);
                 setQuestion(res.data.data);
-                // XÓA: setContent(res.data.data.noi_dung || '');
             } catch (error) {
                 console.error('Lỗi khi lấy thông tin câu hỏi:', error);
                 toast.error(error.response?.data?.message);
@@ -85,7 +80,6 @@ function EditQuestionBank() {
 
             const res = await editQuestion(id, { data: payload });
             toast.success(res.data.message);
-            // navigate(`/admin/test/question/detail-question/${id}`);
         } catch (error) {
             console.error('Lỗi khi cập nhật câu hỏi:', error);
             toast.error(error?.response?.data?.message || 'Đã xảy ra lỗi');
