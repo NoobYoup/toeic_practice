@@ -33,7 +33,6 @@ function Exam() {
         setLoading(true);
         try {
             const res = await getAllExam(currentPage, filters);
-
             setExams(res.data.data);
             // Lấy danh sách id người tạo duy nhất
             const creatorIds = [...new Set(res.data.data.map((item) => item.nguoi_tao))];

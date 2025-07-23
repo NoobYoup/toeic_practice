@@ -69,7 +69,6 @@ function EditExam() {
                 la_bai_thi_dau_vao: laBaiThiDauVao,
                 nam_xuat_ban: Number(namXuatBan),
             };
-            console.log(payload);
             const res = await editExam(id, payload);
             toast.success(res.data.message);
             navigate('/admin/test/exam');
@@ -277,12 +276,30 @@ function EditExam() {
             <ChooseQuestion
                 isOpen={showChooseModal}
                 onClose={() => setShowChooseModal(false)}
-                onSelect={(qs) =>
-                    setSelectedQuestions((prev) => [
-                        ...prev,
-                        ...qs.filter((q) => !prev.find((p) => p.id_cau_hoi === q.id_cau_hoi)),
-                    ])
-                }
+                onSelect={() => {
+                    // Sau khi cập nhật câu hỏi thành công, reload lại đề thi
+                    if (id) {
+                        setFetching(true);
+                        getDraftExam(id)
+                            .then((res) => {
+                                const data = res.data.data;
+                                setTenBaiThi(data.ten_bai_thi || '');
+                                setThoiGianBaiThi(data.thoi_gian_bai_thi || data.thoi_gian_thi || '');
+                                setNamXuatBan(data.nam_xuat_ban);
+                                setLaBaiThiDauVao(Boolean(data.la_bai_thi_dau_vao));
+                                setContent(data.mo_ta || '');
+                                if (Array.isArray(data.cau_hoi_cua_bai_thi)) {
+                                    setSelectedQuestions(data.cau_hoi_cua_bai_thi.map((item) => item.cau_hoi));
+                                }
+                            })
+                            .catch((err) => {
+                                console.error(err);
+                                toast.error(err?.response?.data?.message || 'Không thể tải thông tin đề thi!');
+                                navigate('/admin/test/exam');
+                            })
+                            .finally(() => setFetching(false));
+                    }
+                }}
                 examId={id}
                 initialSelectedIds={selectedQuestions.map((q) => q.id_cau_hoi)}
             />

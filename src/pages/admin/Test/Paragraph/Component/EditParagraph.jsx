@@ -24,7 +24,6 @@ function EditParagraph() {
             setFetching(true);
             try {
                 const res = await getPassageDetail(id);
-                console.log(res.data.data);
                 const data = res.data.data;
                 setPassageData({
                     id: data.id_doan_van,

@@ -161,6 +161,15 @@ const checkEntryExam = (id) => {
     );
 };
 
+const updateQuestionExam = (examId, questionData) => {
+    const token = localStorage.getItem('admin_token');
+    return axios.put(`${API}/exams/questions/update-questions/${examId}`, questionData, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
 export {
     getAllExam,
     getAllQuestionExam,
@@ -175,4 +184,5 @@ export {
     getDetailEntryExam,
     getAllExamUser,
     checkEntryExam,
+    updateQuestionExam,
 };

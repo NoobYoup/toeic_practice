@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Select from 'react-select';
 import ReactPaginate from 'react-paginate';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getAllQuestionExam, addQuestionToExam } from '@/services/examService';
+import { getAllQuestionExam, addQuestionToExam, updateQuestionExam } from '@/services/examService';
 import { toast } from 'react-toastify';
 
 /**
@@ -19,6 +19,7 @@ function ChooseQuestion({ isOpen, onClose, onSelect, examId, initialSelectedIds 
     const [selectedIds, setSelectedIds] = useState(initialSelectedIds);
     const [selectedData, setSelectedData] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [updating, setUpdating] = useState(false);
 
     const [filters, setFilters] = useState({});
 
@@ -43,7 +44,6 @@ function ChooseQuestion({ isOpen, onClose, onSelect, examId, initialSelectedIds 
         setLoading(true);
         try {
             const res = await getAllQuestionExam(currentPage, filters);
-            console.log(res.data.data);
             setQuestions(res.data.data || []);
             setPagination(res.data.pagination || { page: 1, limit: 7, total: 0 });
             // Lấy options phần
@@ -125,6 +125,24 @@ function ChooseQuestion({ isOpen, onClose, onSelect, examId, initialSelectedIds 
             toast.error(err.response?.data?.message || 'Thêm câu hỏi thất bại');
         }
         setAdding(false);
+    };
+
+    const handleUpdateQuestionExam = async () => {
+        if (!examId || selectedIds.length === 0) {
+            toast.error('Vui lòng chọn ít nhất một câu hỏi!');
+            return;
+        }
+        setUpdating(true);
+        try {
+            await updateQuestionExam(examId, { ds_cau_hoi: selectedIds });
+            toast.success('Cập nhật danh sách câu hỏi thành công!');
+            if (onSelect) onSelect(); // callback để reload ngoài EditExam
+            onClose();
+        } catch (err) {
+            console.error(err);
+            toast.error(err?.response?.data?.message || 'Cập nhật câu hỏi thất bại');
+        }
+        setUpdating(false);
     };
 
     /* Animation variants */
@@ -358,6 +376,19 @@ function ChooseQuestion({ isOpen, onClose, onSelect, examId, initialSelectedIds 
                                 Hủy
                             </button>
                             <button
+                                className="btn btn-success"
+                                onClick={handleUpdateQuestionExam}
+                                disabled={updating || selectedIds.length === 0}
+                            >
+                                {updating ? (
+                                    <>
+                                        <i className="fas fa-spinner fa-spin me-2"></i>Đang lưu...
+                                    </>
+                                ) : (
+                                    'Cập nhật câu hỏi'
+                                )}
+                            </button>
+                            <button
                                 className="btn btn-primary"
                                 onClick={handleConfirm}
                                 disabled={selectedIds.length === 0 || adding}
@@ -367,7 +398,7 @@ function ChooseQuestion({ isOpen, onClose, onSelect, examId, initialSelectedIds 
                                         <i className="fas fa-spinner fa-spin me-2"></i>Đang thêm...
                                     </>
                                 ) : (
-                                    `Thêm (${selectedIds.length})`
+                                    'Thêm câu hỏi'
                                 )}
                             </button>
                         </div>
