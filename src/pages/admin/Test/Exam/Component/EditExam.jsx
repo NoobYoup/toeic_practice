@@ -258,7 +258,7 @@ function EditExam() {
                         </>
                     )}
 
-                    <div className="text-end">
+                    {/* <div className="text-end">
                         <button
                             type="button"
                             className="btn btn-success"
@@ -268,7 +268,7 @@ function EditExam() {
                             {approving && <i className="fas fa-spinner fa-spin me-2"></i>}
                             Duyệt đề thi
                         </button>
-                    </div>
+                    </div> */}
                 </div>
             </div>
 

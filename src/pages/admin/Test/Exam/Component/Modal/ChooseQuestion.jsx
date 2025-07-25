@@ -157,6 +157,9 @@ function ChooseQuestion({ isOpen, onClose, onSelect, examId, initialSelectedIds 
         exit: { y: -50, opacity: 0 },
     };
 
+    // Thêm biến xác định chế độ
+    const isEditMode = !!examId;
+
     return (
         <AnimatePresence>
             {isOpen && (
@@ -375,32 +378,38 @@ function ChooseQuestion({ isOpen, onClose, onSelect, examId, initialSelectedIds 
                             <button className="btn btn-secondary" onClick={onClose}>
                                 Hủy
                             </button>
-                            <button
-                                className="btn btn-success"
-                                onClick={handleUpdateQuestionExam}
-                                disabled={updating || selectedIds.length === 0}
-                            >
-                                {updating ? (
-                                    <>
-                                        <i className="fas fa-spinner fa-spin me-2"></i>Đang lưu...
-                                    </>
-                                ) : (
-                                    'Cập nhật câu hỏi'
-                                )}
-                            </button>
-                            <button
-                                className="btn btn-primary"
-                                onClick={handleConfirm}
-                                disabled={selectedIds.length === 0 || adding}
-                            >
-                                {adding ? (
-                                    <>
-                                        <i className="fas fa-spinner fa-spin me-2"></i>Đang thêm...
-                                    </>
-                                ) : (
-                                    'Thêm câu hỏi'
-                                )}
-                            </button>
+                            {/* Chỉ hiện nút Cập nhật khi ở chế độ chỉnh sửa */}
+                            {isEditMode && (
+                                <button
+                                    className="btn btn-success"
+                                    onClick={handleUpdateQuestionExam}
+                                    disabled={updating || selectedIds.length === 0}
+                                >
+                                    {updating ? (
+                                        <>
+                                            <i className="fas fa-spinner fa-spin me-2"></i>Đang lưu...
+                                        </>
+                                    ) : (
+                                        'Cập nhật câu hỏi'
+                                    )}
+                                </button>
+                            )}
+                            {/* Chỉ hiện nút Thêm khi ở chế độ tạo mới */}
+                            {!isEditMode && (
+                                <button
+                                    className="btn btn-primary"
+                                    onClick={handleConfirm}
+                                    disabled={selectedIds.length === 0 || adding}
+                                >
+                                    {adding ? (
+                                        <>
+                                            <i className="fas fa-spinner fa-spin me-2"></i>Đang thêm...
+                                        </>
+                                    ) : (
+                                        'Thêm câu hỏi'
+                                    )}
+                                </button>
+                            )}
                         </div>
                     </motion.div>
                 </motion.div>

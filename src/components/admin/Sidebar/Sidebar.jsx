@@ -84,12 +84,12 @@ function Sidebar() {
                         </NavLink>
                     </li>
 
-                    <li className="nav-item">
+                    {/* <li className="nav-item">
                         <NavLink to="/admin/setting" className="nav-link">
                             {' '}
                             <i className="fas fa-cog"></i> Cài Đặt{' '}
                         </NavLink>
-                    </li>
+                    </li> */}
                 </ul>
                 <hr className="text-white-50" />
                 <div className="dropdown">
