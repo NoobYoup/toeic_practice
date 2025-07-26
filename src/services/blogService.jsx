@@ -80,7 +80,7 @@ const getDetailBlog = (id) => {
 };
 
 const getAllCategory = () => {
-    const token = localStorage.getItem('user_token');
+    const token = localStorage.getItem('admin_token') || localStorage.getItem('user_token');
     return axios.get(`${API}/categorys/get-all-categorys`, {
         headers: {
             Authorization: `Bearer ${token}`,

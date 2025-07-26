@@ -119,18 +119,6 @@ function DetailUser() {
                                 {user.nguoi_dung?.id_vai_tro}
                             </span>
                         </div>
-                        <div className="col-md-3 text-end">
-                            <div className="stats-grid">
-                                <div className="text-center">
-                                    <div className={cx('stat-number')}>15</div>
-                                    <div className={cx('stat-label')}>Bài thi</div>
-                                </div>
-                                <div className="text-center">
-                                    <div className={cx('stat-number')}>500</div>
-                                    <div className={cx('stat-label')}>Điểm cao nhất</div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>

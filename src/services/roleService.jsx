@@ -58,4 +58,21 @@ const updatePermissionTable = (permissionId, permission) => {
     });
 };
 
-export { getAllRole, createRole, updateRole, deleteRole, detailRole, getPermissionTable, updatePermissionTable };
+const getAllRolePermission = () => {
+    const token = localStorage.getItem('admin_token');
+
+    return axios.get(`${API}/roles/get-all`, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+};
+
+export {
+    getAllRole,
+    createRole,
+    updateRole,
+    deleteRole,
+    detailRole,
+    getPermissionTable,
+    updatePermissionTable,
+    getAllRolePermission,
+};

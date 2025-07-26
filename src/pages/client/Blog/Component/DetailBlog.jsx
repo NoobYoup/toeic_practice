@@ -106,7 +106,7 @@ function DetailBlog() {
             fetchComment();
         } catch (error) {
             console.log(error);
-            toast.error(error?.response?.data?.message);
+            toast.error('Đăng nhập để bình luận');
         }
         setLoadingReply(false);
     };
@@ -133,6 +133,7 @@ function DetailBlog() {
     const handleDelete = async (id) => {
         setLoadingDelete(true);
         try {
+            window.confirm('Bạn có chắc chắn muốn xóa bình luận này không?');
             const res = await deleteComment(id);
             toast.success(res.data.message);
             // setIdBinhLuanCha(null);

@@ -121,6 +121,7 @@ function CreateExam() {
                                         className="form-control"
                                         id="examTime"
                                         placeholder="Nhập thời gian làm bài"
+                                        min={0}
                                         value={thoiGianBaiThi}
                                         onChange={(e) => setThoiGianBaiThi(e.target.value)}
                                     />
@@ -136,6 +137,7 @@ function CreateExam() {
                                         className="form-control"
                                         id="examYear"
                                         placeholder="Nhập năm xuất bản"
+                                        min={1979}
                                         value={namXuatBan}
                                         onChange={(e) => setNamXuatBan(e.target.value)}
                                     />

@@ -111,6 +111,30 @@ const updateUserRole = (userId, roleId) => {
     );
 };
 
+const getDetailProfileAdmin = (id) => {
+    const token = localStorage.getItem('admin_token');
+
+    return axios.get(`${API}/users/detail/${id}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+const updateProfileAdmin = (id, userData, file) => {
+    const token = localStorage.getItem('admin_token');
+    const formData = new FormData();
+    Object.keys(userData).forEach((key) => {
+        formData.append(key, userData[key]);
+    });
+    if (file) {
+        formData.append('hinh_dai_dien', file);
+    }
+    return axios.patch(`${API}/users/update-profile/${id}`, formData, {
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' },
+    });
+};
+
 export {
     getAllUser,
     getDetailUser,
@@ -121,4 +145,6 @@ export {
     updateProfile,
     changeUserStatus,
     getMe,
+    getDetailProfileAdmin,
+    updateProfileAdmin,
 };

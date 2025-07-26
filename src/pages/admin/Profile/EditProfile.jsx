@@ -5,11 +5,11 @@ import { getAllRolePermission } from '@/services/roleService.jsx';
 import { toast } from 'react-toastify';
 import Select from 'react-select';
 import classNames from 'classnames/bind';
-import styles from './EditUser.module.scss';
+import styles from '@/pages/admin/User/Component/EditUser.module.scss';
 
 const cx = classNames.bind(styles);
 
-function EditUser() {
+function EditProfile() {
     const { id } = useParams(); // lấy ID từ URL
     const navigate = useNavigate();
     const fileInputRef = useRef(null); // Ref for file input
@@ -514,4 +514,4 @@ function EditUser() {
     );
 }
 
-export default EditUser;
+export default EditProfile;

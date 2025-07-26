@@ -101,6 +101,7 @@ function RolePermission() {
                     const roleId = roleIdMap[roleKey];
                     if (!roleId) continue;
                     const payload = { ds_ma_quyen: currentPerms };
+                    console.log(payload);
                     try {
                         await updatePermissionTable(roleId, payload);
                         toast.success(`Cập nhật quyền cho ${ROLE_LABEL[roleKey] || roleKey} thành công!`);

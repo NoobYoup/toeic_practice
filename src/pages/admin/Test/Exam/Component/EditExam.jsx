@@ -80,21 +80,6 @@ function EditExam() {
         setLoading(false);
     };
 
-    const handleApproveExam = async () => {
-        if (!id) return;
-        setApproving(true);
-        try {
-            const res = await approveExam(id);
-            toast.success(res.data.message || 'Đã duyệt đề thi');
-            navigate('/admin/test/exam');
-        } catch (err) {
-            // eslint-disable-next-line no-console
-            console.error(err);
-            toast.error(err?.response?.data?.message || 'Duyệt đề thi thất bại');
-        }
-        setApproving(false);
-    };
-
     /* ------------------------------------------------------------ */
     /* RENDER                                                        */
     /* ------------------------------------------------------------ */
@@ -138,6 +123,7 @@ function EditExam() {
                                         className="form-control"
                                         id="examTime"
                                         placeholder="Nhập thời gian làm bài"
+                                        min={0}
                                         value={thoiGianBaiThi}
                                         onChange={(e) => setThoiGianBaiThi(e.target.value)}
                                     />
@@ -153,6 +139,7 @@ function EditExam() {
                                         className="form-control"
                                         id="examYear"
                                         placeholder="Nhập năm xuất bản"
+                                        min={1979}
                                         value={namXuatBan}
                                         onChange={(e) => setNamXuatBan(e.target.value)}
                                     />
@@ -257,18 +244,6 @@ function EditExam() {
                             </div>
                         </>
                     )}
-
-                    {/* <div className="text-end">
-                        <button
-                            type="button"
-                            className="btn btn-success"
-                            disabled={approving || !id}
-                            onClick={handleApproveExam}
-                        >
-                            {approving && <i className="fas fa-spinner fa-spin me-2"></i>}
-                            Duyệt đề thi
-                        </button>
-                    </div> */}
                 </div>
             </div>
 

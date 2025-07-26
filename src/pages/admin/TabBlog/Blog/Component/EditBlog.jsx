@@ -93,7 +93,7 @@ function EditBlog() {
     };
 
     return (
-        <div className="container py-4 min-vh-100">
+        <div className="py-4 min-vh-100">
             <>
                 <h3 className="mb-4">Chỉnh sửa bài viết</h3>
 
@@ -180,7 +180,7 @@ function EditBlog() {
                                     {loading && <i className="fas fa-spinner fa-spin me-2"></i>}
                                     Lưu thay đổi
                                 </button>
-                                <Link to="/admin/blog" className="btn btn-outline-secondary">
+                                <Link to="/admin/tab-blog/blog" className="btn btn-outline-secondary">
                                     Hủy bỏ
                                 </Link>
                             </div>
