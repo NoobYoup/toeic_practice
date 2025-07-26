@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { getDetailUser, editUser, updateUserRole } from '@/services/userService.jsx';
+import { getDetailProfileAdmin, updateProfileAdmin } from '@/services/userService.jsx';
 import { getAllRolePermission } from '@/services/roleService.jsx';
 import { toast } from 'react-toastify';
 import Select from 'react-select';
@@ -71,7 +71,7 @@ function EditProfile() {
         const fetchUser = async () => {
             setLoading(true);
             try {
-                const res = await getDetailUser(id);
+                const res = await getDetailProfileAdmin(id);
 
                 const userData = res.data.data.user;
 
@@ -120,8 +120,8 @@ function EditProfile() {
 
         try {
             // Không gửi vai_tro cùng với editUser
-            const { vai_tro, ...otherFields } = formData;
-            const res = await editUser(id, otherFields, selectedFile);
+            const { ...otherFields } = formData;
+            const res = await updateProfileAdmin(id, otherFields, selectedFile);
 
             toast.success(res.data.message);
 
@@ -145,24 +145,6 @@ function EditProfile() {
             toast.error(err.response?.data?.message);
         }
         setLoading(false);
-    };
-
-    // Cập nhật vai trò riêng lẻ
-    const handleUpdateRole = async () => {
-        if (!selectedRole) {
-            toast.error('Vui lòng chọn vai trò');
-            return;
-        }
-        setUpdatingRole(true);
-        try {
-            const res = await updateUserRole(id, selectedRole.value);
-            toast.success(res.data?.message || 'Cập nhật vai trò thành công');
-            navigate(`/admin/user/detail-user/${id}`);
-        } catch (err) {
-            console.error(err);
-            toast.error(err.response?.data?.message || 'Cập nhật vai trò thất bại');
-        }
-        setUpdatingRole(false);
     };
 
     const handleFileChange = (e) => {
@@ -300,7 +282,7 @@ function EditProfile() {
                                         id="vai_tro"
                                         className="basic-single"
                                         classNamePrefix="select"
-                                        isDisabled={loading || saving}
+                                        isDisabled={loading || saving || true}
                                         isLoading={loading}
                                         isClearable={false}
                                         isSearchable={true}
@@ -320,22 +302,6 @@ function EditProfile() {
                                             setUser((prev) => ({ ...prev, vai_tro: newValue }));
                                         }}
                                     />
-
-                                    <div className="mt-2 d-flex align-items-center justify-content-between">
-                                        <label htmlFor="vai_tro" className="form-label text-muted">
-                                            *Lưu ý: Quản trị viên cấp quyền truy cập vào trang quản trị
-                                        </label>
-
-                                        <button
-                                            type="button"
-                                            className="btn btn-warning"
-                                            onClick={handleUpdateRole}
-                                            disabled={updatingRole || userRole === 1}
-                                        >
-                                            {updatingRole && <i className="fas fa-spinner fa-spin me-2"></i>}
-                                            Cập nhật vai trò
-                                        </button>
-                                    </div>
                                 </div>
                             </div>
 

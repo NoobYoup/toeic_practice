@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getDetailExamPublic } from '@/services/examService';
 import { submitExamToResult } from '@/services/resultService';
@@ -27,26 +27,62 @@ function Test() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [answers, setAnswers] = useState({});
 
-    const [lastPathname, setLastPathname] = useState(location.pathname);
-    const [pendingPath, setPendingPath] = useState(null);
+    // Sử dụng useRef để tránh vòng lặp vô hạn
+    const lastPathnameRef = useRef(location.pathname);
+    const isNavigatingRef = useRef(false);
+    const isInitialMountRef = useRef(true);
+
+    // Hàm xóa dữ liệu tạm khi nộp bài thành công hoặc hết giờ - tối ưu bằng useCallback
+    const clearDraft = useCallback(() => {
+        if (!examId) return;
+        const draftKey = `toeic_exam_${examId}_draft`;
+        localStorage.removeItem(draftKey);
+    }, [examId]);
 
     // Cảnh báo khi rời trang nếu đã có đáp án
     useEffect(() => {
         const handleBeforeUnload = (e) => {
             if (Object.keys(answers).length > 0) {
-                clearDraft(); // Xóa localStorage trước khi rời đi
                 e.preventDefault();
-                // Chrome requires returnValue to be set
-                e.returnValue = '';
+                e.returnValue = 'Bạn có chắc chắn muốn rời khỏi trang? Đáp án tạm thời sẽ bị xóa.';
+                return e.returnValue;
             }
         };
-        if (Object.keys(answers).length > 0) {
-            window.addEventListener('beforeunload', handleBeforeUnload);
-        }
+        window.addEventListener('beforeunload', handleBeforeUnload);
         return () => {
             window.removeEventListener('beforeunload', handleBeforeUnload);
         };
     }, [answers]);
+
+    // Theo dõi pathname, chặn chuyển route nếu đã có đáp án
+    useEffect(() => {
+        if (isInitialMountRef.current) {
+            isInitialMountRef.current = false;
+            return;
+        }
+        if (isNavigatingRef.current) {
+            return;
+        }
+        if (location.pathname === lastPathnameRef.current) {
+            return;
+        }
+        const answersCount = Object.keys(answers).length;
+        if (answersCount > 0) {
+            const confirmLeave = window.confirm('Bạn có chắc chắn muốn rời khỏi trang? Đáp án tạm thời sẽ bị xóa.');
+            if (confirmLeave) {
+                clearDraft();
+                lastPathnameRef.current = location.pathname;
+            } else {
+                isNavigatingRef.current = true;
+                navigate(lastPathnameRef.current, { replace: true });
+                setTimeout(() => {
+                    isNavigatingRef.current = false;
+                }, 100);
+            }
+        } else {
+            lastPathnameRef.current = location.pathname;
+        }
+    }, [location.pathname, clearDraft, navigate, answers]);
 
     // Lưu đáp án và thời gian còn lại vào localStorage
     useEffect(() => {
@@ -61,58 +97,119 @@ function Test() {
         localStorage.setItem(draftKey, JSON.stringify(draftData));
     }, [answers, remainingSeconds, examId]);
 
-    // Hàm xóa dữ liệu tạm khi nộp bài thành công hoặc hết giờ - tối ưu bằng useCallback
-    const clearDraft = useCallback(() => {
-        if (!examId) return;
-        const draftKey = `toeic_exam_${examId}_draft`;
-        localStorage.removeItem(draftKey);
-    }, [examId]);
+    // // Thêm một useEffect để theo dõi sự thay đổi của answers và log ra
+    // useEffect(() => {
+    //     const answersCount = Object.keys(answers).length;
+    //     console.log('Answers state changed:', {
+    //         answersCount: answersCount,
+    //         hasAnswers: answersCount > 0,
+    //         answers: answers,
+    //     });
+    // }, [answers]);
 
-    // Theo dõi pathname, chặn chuyển route nếu đã có đáp án
-    useEffect(() => {
-        if (pendingPath && location.pathname !== pendingPath) {
-            // Đã có pendingPath, thực hiện chuyển trang
-            navigate(pendingPath, { replace: true });
-            setLastPathname(pendingPath);
-            setPendingPath(null);
-            return;
-        }
-        if (location.pathname !== lastPathname) {
-            if (Object.keys(answers).length > 0) {
-                const confirmLeave = window.confirm('Bạn có chắc chắn muốn rời khỏi trang? Đáp án tạm thời sẽ bị xóa.');
-                if (confirmLeave) {
-                    clearDraft();
-                    setPendingPath(location.pathname);
-                } else {
-                    // Quay lại trang cũ
-                    navigate(lastPathname, { replace: true });
-                }
-            } else {
-                setLastPathname(location.pathname);
-            }
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [location.pathname]);
+    // // Thêm một useEffect để theo dõi sự thay đổi của location
+    // useEffect(() => {
+    //     console.log('Location changed:', {
+    //         pathname: location.pathname,
+    //         lastPathname: lastPathnameRef.current,
+    //         isNavigating: isNavigatingRef.current,
+    //     });
+    // }, [location.pathname]);
 
-    // Lắng nghe sự kiện back/forward trên trình duyệt
+    // Chặn click trên các Link khi có đáp án
     useEffect(() => {
-        const handlePopState = () => {
-            if (Object.keys(answers).length > 0) {
+        const answersCount = Object.keys(answers).length;
+        if (answersCount === 0) return;
+        const handleLinkClick = (event) => {
+            const target = event.target.closest('a[href], [data-router-link]');
+            if (target) {
                 const confirmLeave = window.confirm('Bạn có chắc chắn muốn rời khỏi trang? Đáp án tạm thời sẽ bị xóa.');
                 if (confirmLeave) {
                     clearDraft();
                 } else {
-                    // Ngăn back/forward bằng cách push lại pathname hiện tại
-                    navigate(location.pathname, { replace: true });
+                    event.preventDefault();
+                    event.stopPropagation();
                 }
             }
         };
-        window.addEventListener('popstate', handlePopState);
+        document.addEventListener('click', handleLinkClick, true);
         return () => {
-            window.removeEventListener('popstate', handlePopState);
+            document.removeEventListener('click', handleLinkClick, true);
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [answers, location.pathname]);
+    }, [answers, clearDraft]);
+
+    // Chặn keyboard navigation (Alt+Left/Right)
+    useEffect(() => {
+        const answersCount = Object.keys(answers).length;
+        if (answersCount === 0) return;
+        const handleKeyDown = (event) => {
+            if (event.altKey && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
+                const confirmLeave = window.confirm('Bạn có chắc chắn muốn rời khỏi trang? Đáp án tạm thời sẽ bị xóa.');
+                if (confirmLeave) {
+                    clearDraft();
+                } else {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+            }
+        };
+        document.addEventListener('keydown', handleKeyDown, true);
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown, true);
+        };
+    }, [answers, clearDraft]);
+
+    // Override history methods để chặn navigation
+    useEffect(() => {
+        const answersCount = Object.keys(answers).length;
+        if (answersCount === 0) return;
+        const originalPushState = window.history.pushState;
+        const originalReplaceState = window.history.replaceState;
+        const originalBack = window.history.back;
+        const originalForward = window.history.forward;
+        const handleNavigation = (method, ...args) => {
+            const confirmLeave = window.confirm('Bạn có chắc chắn muốn rời khỏi trang? Đáp án tạm thời sẽ bị xóa.');
+            if (confirmLeave) {
+                clearDraft();
+                if (method === 'pushState') {
+                    originalPushState.apply(window.history, args);
+                } else if (method === 'replaceState') {
+                    originalReplaceState.apply(window.history, args);
+                } else if (method === 'back') {
+                    originalBack.apply(window.history, args);
+                } else if (method === 'forward') {
+                    originalForward.apply(window.history, args);
+                }
+            }
+        };
+        window.history.pushState = (...args) => handleNavigation('pushState', ...args);
+        window.history.replaceState = (...args) => handleNavigation('replaceState', ...args);
+        window.history.back = (...args) => handleNavigation('back', ...args);
+        window.history.forward = (...args) => handleNavigation('forward', ...args);
+        return () => {
+            window.history.pushState = originalPushState;
+            window.history.replaceState = originalReplaceState;
+            window.history.back = originalBack;
+            window.history.forward = originalForward;
+        };
+    }, [answers, clearDraft]);
+
+    // Thêm một cách tiếp cận mạnh mẽ hơn - sử dụng unload event
+    useEffect(() => {
+        const answersCount = Object.keys(answers).length;
+        if (answersCount === 0) return;
+
+        const handleUnload = () => {
+            console.log('Unload event detected, clearing draft');
+            clearDraft();
+        };
+
+        window.addEventListener('unload', handleUnload);
+
+        return () => {
+            window.removeEventListener('unload', handleUnload);
+        };
+    }, [answers, clearDraft]);
 
     // load bài làm
     const fetchExam = async () => {
@@ -146,11 +243,13 @@ function Test() {
             try {
                 const draft = JSON.parse(draftStr);
                 if (draft && draft.remainingSeconds > 0 && draft.answers) {
+                    // console.log('Loading draft data:', draft);
                     setAnswers(draft.answers);
                     setRemainingSeconds(draft.remainingSeconds);
                     return; // Nếu có dữ liệu tạm thì không set lại timer mặc định
                 }
-            } catch {
+            } catch (error) {
+                console.error('Error parsing draft data:', error);
                 // Nếu lỗi parse thì bỏ qua
             }
         }
@@ -318,7 +417,13 @@ function Test() {
 
     // xử lý chọn đáp án
     const handleAnswerSelect = (questionId, choiceLetter) => {
-        setAnswers((prev) => ({ ...prev, [questionId]: choiceLetter }));
+        // console.log('Answer selected:', { questionId, choiceLetter });
+        // console.log('Current answers count:', Object.keys(answers).length);
+        setAnswers((prev) => {
+            const newAnswers = { ...prev, [questionId]: choiceLetter };
+            // console.log('New answers count:', Object.keys(newAnswers).length);
+            return newAnswers;
+        });
     };
 
     // render component tương ứng với part hiện tại
@@ -349,7 +454,7 @@ function Test() {
         if (remainingSeconds === 0) {
             clearDraft(); // Xóa dữ liệu tạm khi hết giờ
         }
-    }, [remainingSeconds]);
+    }, [remainingSeconds, clearDraft]);
 
     if (loading) {
         return (

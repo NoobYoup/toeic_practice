@@ -21,8 +21,6 @@ function Sidebar() {
             const tokenKey = `${role}_token`;
             localStorage.removeItem(tokenKey, user.token);
             localStorage.removeItem('admin_token');
-
-            toast.success('Đăng xuất thành công');
             navigate('/admin');
         } else {
             toast.error('Bạn không có quyền truy cập trang quản trị.');

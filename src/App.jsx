@@ -84,6 +84,7 @@ import CreateCategoryGrammar from './pages/admin/TabGrammar/CategoryGrammar/Comp
 import EditCategoryGrammar from './pages/admin/TabGrammar/CategoryGrammar/Component/EditCategoryGrammar.jsx';
 import DetailCategoryGrammar from './pages/admin/TabGrammar/CategoryGrammar/Component/DetailCategoryGrammar.jsx';
 import Profile from './pages/admin/Profile/Profile.jsx';
+import EditProfile from './pages/admin/Profile/EditProfile.jsx';
 
 function App() {
     return (
@@ -132,6 +133,7 @@ function App() {
                             <Route path="/admin/dashboard" element={<Dashboard />} />
                             <Route path="/admin/setting" element={<Setting />} />
                             <Route path="/admin/profile/:id" element={<Profile />} />
+                            <Route path="/admin/profile/edit-profile/:id" element={<EditProfile />} />
                             <Route path="/admin/tab-permission" element={<TabPermission />}>
                                 <Route path="role" element={<Role />} />
                                 <Route path="role/create-role" element={<CreateRole />} />

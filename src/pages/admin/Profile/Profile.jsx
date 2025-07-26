@@ -2,7 +2,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
-import { getDetailProfileAdmin, deleteUser } from '@/services/userService';
+import { getDetailProfileAdmin } from '@/services/userService';
 import classNames from 'classnames/bind';
 import styles from '@/pages/admin/User/Component/DetailUser.module.scss';
 
@@ -21,8 +21,6 @@ function Profile() {
             setLoading(true);
             try {
                 const res = await getDetailProfileAdmin(id);
-                console.log(res.data.data);
-
                 setUser(res.data.data.user);
             } catch (err) {
                 console.error(err);
@@ -39,18 +37,6 @@ function Profile() {
 
         fetchUser();
     }, [id]); // Re-run when ID changes
-
-    const handleDelete = async () => {
-        if (window.confirm('Bạn có chắc chắn muốn xóa người dùng này không?')) {
-            try {
-                await deleteUser(id);
-                navigate('/admin/user'); // Redirect to user list after deletion
-            } catch (error) {
-                console.error('Error deleting user:', error);
-                setError('Không thể xóa tài khoản');
-            }
-        }
-    };
 
     if (loading) {
         return (
@@ -147,17 +133,10 @@ function Profile() {
 
                             <Link
                                 className={`${cx('btn-action')} btn btn-primary w-100`}
-                                to={`/admin/user/edit-user/${id}`}
+                                to={`/admin/profile/edit-profile/${id}`}
                             >
                                 <i className="fas fa-edit me-2"></i>Chỉnh sửa thông tin
                             </Link>
-
-                            <button
-                                className={`${cx('btn-action')} btn btn-outline-danger w-100`}
-                                onClick={handleDelete}
-                            >
-                                <i className="fas fa-trash me-2"></i>Xóa tài khoản
-                            </button>
                         </div>
                     </div>
                 </div>

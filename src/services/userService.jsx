@@ -114,7 +114,7 @@ const updateUserRole = (userId, roleId) => {
 const getDetailProfileAdmin = (id) => {
     const token = localStorage.getItem('admin_token');
 
-    return axios.get(`${API}/users/detail/${id}`, {
+    return axios.get(`${API}/users/detail-admin/${id}`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },
@@ -124,13 +124,24 @@ const getDetailProfileAdmin = (id) => {
 const updateProfileAdmin = (id, userData, file) => {
     const token = localStorage.getItem('admin_token');
     const formData = new FormData();
+
+    // Append user data fields
     Object.keys(userData).forEach((key) => {
         formData.append(key, userData[key]);
     });
+
+    // Append file if provided
     if (file) {
-        formData.append('hinh_dai_dien', file);
+        formData.append('url_hinh_dai_dien', file); // Changed from 'url_hinh_dai_dien' to 'avatar'
+        console.log('File appended:', file.name, file.type, file.size); // Debug file info
     }
-    return axios.patch(`${API}/users/update-profile/${id}`, formData, {
+
+    // Log formData contents for debugging
+    for (let [key, value] of formData.entries()) {
+        console.log(`FormData: ${key} =`, value);
+    }
+
+    return axios.patch(`${API}/users/edit-admin/${id}`, formData, {
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' },
     });
 };
