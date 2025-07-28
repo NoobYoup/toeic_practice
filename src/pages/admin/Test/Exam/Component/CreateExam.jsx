@@ -50,7 +50,6 @@ function CreateExam() {
                 loai_bai_thi: loaiBaiThi,
             };
             const res = await createExam(payload);
-            console.log(res.data.data);
             setExamId(res.data.data.id_bai_thi); // Lưu ID bài thi vào state
             toast.success(res.data.message);
         } catch (err) {
@@ -292,6 +291,7 @@ function CreateExam() {
                 onClose={() => setShowChooseModal(false)}
                 onSelect={(qs) => setSelectedQuestions(qs)}
                 examId={examId}
+                mode="create"
             />
         </>
     );

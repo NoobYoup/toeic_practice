@@ -27,6 +27,9 @@ function Test() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [answers, setAnswers] = useState({});
 
+    // Global flag để đánh dấu khi đang nộp bài (tránh race condition)
+    const isSubmittingGlobal = useRef(false);
+
     // Sử dụng useRef để tránh vòng lặp vô hạn
     const lastPathnameRef = useRef(location.pathname);
     const isNavigatingRef = useRef(false);
@@ -42,6 +45,10 @@ function Test() {
     // Cảnh báo khi rời trang nếu đã có đáp án
     useEffect(() => {
         const handleBeforeUnload = (e) => {
+            // Không hiển thị cảnh báo nếu đang trong quá trình nộp bài
+            if (isSubmittingGlobal.current) {
+                return;
+            }
             if (Object.keys(answers).length > 0) {
                 e.preventDefault();
                 e.returnValue = 'Bạn có chắc chắn muốn rời khỏi trang? Đáp án tạm thời sẽ bị xóa.';
@@ -61,6 +68,10 @@ function Test() {
             return;
         }
         if (isNavigatingRef.current) {
+            return;
+        }
+        // Không chặn chuyển route nếu đang trong quá trình nộp bài
+        if (isSubmittingGlobal.current) {
             return;
         }
         if (location.pathname === lastPathnameRef.current) {
@@ -97,29 +108,13 @@ function Test() {
         localStorage.setItem(draftKey, JSON.stringify(draftData));
     }, [answers, remainingSeconds, examId]);
 
-    // // Thêm một useEffect để theo dõi sự thay đổi của answers và log ra
-    // useEffect(() => {
-    //     const answersCount = Object.keys(answers).length;
-    //     console.log('Answers state changed:', {
-    //         answersCount: answersCount,
-    //         hasAnswers: answersCount > 0,
-    //         answers: answers,
-    //     });
-    // }, [answers]);
-
-    // // Thêm một useEffect để theo dõi sự thay đổi của location
-    // useEffect(() => {
-    //     console.log('Location changed:', {
-    //         pathname: location.pathname,
-    //         lastPathname: lastPathnameRef.current,
-    //         isNavigating: isNavigatingRef.current,
-    //     });
-    // }, [location.pathname]);
-
     // Chặn click trên các Link khi có đáp án
     useEffect(() => {
         const answersCount = Object.keys(answers).length;
         if (answersCount === 0) return;
+        // Không chặn click nếu đang trong quá trình nộp bài
+        if (isSubmittingGlobal.current) return;
+
         const handleLinkClick = (event) => {
             const target = event.target.closest('a[href], [data-router-link]');
             if (target) {
@@ -142,6 +137,9 @@ function Test() {
     useEffect(() => {
         const answersCount = Object.keys(answers).length;
         if (answersCount === 0) return;
+        // Không chặn keyboard navigation nếu đang trong quá trình nộp bài
+        if (isSubmittingGlobal.current) return;
+
         const handleKeyDown = (event) => {
             if (event.altKey && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
                 const confirmLeave = window.confirm('Bạn có chắc chắn muốn rời khỏi trang? Đáp án tạm thời sẽ bị xóa.');
@@ -163,11 +161,28 @@ function Test() {
     useEffect(() => {
         const answersCount = Object.keys(answers).length;
         if (answersCount === 0) return;
+        // Không chặn history navigation nếu đang trong quá trình nộp bài
+        if (isSubmittingGlobal.current) return;
+
         const originalPushState = window.history.pushState;
         const originalReplaceState = window.history.replaceState;
         const originalBack = window.history.back;
         const originalForward = window.history.forward;
         const handleNavigation = (method, ...args) => {
+            // Nếu đang trong quá trình nộp bài (tự động hoặc thủ công) thì bỏ qua xác nhận
+            if (isSubmittingGlobal.current) {
+                if (method === 'pushState') {
+                    originalPushState.apply(window.history, args);
+                } else if (method === 'replaceState') {
+                    originalReplaceState.apply(window.history, args);
+                } else if (method === 'back') {
+                    originalBack.apply(window.history, args);
+                } else if (method === 'forward') {
+                    originalForward.apply(window.history, args);
+                }
+                return;
+            }
+
             const confirmLeave = window.confirm('Bạn có chắc chắn muốn rời khỏi trang? Đáp án tạm thời sẽ bị xóa.');
             if (confirmLeave) {
                 clearDraft();
@@ -198,6 +213,8 @@ function Test() {
     useEffect(() => {
         const answersCount = Object.keys(answers).length;
         if (answersCount === 0) return;
+        // Không xử lý unload event nếu đang trong quá trình nộp bài
+        if (isSubmittingGlobal.current) return;
 
         const handleUnload = () => {
             console.log('Unload event detected, clearing draft');
@@ -254,7 +271,8 @@ function Test() {
             }
         }
         // Nếu không có dữ liệu tạm thì set timer mặc định
-        const durationMinutes = exam.thoi_gian_bai_thi || exam.thoi_gian_thi;
+        // const durationMinutes = exam.thoi_gian_bai_thi || exam.thoi_gian_thi;
+        const durationMinutes = 1;
         if (durationMinutes) {
             setRemainingSeconds(durationMinutes * 60);
         }
@@ -299,6 +317,8 @@ function Test() {
         };
 
         setIsSubmitting(true);
+        // Set global flag để tránh timing issues
+        isSubmittingGlobal.current = true;
 
         try {
             const res = await submitExamToResult(payload); // POST tới /api/results/submit-from-fe
@@ -314,7 +334,26 @@ function Test() {
         }
 
         setIsSubmitting(false);
+        // Giữ nguyên isSubmittingGlobal cho tới khi component unmount để tránh hộp thoại confirm khi điều hướng sau khi nộp bài thành công
     }, [exam, answers, navigate, clearDraft]); // Dependencies cho useCallback
+
+    // Reset isSubmittingGlobal khi component bị unmount
+    useEffect(() => {
+        return () => {
+            isSubmittingGlobal.current = false;
+        };
+    }, []);
+
+    // Hàm tự động nộp bài khi hết thời gian
+    const handleAutoSubmit = useCallback(async () => {
+        // Set global flag ngay lập tức để tránh timing issues
+        isSubmittingGlobal.current = true;
+
+        // Sử dụng setTimeout để đảm bảo flag được set trước khi gọi handleSubmit
+        setTimeout(async () => {
+            await handleSubmit();
+        }, 0);
+    }, [handleSubmit]);
 
     // thời gian đếm ngược - tối ưu dependencies
     useEffect(() => {
@@ -324,7 +363,7 @@ function Test() {
             setRemainingSeconds((prev) => {
                 if (prev === null || prev <= 1) {
                     clearInterval(intervalId);
-                    handleSubmit(); // tự động nộp bài khi hết thời gian
+                    handleAutoSubmit(); // Sử dụng hàm riêng cho tự động nộp bài
                     return 0;
                 }
                 return prev - 1;
@@ -332,7 +371,7 @@ function Test() {
         }, 1000);
 
         return () => clearInterval(intervalId);
-    }, [exam, remainingSeconds, handleSubmit]); // Thêm handleSubmit vào dependencies
+    }, [exam, remainingSeconds, handleAutoSubmit]); // Sử dụng handleAutoSubmit thay vì handleSubmit
 
     const formatTime = (seconds) => {
         const m = Math.floor(seconds / 60)
@@ -452,9 +491,10 @@ function Test() {
 
     useEffect(() => {
         if (remainingSeconds === 0) {
-            clearDraft(); // Xóa dữ liệu tạm khi hết giờ
+            // Không cần clearDraft() ở đây vì handleSubmit() sẽ được gọi và xử lý việc này
+            // clearDraft() được gọi trong handleSubmit() sau khi nộp bài thành công
         }
-    }, [remainingSeconds, clearDraft]);
+    }, [remainingSeconds]);
 
     if (loading) {
         return (

@@ -276,6 +276,7 @@ function EditExam() {
                     }
                 }}
                 examId={id}
+                mode="edit"
                 initialSelectedIds={selectedQuestions.map((q) => q.id_cau_hoi)}
             />
         </>

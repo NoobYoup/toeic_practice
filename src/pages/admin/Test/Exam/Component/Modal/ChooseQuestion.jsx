@@ -12,8 +12,11 @@ import { toast } from 'react-toastify';
  *  - isOpen: boolean   : điều khiển bật / tắt modal
  *  - onClose: () => void : hàm đóng modal
  *  - onSelect: (questions: array) => void : callback khi người dùng chọn câu hỏi và nhấn Xác nhận
+ *  - examId: string/number : ID của đề thi (bắt buộc)
+ *  - mode: 'create' | 'edit' : chế độ tạo mới hoặc chỉnh sửa (mặc định: 'create')
+ *  - initialSelectedIds: array : danh sách ID câu hỏi đã chọn ban đầu
  */
-function ChooseQuestion({ isOpen, onClose, onSelect, examId, initialSelectedIds = [] }) {
+function ChooseQuestion({ isOpen, onClose, onSelect, examId, mode = 'create', initialSelectedIds = [] }) {
     /* States */
     const [questions, setQuestions] = useState([]);
     const [selectedIds, setSelectedIds] = useState(initialSelectedIds);
@@ -157,8 +160,8 @@ function ChooseQuestion({ isOpen, onClose, onSelect, examId, initialSelectedIds 
         exit: { y: -50, opacity: 0 },
     };
 
-    // Thêm biến xác định chế độ
-    const isEditMode = !!examId;
+    // Xác định chế độ dựa trên prop mode
+    const isEditMode = mode === 'edit';
 
     return (
         <AnimatePresence>
@@ -379,7 +382,7 @@ function ChooseQuestion({ isOpen, onClose, onSelect, examId, initialSelectedIds 
                                 Hủy
                             </button>
                             {/* Chỉ hiện nút Cập nhật khi ở chế độ chỉnh sửa */}
-                            {isEditMode && (
+                            {isEditMode ? (
                                 <button
                                     className="btn btn-success"
                                     onClick={handleUpdateQuestionExam}
@@ -393,9 +396,7 @@ function ChooseQuestion({ isOpen, onClose, onSelect, examId, initialSelectedIds 
                                         'Cập nhật câu hỏi'
                                     )}
                                 </button>
-                            )}
-                            {/* Chỉ hiện nút Thêm khi ở chế độ tạo mới */}
-                            {!isEditMode && (
+                            ) : (
                                 <button
                                     className="btn btn-primary"
                                     onClick={handleConfirm}
@@ -410,6 +411,22 @@ function ChooseQuestion({ isOpen, onClose, onSelect, examId, initialSelectedIds 
                                     )}
                                 </button>
                             )}
+                            {/* Chỉ hiện nút Thêm khi ở chế độ tạo mới */}
+                            {/* {!isEditMode && (
+                                <button
+                                    className="btn btn-primary"
+                                    onClick={handleConfirm}
+                                    disabled={selectedIds.length === 0 || adding}
+                                >
+                                    {adding ? (
+                                        <>
+                                            <i className="fas fa-spinner fa-spin me-2"></i>Đang thêm...
+                                        </>
+                                    ) : (
+                                        'Thêm câu hỏi'
+                                    )}
+                                </button>
+                            )} */}
                         </div>
                     </motion.div>
                 </motion.div>
