@@ -25,26 +25,27 @@ function Grammar() {
         setLoading(true);
         try {
             const res = await getAllGrammar(page);
+            console.log(res.data.data);
             setGrammars(res.data.data);
-            // Lấy danh sách id người tạo duy nhất
-            const creatorIds = [...new Set(res.data.data.map((item) => item.nguoi_tao))];
+            // // Lấy danh sách id người tạo duy nhất
+            // const creatorIds = [...new Set(res.data.data.map((item) => item.nguoi_tao))];
 
-            // Gọi API lấy tên cho từng id
-            const nameResults = await Promise.all(
-                creatorIds.map((id) =>
-                    getDetailUser(id).then((res) => ({
-                        id,
-                        name: res.data.data.user.nguoi_dung.ten_dang_nhap,
-                    })),
-                ),
-            );
+            // // Gọi API lấy tên cho từng id
+            // const nameResults = await Promise.all(
+            //     creatorIds.map((id) =>
+            //         getDetailUser(id).then((res) => ({
+            //             id,
+            //             name: res.data.data.user.nguoi_dung.ten_dang_nhap,
+            //         })),
+            //     ),
+            // );
 
-            // Tạo map id → tên
-            const nameMap = {};
-            nameResults.forEach(({ id, name }) => {
-                nameMap[id] = name;
-            });
-            setCreatorNames(nameMap);
+            // // Tạo map id → tên
+            // const nameMap = {};
+            // nameResults.forEach(({ id, name }) => {
+            //     nameMap[id] = name;
+            // });
+            // setCreatorNames(nameMap);
 
             setPagination((prev) => ({
                 ...prev,
@@ -142,7 +143,7 @@ function Grammar() {
                                                         : grammar.ghi_chu}
                                                 </td>
                                                 <td>{grammar.id_danh_muc}</td>
-                                                <td>{creatorNames[grammar.nguoi_tao] || '...'}</td>
+                                                <td>{grammar.nguoi_tao_ngu_phap.ho_so.ho_ten}</td>
                                                 <td>{new Date(grammar.thoi_gian_tao).toLocaleDateString()}</td>
                                                 <td>{new Date(grammar.thoi_gian_cap_nhat).toLocaleDateString()}</td>
 

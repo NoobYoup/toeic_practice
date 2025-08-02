@@ -1,7 +1,12 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import { getProfile } from '@/services/userService';
-import { login as loginService, loginGoogle as loginGoogleService } from '@/services/authService';
+import {
+    login as loginService,
+    loginGoogle as loginGoogleService,
+    refreshToken,
+    removeCookies,
+} from '@/services/authService';
 import { toast } from 'react-toastify';
 
 const AuthContext = createContext();
@@ -48,6 +53,7 @@ export const AuthProvider = ({ children }) => {
 
             // Lấy thông tin user từ API
             const res = await getProfile(token);
+
             const userData = res.data.data;
 
             setUser(userData);
@@ -122,7 +128,8 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     // Logout function
-    const logout = useCallback(() => {
+    const logout = useCallback(async () => {
+        await removeCookies();
         localStorage.removeItem('user_token');
         localStorage.removeItem('user_profile');
         setUser(null);
@@ -148,6 +155,30 @@ export const AuthProvider = ({ children }) => {
         [user],
     );
 
+    const refreshAccessToken = useCallback(async () => {
+        try {
+            const res = await refreshToken();
+            const newToken = res.data.token;
+            // localStorage.removeItem('user_token', userToken);
+            localStorage.setItem('user_token', newToken);
+
+            // Decode và cập nhật lại context
+            const decoded = jwtDecode(newToken);
+            setUserToken(decoded);
+
+            // Gọi lại getProfile nếu cần update thông tin user
+            const userRes = await getProfile(newToken);
+            const userData = userRes.data.data;
+            setUser(userData);
+            localStorage.setItem('user_profile', JSON.stringify(userData));
+
+            return decoded;
+        } catch (error) {
+            console.error('Lỗi refresh token:', error);
+            // logout(); // hoặc xử lý khác
+        }
+    }, []);
+
     // Kiểm tra auth khi component mount
     useEffect(() => {
         checkAuth();
@@ -163,6 +194,7 @@ export const AuthProvider = ({ children }) => {
         logout,
         updateProfile,
         checkAuth,
+        refreshAccessToken,
     };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

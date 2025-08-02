@@ -46,6 +46,10 @@ function Part6Detail() {
 
     const questionGroups = Object.values(groupedQuestions);
 
+    if (questionGroups.length === 0) {
+        return <p>Không có câu hỏi cho phần này.</p>;
+    }
+
     return (
         <div className="vstack gap-5">
             {questionGroups.map((group, groupIndex) => (

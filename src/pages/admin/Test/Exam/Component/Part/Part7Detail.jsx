@@ -46,6 +46,10 @@ function Part7Detail() {
 
     const questionGroups = Object.values(groupedQuestions);
 
+    if (questionGroups.length === 0) {
+        return <p>Không có câu hỏi cho phần này.</p>;
+    }
+
     return (
         <div className="vstack gap-5">
             {questionGroups.map((group, groupIndex) => (
@@ -56,36 +60,40 @@ function Part7Detail() {
                             <div className="mb-4 bg-secondary-subtle p-4 rounded-3">
                                 {/* Tiêu đề đoạn văn */}
                                 {group.passage.tieu_de && (
-                                    <h6 className="mb-2" dangerouslySetInnerHTML={{ __html: group.passage.tieu_de }}></h6>
+                                    <h6
+                                        className="mb-2"
+                                        dangerouslySetInnerHTML={{ __html: group.passage.tieu_de }}
+                                    ></h6>
                                 )}
 
                                 {/* Phương tiện (hình ảnh / âm thanh) của đoạn văn */}
-                                {Array.isArray(group.passage.danh_sach_phuong_tien) && group.passage.danh_sach_phuong_tien.length > 0 && (
-                                    <div className="d-flex flex-wrap gap-3 mb-2">
-                                        {group.passage.danh_sach_phuong_tien.map((media) => {
-                                            if (media.loai_phuong_tien === 'hinh_anh') {
-                                                return (
-                                                    <img
-                                                        key={media.id_phuong_tien}
-                                                        src={media.url_phuong_tien}
-                                                        alt={`Hình ảnh đoạn văn ${media.id_phuong_tien}`}
-                                                        className="img-fluid rounded border"
-                                                        style={{ maxWidth: '100%' }}
-                                                    />
-                                                );
-                                            }
-                                            if (media.loai_phuong_tien === 'am_thanh') {
-                                                return (
-                                                    <audio key={media.id_phuong_tien} controls className="w-100">
-                                                        <source src={media.url_phuong_tien} type="audio/mpeg" />
-                                                        Trình duyệt của bạn không hỗ trợ audio.
-                                                    </audio>
-                                                );
-                                            }
-                                            return null;
-                                        })}
-                                    </div>
-                                )}
+                                {Array.isArray(group.passage.danh_sach_phuong_tien) &&
+                                    group.passage.danh_sach_phuong_tien.length > 0 && (
+                                        <div className="d-flex flex-wrap gap-3 mb-2">
+                                            {group.passage.danh_sach_phuong_tien.map((media) => {
+                                                if (media.loai_phuong_tien === 'hinh_anh') {
+                                                    return (
+                                                        <img
+                                                            key={media.id_phuong_tien}
+                                                            src={media.url_phuong_tien}
+                                                            alt={`Hình ảnh đoạn văn ${media.id_phuong_tien}`}
+                                                            className="img-fluid rounded border"
+                                                            style={{ maxWidth: '100%' }}
+                                                        />
+                                                    );
+                                                }
+                                                if (media.loai_phuong_tien === 'am_thanh') {
+                                                    return (
+                                                        <audio key={media.id_phuong_tien} controls className="w-100">
+                                                            <source src={media.url_phuong_tien} type="audio/mpeg" />
+                                                            Trình duyệt của bạn không hỗ trợ audio.
+                                                        </audio>
+                                                    );
+                                                }
+                                                return null;
+                                            })}
+                                        </div>
+                                    )}
 
                                 {/* Nội dung đoạn văn */}
                                 {group.passage.noi_dung && (
@@ -142,7 +150,9 @@ function Part7Detail() {
                                             return (
                                                 <li
                                                     key={choice.ky_tu_lua_chon}
-                                                    className={`list-group-item ${isCorrect ? 'list-group-item-success' : ''}`}
+                                                    className={`list-group-item ${
+                                                        isCorrect ? 'list-group-item-success' : ''
+                                                    }`}
                                                 >
                                                     {choice.ky_tu_lua_chon}) {choice.noi_dung}
                                                     {isCorrect && <span className="badge bg-success ms-2">Đáp án</span>}

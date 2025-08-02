@@ -1,8 +1,8 @@
 import { useParams } from 'react-router-dom';
 import { getDetailBlogPublic } from '@/services/blogService';
 import { createComment, getCommentById, updateComment, deleteComment } from '@/services/commentService';
+import { useAuth } from '@/contexts/AuthContext';
 import { useState, useEffect } from 'react';
-
 import styles from './DetailBlog.module.scss';
 import classNames from 'classnames/bind';
 import { DEFAULT_AVATAR, DEFAULT_BACKGROUND } from '@/constants/default';
@@ -12,6 +12,7 @@ import { jwtDecode } from 'jwt-decode';
 const cx = classNames.bind(styles);
 
 function DetailBlog() {
+    // const { user } = useAuth();
     const { id } = useParams();
     const [blog, setBlog] = useState(null);
 

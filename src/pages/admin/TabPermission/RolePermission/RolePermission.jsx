@@ -1,4 +1,5 @@
 import { getPermissionTable, updatePermissionTable } from '@/services/roleService';
+import { refreshToken } from '@/services/authService';
 import React, { useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import styles from './RolePermission.module.scss';
@@ -21,7 +22,7 @@ function RolePermission() {
         try {
             const res = await getPermissionTable();
             const raw = res.data?.permissions || {};
-            // Flatten permissions and attach group name, also convert roles array → object for O(1) access
+
             const flat = [];
             Object.entries(raw).forEach(([group, list]) => {
                 list.forEach((perm) => {
@@ -48,13 +49,10 @@ function RolePermission() {
         fetchPermissionTable();
     }, []);
 
-    // Determine list of role columns from the first permission entry
     const rolesList =
         permissionTable.length > 0 ? Array.from(new Set(permissionTable.flatMap((p) => Object.keys(p.roles)))) : [];
 
-    // Toggle a specific role's permission state in the UI (local only for now)
     const handleToggle = (ma_quyen, roleKey) => {
-        // if (roleKey === 'quan_tri_vien') return; // admin immutable
         setPermissionTable((prev) =>
             prev.map((p) =>
                 p.ma_quyen === ma_quyen ? { ...p, roles: { ...p.roles, [roleKey]: !p.roles[roleKey] } } : p,
@@ -71,7 +69,6 @@ function RolePermission() {
     const handleSave = async () => {
         setSaving(true);
         try {
-            // Build a roleId map once to avoid looking it up repeatedly
             const roleIdMap = permissionTable.reduce((acc, p) => {
                 if (p.roleIds) {
                     Object.entries(p.roleIds).forEach(([key, id]) => {
@@ -101,10 +98,12 @@ function RolePermission() {
                     const roleId = roleIdMap[roleKey];
                     if (!roleId) continue;
                     const payload = { ds_ma_quyen: currentPerms };
-                    console.log(payload);
+
                     try {
                         await updatePermissionTable(roleId, payload);
                         toast.success(`Cập nhật quyền cho ${ROLE_LABEL[roleKey] || roleKey} thành công!`);
+                        const ress = await refreshToken();
+                        localStorage.setItem('access_token', ress.data.token);
                     } catch {
                         toast.error(`Cập nhật quyền cho ${ROLE_LABEL[roleKey] || roleKey} thất bại!`);
                     }

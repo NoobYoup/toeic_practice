@@ -2,6 +2,8 @@ import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getDetailExamPublic } from '@/services/examService';
 import { submitExamToResult } from '@/services/resultService';
+// import { refreshToken } from '@/services/authService';
+import { useAuth } from '@/contexts/AuthContext';
 import { jwtDecode } from 'jwt-decode';
 import PartWrapper from './Part/PartWrapper.jsx';
 import Part3Test from './Part/Part3Test.jsx';
@@ -16,6 +18,7 @@ import classNames from 'classnames/bind';
 const cx = classNames.bind(styles);
 
 function Test() {
+    const { refreshAccessToken } = useAuth();
     const location = useLocation();
     const { examId } = location.state || {};
     const navigate = useNavigate();
@@ -271,8 +274,8 @@ function Test() {
             }
         }
         // Nếu không có dữ liệu tạm thì set timer mặc định
-        // const durationMinutes = exam.thoi_gian_bai_thi || exam.thoi_gian_thi;
-        const durationMinutes = 1;
+        const durationMinutes = exam.thoi_gian_bai_thi || exam.thoi_gian_thi;
+        // const durationMinutes = 1;
         if (durationMinutes) {
             setRemainingSeconds(durationMinutes * 60);
         }
@@ -327,6 +330,7 @@ function Test() {
             clearDraft(); // Xóa dữ liệu tạm khi nộp bài thành công
 
             navigate(`/result-test/${res.data.data.id_bai_lam_nguoi_dung}`, { state: { result: res.data.data } });
+            await refreshAccessToken();
         } catch (err) {
             console.error(err);
             const msg = err.response?.data?.message || 'Có lỗi xảy ra khi nộp bài';

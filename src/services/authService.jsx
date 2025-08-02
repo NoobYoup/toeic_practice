@@ -4,7 +4,9 @@ import axios from 'axios';
 const API = import.meta.env.VITE_API_BASE_URL;
 
 const login = (data) => {
-    return axios.post(`${API}/auth/login`, data);
+    return axios.post(`${API}/auth/login`, data, {
+        withCredentials: true,
+    });
 };
 
 const register = (data) => {
@@ -44,4 +46,22 @@ const changePassword = (data) => {
     });
 };
 
-export { login, register, forgotPassword, verifyOTP, resetPassword, loginGoogle, changePassword };
+const refreshToken = () => {
+    return axios.post(`${API}/auth/refresh-token`, {}, { withCredentials: true });
+};
+
+const removeCookies = () => {
+    return axios.post(`${API}/auth/logout`, {}, { withCredentials: true });
+};
+
+export {
+    login,
+    register,
+    forgotPassword,
+    verifyOTP,
+    resetPassword,
+    loginGoogle,
+    changePassword,
+    refreshToken,
+    removeCookies,
+};

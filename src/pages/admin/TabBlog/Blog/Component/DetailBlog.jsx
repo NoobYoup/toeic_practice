@@ -144,11 +144,7 @@ function DetailBlog() {
                                             : cx('status-rejected')
                                     }`}
                                 >
-                                    {blog.blog_status === 'approved'
-                                        ? 'Đã duyệt'
-                                        : blog.blog_status === 'pending'
-                                        ? 'Chờ duyệt'
-                                        : 'Từ chối'}
+                                    {blog.blog_status}
                                 </span>
                             </div>
                         </div>

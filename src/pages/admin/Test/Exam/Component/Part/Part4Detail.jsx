@@ -3,7 +3,7 @@ import { useOutletContext } from 'react-router-dom';
 
 function Part4Detail() {
     const { exam } = useOutletContext() || {};
-    
+
     if (!exam) {
         return (
             <div className="text-center">
@@ -46,6 +46,10 @@ function Part4Detail() {
 
     const questionGroups = Object.values(groupedQuestions);
 
+    if (questionGroups.length === 0) {
+        return <p>Không có câu hỏi cho phần này.</p>;
+    }
+
     return (
         <div className="vstack gap-5">
             {questionGroups.map((group, groupIndex) => (
@@ -84,7 +88,9 @@ function Part4Detail() {
                                             return (
                                                 <li
                                                     key={choice.ky_tu_lua_chon}
-                                                    className={`list-group-item ${isCorrect ? 'list-group-item-success' : ''}`}
+                                                    className={`list-group-item ${
+                                                        isCorrect ? 'list-group-item-success' : ''
+                                                    }`}
                                                 >
                                                     {choice.ky_tu_lua_chon}) {choice.noi_dung}
                                                     {isCorrect && <span className="badge bg-success ms-2">Đáp án</span>}

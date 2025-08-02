@@ -5,6 +5,7 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { createBlog, getAllCategory } from '@/services/blogService';
+import { useAuth } from '@/contexts/AuthContext';
 
 import classNames from 'classnames/bind';
 import styles from '@/pages/client/Account/EditAccount/EditAccount.module.scss';
@@ -12,6 +13,7 @@ import styles from '@/pages/client/Account/EditAccount/EditAccount.module.scss';
 const cx = classNames.bind(styles);
 
 function CreateMyBlog() {
+    const { user } = useAuth();
     const [tieu_de, setTieuDe] = useState('');
     const [noi_dung, setNoiDung] = useState('');
     const [id_danh_muc, setIdDanhMuc] = useState(null);
@@ -68,7 +70,7 @@ function CreateMyBlog() {
             setHinhAnh(null);
             setPreviewUrl(null);
             if (fileInputRef.current) fileInputRef.current.value = '';
-            toast.success(res.data.message);
+            toast.success(res.data.data.message);
         } catch (error) {
             console.error(error);
             toast.error(error?.response?.data?.message || 'Tạo bài viết thất bại');
@@ -76,10 +78,13 @@ function CreateMyBlog() {
         setLoading(false);
     };
 
+    console.log(user.ho_so.url_hinh_dai_dien);
+
     return (
         <div className="container py-4 min-vh-100">
             <>
                 <h3 className="mb-4">Thêm bài viết</h3>
+                <img src={user?.ho_so?.url_hinh_dai_dien} alt="img" />
 
                 <div className={`${cx('edit-section')} shadow`}>
                     <h4 className="section-title mb-4">Ảnh bài viết</h4>
