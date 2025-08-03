@@ -63,7 +63,6 @@ function CreateMyBlog() {
             };
             const res = await createBlog(payload);
 
-            // reset form
             setTieuDe('');
             setNoiDung('');
             setIdDanhMuc(null);
@@ -77,8 +76,6 @@ function CreateMyBlog() {
         }
         setLoading(false);
     };
-
-    console.log(user.ho_so.url_hinh_dai_dien);
 
     return (
         <div className="container py-4 min-vh-100">

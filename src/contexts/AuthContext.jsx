@@ -72,7 +72,6 @@ export const AuthProvider = ({ children }) => {
         }
     }, []);
 
-    // Login function
     const login = useCallback(async (credentials) => {
         try {
             const res = await loginService(credentials);
@@ -100,7 +99,6 @@ export const AuthProvider = ({ children }) => {
         }
     }, []);
 
-    // Google login function
     const loginGoogle = useCallback(async (credentialResponse) => {
         try {
             const res = await loginGoogleService(credentialResponse.credential);
@@ -127,7 +125,6 @@ export const AuthProvider = ({ children }) => {
         }
     }, []);
 
-    // Logout function
     const logout = useCallback(async () => {
         await removeCookies();
         localStorage.removeItem('user_token');
@@ -137,7 +134,6 @@ export const AuthProvider = ({ children }) => {
         setUserToken(null);
     }, []);
 
-    // Update user profile
     const updateProfile = useCallback(
         (newProfileData) => {
             setUser((prev) => ({
@@ -159,7 +155,7 @@ export const AuthProvider = ({ children }) => {
         try {
             const res = await refreshToken();
             const newToken = res.data.token;
-            // localStorage.removeItem('user_token', userToken);
+
             localStorage.setItem('user_token', newToken);
 
             // Decode và cập nhật lại context
@@ -175,7 +171,6 @@ export const AuthProvider = ({ children }) => {
             return decoded;
         } catch (error) {
             console.error('Lỗi refresh token:', error);
-            // logout(); // hoặc xử lý khác
         }
     }, []);
 

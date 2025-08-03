@@ -22,7 +22,6 @@ function Grammar() {
         danh_muc: '',
     });
 
-    // Gọi API khi filters hoặc currentPage thay đổi
     useEffect(() => {
         fetchGrammarHome();
     }, [filters, currentPage]);
@@ -30,7 +29,6 @@ function Grammar() {
     const fetchGrammarHome = async () => {
         setLoading(true);
         try {
-            // Log params để debug
             const res = await getGrammarHome(currentPage, filters);
             setGrammars(res.data.data);
             setPagination((prev) => ({
@@ -46,7 +44,6 @@ function Grammar() {
         }
     };
 
-    // Tạo options cho Select, thêm option 'Tất cả'
     const categoryOptions = [
         { value: '', label: 'Tất cả' },
         ...categories.map((category) => ({
@@ -55,10 +52,8 @@ function Grammar() {
         })),
     ];
 
-    // Lấy option đã chọn dựa trên filters
     const selectedCategory = categoryOptions.find((opt) => String(opt.value) === String(filters.danh_muc ?? ''));
 
-    // Khi chọn danh mục, lưu vào localStorage, reset về trang 1
     const handleSelectChange = (selectedOption) => {
         setCurrentPage(1);
         setFilters((prev) => ({

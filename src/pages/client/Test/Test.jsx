@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getDetailExamPublic } from '@/services/examService';
 import { submitExamToResult } from '@/services/resultService';
-// import { refreshToken } from '@/services/authService';
 import { useAuth } from '@/contexts/AuthContext';
 import { jwtDecode } from 'jwt-decode';
 import PartWrapper from './Part/PartWrapper.jsx';
@@ -30,10 +29,8 @@ function Test() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [answers, setAnswers] = useState({});
 
-    // Global flag để đánh dấu khi đang nộp bài (tránh race condition)
     const isSubmittingGlobal = useRef(false);
 
-    // Sử dụng useRef để tránh vòng lặp vô hạn
     const lastPathnameRef = useRef(location.pathname);
     const isNavigatingRef = useRef(false);
     const isInitialMountRef = useRef(true);
@@ -239,7 +236,6 @@ function Test() {
 
             setExam(res.data.data);
         } catch (err) {
-            // eslint-disable-next-line no-console
             console.error(err);
         }
         setLoading(false);
@@ -251,7 +247,6 @@ function Test() {
             return;
         }
         fetchExam();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [examId]);
 
     // Khi load xong exam, kiểm tra và load dữ liệu tạm nếu có
@@ -263,14 +258,12 @@ function Test() {
             try {
                 const draft = JSON.parse(draftStr);
                 if (draft && draft.remainingSeconds > 0 && draft.answers) {
-                    // console.log('Loading draft data:', draft);
                     setAnswers(draft.answers);
                     setRemainingSeconds(draft.remainingSeconds);
                     return; // Nếu có dữ liệu tạm thì không set lại timer mặc định
                 }
             } catch (error) {
                 console.error('Error parsing draft data:', error);
-                // Nếu lỗi parse thì bỏ qua
             }
         }
         // Nếu không có dữ liệu tạm thì set timer mặc định
@@ -294,21 +287,21 @@ function Test() {
         const decoded = jwtDecode(token);
         const userId = decoded.id_nguoi_dung;
 
-        // === B1: Chuẩn bị danh sách câu hỏi đầy đủ ===
+        // B1: Chuẩn bị danh sách câu hỏi đầy đủ
         const allQuestions = exam.cau_hoi_cua_bai_thi.map((item) => ({
             id_cau_hoi: item.cau_hoi.id_cau_hoi,
             dap_an_dung: item.cau_hoi.dap_an_dung,
             phan: { loai_phan: item.cau_hoi.phan?.loai_phan || 'reading' },
         }));
 
-        // === B2: Chuẩn bị câu trả lời người dùng ===
+        // B2: Chuẩn bị câu trả lời người dùng
         const userAnswers = allQuestions.map((q) => ({
             id_cau_hoi: q.id_cau_hoi,
             lua_chon_da_chon: answers[q.id_cau_hoi] || '',
         }));
 
-        // === B3: Chấm điểm bằng hàm chamDiemToeic ===
-        const result = chamDiemToeic(allQuestions, userAnswers); // { diemNghe, diemDoc, tongDiem, chiTietCauTraLoi }
+        // B3: Chấm điểm bằng hàm chamDiemToeic
+        const result = chamDiemToeic(allQuestions, userAnswers);
 
         const payload = {
             id_nguoi_dung: userId,
@@ -316,7 +309,7 @@ function Test() {
             diem_nghe: result.diemNghe,
             diem_doc: result.diemDoc,
             tong_diem: result.tongDiem,
-            chi_tiet_cau_tra_loi: result.chiTietCauTraLoi, // [{id_cau_hoi, lua_chon_da_chon, la_dung, da_tra_loi}]
+            chi_tiet_cau_tra_loi: result.chiTietCauTraLoi,
         };
 
         setIsSubmitting(true);
@@ -339,7 +332,7 @@ function Test() {
 
         setIsSubmitting(false);
         // Giữ nguyên isSubmittingGlobal cho tới khi component unmount để tránh hộp thoại confirm khi điều hướng sau khi nộp bài thành công
-    }, [exam, answers, navigate, clearDraft]); // Dependencies cho useCallback
+    }, [exam, answers, navigate, clearDraft]);
 
     // Reset isSubmittingGlobal khi component bị unmount
     useEffect(() => {
@@ -460,11 +453,8 @@ function Test() {
 
     // xử lý chọn đáp án
     const handleAnswerSelect = (questionId, choiceLetter) => {
-        // console.log('Answer selected:', { questionId, choiceLetter });
-        // console.log('Current answers count:', Object.keys(answers).length);
         setAnswers((prev) => {
             const newAnswers = { ...prev, [questionId]: choiceLetter };
-            // console.log('New answers count:', Object.keys(newAnswers).length);
             return newAnswers;
         });
     };
@@ -495,7 +485,6 @@ function Test() {
 
     useEffect(() => {
         if (remainingSeconds === 0) {
-            // Không cần clearDraft() ở đây vì handleSubmit() sẽ được gọi và xử lý việc này
             // clearDraft() được gọi trong handleSubmit() sau khi nộp bài thành công
         }
     }, [remainingSeconds]);

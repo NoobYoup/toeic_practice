@@ -24,17 +24,14 @@ function AdminLayout() {
                 </div>
             </nav>
 
-            {/* Overlay for small screens */}
             {isSidebarOpen && <div className="overlay d-lg-none" onClick={closeSidebar}></div>}
 
             <div className="container-fluid">
                 <div className="row">
-                    {/* Sidebar - hidden below 992px */}
                     <div className={`col-8 col-lg-2 p-0 sidebar ${isSidebarOpen ? 'open' : ''}`}>
                         <Sidebar />
                     </div>
 
-                    {/* Content takes full width below 992px */}
                     <div className="col-12 col-lg-10 content-wrapper p-4">
                         <Outlet />
                     </div>

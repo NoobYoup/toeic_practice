@@ -1,7 +1,6 @@
-import { Link } from 'react-router-dom';
 import { DEFAULT_BACKGROUND } from '@/constants/default';
 import './HeroSection.scss';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import EntranceExamModal from '@/components/client/Modal/EntranceExamModal';
 import Login from '@/components/client/Modal/Login';

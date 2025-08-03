@@ -4,7 +4,6 @@ import { getAllQuestion } from '@/services/questionService.jsx';
 import { getAllExam } from '@/services/examService.jsx';
 import { getAllUser } from '@/services/userService.jsx';
 import { getAllResultExam } from '@/services/resultService.jsx';
-import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 import classNames from 'classnames/bind';
 
@@ -32,7 +31,6 @@ function Dashboard() {
             setStats({ questions: questionsTotal, exams: examsTotal, users: usersTotal, results: resultsTotal });
         } catch (error) {
             console.error('Lỗi khi lấy thống kê:', error);
-            // toast.error('Không thể tải dữ liệu thống kê');
         }
         setLoading(false);
     }, []);

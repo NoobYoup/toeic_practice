@@ -25,7 +25,6 @@ function DetailTest() {
 
     const navigate = useNavigate();
 
-    // hàm để kiểm tra và điều hướng đến bài thi
     const checkAndNavigateToExam = async () => {
         setLoadingCheckEntry(true);
         try {

@@ -10,9 +10,9 @@ import styles from './EditUser.module.scss';
 const cx = classNames.bind(styles);
 
 function EditUser() {
-    const { id } = useParams(); // lấy ID từ URL
+    const { id } = useParams();
     const navigate = useNavigate();
-    const fileInputRef = useRef(null); // Ref for file input
+    const fileInputRef = useRef(null);
     const [user, setUser] = useState(null);
     const [formData, setFormData] = useState({
         ten_dang_nhap: '',
@@ -26,8 +26,6 @@ function EditUser() {
         gioi_thieu: '',
     });
     const [loading, setLoading] = useState(false);
-    const [saving, setSaving] = useState(false);
-    const [roles, setRoles] = useState([]);
     const [roleOptions, setRoleOptions] = useState([]);
     const [selectedRole, setSelectedRole] = useState(null);
     const [success, setSuccess] = useState(null);
@@ -42,7 +40,6 @@ function EditUser() {
         try {
             const res = await getAllRolePermission();
             const rolesData = res.data?.data || [];
-            setRoles(rolesData);
 
             const options = rolesData.map((role) => ({
                 value: String(role.id_vai_tro),
@@ -59,7 +56,6 @@ function EditUser() {
         fetchRoles();
     }, [fetchRoles]);
 
-    // Đồng bộ selectedRole khi danh sách roleOptions hoặc formData.vai_tro thay đổi
     useEffect(() => {
         if (roleOptions.length) {
             const found = roleOptions.find((opt) => opt.value === formData.vai_tro);
@@ -75,7 +71,6 @@ function EditUser() {
 
                 const userData = res.data.data.user;
 
-                // Flatten role id for easier access in UI state
                 setUser({ ...userData, vai_tro: userData.nguoi_dung?.id_vai_tro });
 
                 setFormData({
@@ -119,14 +114,11 @@ function EditUser() {
         setLoading(true);
 
         try {
-            // Không gửi vai_tro cùng với editUser
-            const { vai_tro, ...otherFields } = formData;
+            const { ...otherFields } = formData;
             const res = await editUser(id, otherFields, selectedFile);
 
             toast.success(res.data.message);
 
-            // setSuccess('Cập nhật thông tin người dùng thành công!');
-            //Update user state with new image URL if returned
             if (res.data.data?.url_hinh_dai_dien) {
                 setUser((prev) => ({
                     ...prev,
@@ -134,9 +126,9 @@ function EditUser() {
                 }));
                 setPreviewUrl(res.data.data.url_hinh_dai_dien);
             }
-            setSelectedFile(null); // Clear file input
+            setSelectedFile(null);
             if (fileInputRef.current) {
-                fileInputRef.current.value = ''; // Clear file input
+                fileInputRef.current.value = '';
             }
 
             navigate(`/admin/user/detail-user/${id}`);
@@ -147,7 +139,6 @@ function EditUser() {
         setLoading(false);
     };
 
-    // Cập nhật vai trò riêng lẻ
     const handleUpdateRole = async () => {
         if (!selectedRole) {
             toast.error('Vui lòng chọn vai trò');
@@ -168,14 +159,12 @@ function EditUser() {
     const handleFileChange = (e) => {
         const file = e.target.files?.[0];
         if (file) {
-            // Validate file type and size
             const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
             if (!validTypes.includes(file.type)) {
                 setError('Chỉ hỗ trợ định dạng JPG, PNG, GIF');
                 return;
             }
             if (file.size > 5 * 1024 * 1024) {
-                // 5MB limit
                 setError('Kích thước ảnh không được vượt quá 5MB');
                 return;
             }
@@ -300,7 +289,7 @@ function EditUser() {
                                         id="vai_tro"
                                         className="basic-single"
                                         classNamePrefix="select"
-                                        isDisabled={loading || saving}
+                                        isDisabled={loading}
                                         isLoading={loading}
                                         isClearable={false}
                                         isSearchable={true}

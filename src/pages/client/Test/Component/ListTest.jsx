@@ -21,7 +21,6 @@ function ListTest() {
             const response = token ? await getAllExamUser(page, filters) : await getAllExamPublic(page, filters);
             setExams(response.data.data);
 
-            // Extract unique years from dsNamXuatBan if available
             if (response.data.dsNamXuatBan && Array.isArray(response.data.dsNamXuatBan)) {
                 const years = response.data.dsNamXuatBan.map((item) => item.nam_xuat_ban).sort((a, b) => b - a); // Sort in descending order (newest first)
                 setPublicationYears(years);

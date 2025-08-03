@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { createPermission } from '@/services/permissionService';
 
@@ -7,8 +7,6 @@ function CreatePermission() {
     const [tenQuyen, setTenQuyen] = useState('');
     const [maQuyen, setMaQuyen] = useState('');
     const [loading, setLoading] = useState(false);
-
-    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();

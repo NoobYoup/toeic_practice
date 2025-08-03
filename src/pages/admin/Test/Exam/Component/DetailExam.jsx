@@ -36,9 +36,6 @@ function DetailExam() {
         fetchExam();
     }, [id]);
 
-    /* ------------------------------------------------------------ */
-    /* TÍNH SỐ THỨ TỰ CÂU HỎI THEO TỪNG PHẦN                       */
-    /* ------------------------------------------------------------ */
     // Chuẩn bị dữ liệu đếm số câu hỏi cho mỗi phần
     const questionCounts = {};
     if (exam && Array.isArray(exam.cau_hoi_cua_bai_thi)) {
@@ -150,7 +147,6 @@ function DetailExam() {
 
                     <div className="col-md-3">
                         <div className={`${cx('question-nav')} mb-4`}>
-                            {/* ---------------------- LISTENING ---------------------- */}
                             {listeningParts.length > 0 && (
                                 <>
                                     <h5 className="mb-3">Listening ({listeningTotal} câu)</h5>
@@ -174,7 +170,6 @@ function DetailExam() {
                                 </>
                             )}
 
-                            {/* ---------------------- READING ----------------------- */}
                             {readingParts.length > 0 && (
                                 <>
                                     <h5 className="mb-3">Reading ({readingTotal} câu)</h5>

@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import ReactPaginate from 'react-paginate';
-import { format } from 'date-fns';
-import { vi } from 'date-fns/locale';
 import { jwtDecode } from 'jwt-decode';
 import { getAllPermission, deletePermission } from '@/services/permissionService';
 
@@ -22,7 +20,7 @@ function RolePermission() {
         try {
             const res = await getAllPermission();
 
-            setPermissions(res.data?.data || res.data); // tuỳ cấu trúc API
+            setPermissions(res.data?.data || res.data);
         } catch (error) {
             console.error(error);
         }
@@ -33,7 +31,6 @@ function RolePermission() {
         fetchAllPermission();
     }, []);
 
-    // Pagination helpers
     const pageCount = Math.ceil(permissions.length / itemsPerPage);
     const displayedPermissions = permissions.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
     const handlePageClick = (selectedItem) => {

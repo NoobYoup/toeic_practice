@@ -11,9 +11,8 @@ function Part3Detail() {
         );
     }
 
-    /* ------------------------------------------------------------ */
-    /* TÍNH SỐ THỨ TỰ BẮT ĐẦU CHO PART 3                            */
-    /* ------------------------------------------------------------ */
+    // TÍNH SỐ THỨ TỰ BẮT ĐẦU CHO PART 3
+
     let startNumber = 1;
     if (Array.isArray(exam.cau_hoi_cua_bai_thi)) {
         const countsBefore = {};
@@ -56,7 +55,6 @@ function Part3Detail() {
             {questionGroups.map((group, groupIndex) => (
                 <div className="card" key={group.audio?.id_phuong_tien || `group-${groupIndex}`}>
                     <div className="card-body">
-                        {/* Hiển thị audio nếu có */}
                         {group.audio?.url_phuong_tien && (
                             <div className="mb-4">
                                 <h6 className="mb-2">Âm thanh:</h6>

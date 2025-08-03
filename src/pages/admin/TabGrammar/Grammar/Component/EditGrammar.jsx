@@ -21,7 +21,6 @@ function EditGrammar() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Lấy danh mục
                 const catRes = await getAllCategoryGrammar();
                 const options = catRes.data.data.map((cat) => ({
                     value: Number(cat.id_danh_muc),
@@ -29,7 +28,7 @@ function EditGrammar() {
                 }));
 
                 setCategoryOptions(options);
-                // Lấy chi tiết ngữ pháp
+
                 const grammarRes = await getDetailGrammar(id);
                 const grammar = grammarRes.data.data;
                 setFormData({

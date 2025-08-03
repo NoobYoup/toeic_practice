@@ -21,7 +21,7 @@ function CreateRole() {
                 mo_ta: moTa.trim(),
                 is_admin: isAdmin,
             };
-            console.log(payload);
+
             const res = await createRole(payload);
             toast.success(res.data?.message);
             navigate('/admin/tab-permission/role');

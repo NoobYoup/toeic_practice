@@ -9,7 +9,6 @@ function ForgotPassword({ isOpen, onSwitch, onClose, email, setEmail }) {
     const [loadingAPI, setLoadingAPI] = useState(false);
     const modalRef = useRef(null);
 
-    // Clear form and messages every time this modal is opened
     useEffect(() => {
         if (isOpen) {
             setMessage('');
@@ -27,11 +26,10 @@ function ForgotPassword({ isOpen, onSwitch, onClose, email, setEmail }) {
         try {
             const res = await forgotPassword({ email });
             setMessage(res.message || 'Mã OTP đã được gửi đến email của bạn');
-            onSwitch('otp'); // Switch to OTP modal on success
+            onSwitch('otp');
         } catch (err) {
             const msg = err.response?.data?.message || 'Không thể gửi mã OTP. Vui lòng thử lại.';
             toast.error(msg);
-            // setError(msg);
         }
         setLoadingAPI(false);
     };

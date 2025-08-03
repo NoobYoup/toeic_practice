@@ -27,7 +27,6 @@ function DetailUser() {
                 console.error(err);
                 if (err.response?.status === 401) {
                     setError('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
-                    // Optionally redirect to login page
                     navigate('/admin');
                 } else {
                     setError('Không thể tải thông tin người dùng');
@@ -37,13 +36,13 @@ function DetailUser() {
         };
 
         fetchUser();
-    }, [id]); // Re-run when ID changes
+    }, [id]);
 
     const handleDelete = async () => {
         if (window.confirm('Bạn có chắc chắn muốn xóa người dùng này không?')) {
             try {
                 await deleteUser(id);
-                navigate('/admin/user'); // Redirect to user list after deletion
+                navigate('/admin/user');
             } catch (error) {
                 console.error('Error deleting user:', error);
                 setError('Không thể xóa tài khoản');

@@ -1,7 +1,6 @@
 import { useParams } from 'react-router-dom';
 import { getDetailBlogPublic } from '@/services/blogService';
 import { createComment, getCommentById, updateComment, deleteComment } from '@/services/commentService';
-import { useAuth } from '@/contexts/AuthContext';
 import { useState, useEffect } from 'react';
 import styles from './DetailBlog.module.scss';
 import classNames from 'classnames/bind';
@@ -12,7 +11,6 @@ import { jwtDecode } from 'jwt-decode';
 const cx = classNames.bind(styles);
 
 function DetailBlog() {
-    // const { user } = useAuth();
     const { id } = useParams();
     const [blog, setBlog] = useState(null);
 
@@ -137,10 +135,6 @@ function DetailBlog() {
             window.confirm('Bạn có chắc chắn muốn xóa bình luận này không?');
             const res = await deleteComment(id);
             toast.success(res.data.message);
-            // setIdBinhLuanCha(null);
-            // setEditingCommentId(null);
-            // setReplyContent('');
-            // setReplyingCommentId(null);
             fetchComment();
         } catch (error) {
             console.log(error);
@@ -392,7 +386,6 @@ function DetailBlog() {
                                             </div>
                                         </div>
 
-                                        {/* Render phản hồi 1 cấp */}
                                         {item.phan_hoi && item.phan_hoi.length > 0 && (
                                             <div className="mt-3 ms-5">
                                                 {item.phan_hoi.map((reply) => (
@@ -448,7 +441,6 @@ function DetailBlog() {
                                                                 <p>{reply.noi_dung}</p>
                                                             )}
                                                             <div className="d-flex align-items-center gap-2">
-                                                                {/* Không có nút phản hồi ở cấp con */}
                                                                 {reply.id_nguoi_dung === userId && (
                                                                     <>
                                                                         <a
@@ -484,55 +476,6 @@ function DetailBlog() {
                                 ))}
                             </div>
                         </div>
-
-                        {/* <div className="col-lg-4">
-                            <div className={`${cx('toc')}`}>
-                                <h5 className="fw-bold mb-3">Thông tin bài viết</h5>
-                                <ul>
-                                    <li>
-                                        <span>Trạng thái: </span>
-                                        <span className="text-muted fst-italic">{blog?.blog_status}</span>
-                                    </li>
-                                    <li>
-                                        <span>Danh mục bài viết</span>
-                                        <ul>
-                                            <li>
-                                                <span>ID danh mục: </span>
-                                                <span className="text-muted fst-italic">{blog?.id_danh_muc}</span>
-                                            </li>
-                                            <li>
-                                                <span>Tên danh mục: </span>
-                                                <span className="text-muted fst-italic">
-                                                    {blog?.danh_muc_bai_viet.ten_danh_muc}
-                                                </span>
-                                            </li>
-                                            <li>
-                                                <span>Mô tả danh mục: </span>
-                                                <span className="text-muted fst-italic">
-                                                    {blog?.danh_muc_bai_viet.mo_ta}
-                                                </span>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <span>ID bài viết: </span>
-                                        <span className="text-muted fst-italic">{blog?.id_bai_viet}</span>
-                                    </li>
-                                    <li>
-                                        <span>Ngày đăng: </span>
-                                        <span className="text-muted fst-italic">
-                                            {new Date(blog?.thoi_gian_tao).toLocaleString()}
-                                        </span>
-                                    </li>
-                                    <li>
-                                        <span>Ngày cập nhật: </span>
-                                        <span className="text-muted fst-italic">
-                                            {new Date(blog?.thoi_gian_cap_nhat).toLocaleString()}
-                                        </span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div> */}
                     </div>
                 )}
             </div>

@@ -11,7 +11,6 @@ function Register({ isOpen, onSwitch, onClose }) {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const modalRef = useRef(null);
 
-    // Clear error messages every time this modal is reopened
     useEffect(() => {
         if (isOpen) {
             setErrors({});
@@ -26,7 +25,6 @@ function Register({ isOpen, onSwitch, onClose }) {
     const handleRegister = async (e) => {
         e.preventDefault();
 
-        // Client-side validation: confirm password must match
         if (form.mat_khau !== form.mat_khau_xac_nhan) {
             setErrors((prev) => ({
                 ...prev,
@@ -39,7 +37,6 @@ function Register({ isOpen, onSwitch, onClose }) {
         try {
             setErrors({});
             await register(form);
-            // onClose();
             onSwitch('login');
             toast.success('Đăng ký thành công');
         } catch (err) {
@@ -51,7 +48,6 @@ function Register({ isOpen, onSwitch, onClose }) {
                 });
                 setErrors(newErrors);
             } else {
-                // setErrors({ general: 'Đăng ký thất bại. Vui lòng thử lại.' });
                 toast.error('Đăng ký thất bại. Vui lòng thử lại.');
             }
         }
@@ -167,12 +163,21 @@ function Register({ isOpen, onSwitch, onClose }) {
                                             <input
                                                 type={showConfirmPassword === true ? 'text' : 'password'}
                                                 name="mat_khau_xac_nhan"
-                                                className={`form-control ${errors.mat_khau_xac_nhan ? 'is-invalid' : ''}`}
+                                                className={`form-control ${
+                                                    errors.mat_khau_xac_nhan ? 'is-invalid' : ''
+                                                }`}
                                                 placeholder="Nhập lại mật khẩu"
                                                 value={form.mat_khau_xac_nhan}
                                                 onChange={handleChange}
                                             />
-                                            <i className={showConfirmPassword === true ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash'} onClick={() => setShowConfirmPassword(!showConfirmPassword)}></i>
+                                            <i
+                                                className={
+                                                    showConfirmPassword === true
+                                                        ? 'fa-solid fa-eye'
+                                                        : 'fa-solid fa-eye-slash'
+                                                }
+                                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                            ></i>
                                         </div>
                                         {errors.mat_khau_xac_nhan &&
                                             errors.mat_khau_xac_nhan.split('\n').map((e, i) => (

@@ -10,9 +10,9 @@ import styles from '@/pages/admin/User/Component/EditUser.module.scss';
 const cx = classNames.bind(styles);
 
 function EditProfile() {
-    const { id } = useParams(); // lấy ID từ URL
+    const { id } = useParams();
     const navigate = useNavigate();
-    const fileInputRef = useRef(null); // Ref for file input
+    const fileInputRef = useRef(null);
     const [user, setUser] = useState(null);
     const [formData, setFormData] = useState({
         ten_dang_nhap: '',
@@ -26,23 +26,18 @@ function EditProfile() {
         gioi_thieu: '',
     });
     const [loading, setLoading] = useState(false);
-    const [saving, setSaving] = useState(false);
-    const [roles, setRoles] = useState([]);
     const [roleOptions, setRoleOptions] = useState([]);
     const [selectedRole, setSelectedRole] = useState(null);
     const [success, setSuccess] = useState(null);
     const [selectedFile, setSelectedFile] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
     const [error, setError] = useState(null);
-    const [updatingRole, setUpdatingRole] = useState(false);
     const [listStatus, setListStatus] = useState([]);
-    const [userRole, setUserRole] = useState(null);
 
     const fetchRoles = useCallback(async () => {
         try {
             const res = await getAllRolePermission();
             const rolesData = res.data?.data || [];
-            setRoles(rolesData);
 
             const options = rolesData.map((role) => ({
                 value: String(role.id_vai_tro),
@@ -59,7 +54,6 @@ function EditProfile() {
         fetchRoles();
     }, [fetchRoles]);
 
-    // Đồng bộ selectedRole khi danh sách roleOptions hoặc formData.vai_tro thay đổi
     useEffect(() => {
         if (roleOptions.length) {
             const found = roleOptions.find((opt) => opt.value === formData.vai_tro);
@@ -75,7 +69,6 @@ function EditProfile() {
 
                 const userData = res.data.data.user;
 
-                // Flatten role id for easier access in UI state
                 setUser({ ...userData, vai_tro: userData.nguoi_dung?.id_vai_tro });
 
                 setFormData({
@@ -92,7 +85,6 @@ function EditProfile() {
 
                 setPreviewUrl(userData.url_hinh_dai_dien || '');
                 setListStatus(res.data.data.listStatus);
-                setUserRole(userData.nguoi_dung?.id_vai_tro);
             } catch (err) {
                 console.error('Error updating user:', err);
                 if (err.response?.status === 401) {
@@ -125,8 +117,6 @@ function EditProfile() {
 
             toast.success(res.data.message);
 
-            // setSuccess('Cập nhật thông tin người dùng thành công!');
-            //Update user state with new image URL if returned
             if (res.data.data?.url_hinh_dai_dien) {
                 setUser((prev) => ({
                     ...prev,
@@ -134,9 +124,9 @@ function EditProfile() {
                 }));
                 setPreviewUrl(res.data.data.url_hinh_dai_dien);
             }
-            setSelectedFile(null); // Clear file input
+            setSelectedFile(null);
             if (fileInputRef.current) {
-                fileInputRef.current.value = ''; // Clear file input
+                fileInputRef.current.value = '';
             }
 
             navigate(`/admin/user/detail-user/${id}`);
@@ -150,14 +140,12 @@ function EditProfile() {
     const handleFileChange = (e) => {
         const file = e.target.files?.[0];
         if (file) {
-            // Validate file type and size
             const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
             if (!validTypes.includes(file.type)) {
                 setError('Chỉ hỗ trợ định dạng JPG, PNG, GIF');
                 return;
             }
             if (file.size > 5 * 1024 * 1024) {
-                // 5MB limit
                 setError('Kích thước ảnh không được vượt quá 5MB');
                 return;
             }
@@ -282,7 +270,7 @@ function EditProfile() {
                                         id="vai_tro"
                                         className="basic-single"
                                         classNamePrefix="select"
-                                        isDisabled={loading || saving || true}
+                                        isDisabled={loading || true}
                                         isLoading={loading}
                                         isClearable={false}
                                         isSearchable={true}

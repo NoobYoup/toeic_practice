@@ -5,19 +5,14 @@ import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import { toast } from 'react-toastify';
 import { jwtDecode } from 'jwt-decode';
-import styles from './Exam.module.scss';
 import { getAllExam, deleteExam } from '@/services/examService';
 import { getDetailUser } from '@/services/userService';
-import classNames from 'classnames/bind';
 import { useState, useEffect } from 'react';
-
-const cx = classNames.bind(styles);
 
 function Exam() {
     const [exams, setExams] = useState([]);
     const [creatorNames, setCreatorNames] = useState({});
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
     const [filters, setFilters] = useState({});
     const [currentPage, setCurrentPage] = useState(1);
 
@@ -34,10 +29,8 @@ function Exam() {
         try {
             const res = await getAllExam(currentPage, filters);
             setExams(res.data.data);
-            // Lấy danh sách id người tạo duy nhất
             const creatorIds = [...new Set(res.data.data.map((item) => item.nguoi_tao))];
 
-            // Gọi API lấy tên cho từng id
             const nameResults = await Promise.all(
                 creatorIds.map((id) =>
                     getDetailUser(id).then((res) => ({
@@ -47,7 +40,6 @@ function Exam() {
                 ),
             );
 
-            // Tạo map id → tên
             const nameMap = {};
             nameResults.forEach(({ id, name }) => {
                 nameMap[id] = name;
@@ -81,7 +73,7 @@ function Exam() {
                 })),
             ]);
         } catch (error) {
-            setError(error);
+            console.error(error);
         }
         setLoading(false);
     };
@@ -231,7 +223,6 @@ function Exam() {
                                                         {user.permissions.includes('EXAM_DETAIL') ? (
                                                             <Link
                                                                 to={`detail-exam/${exam.id_bai_thi}`}
-                                                                // onClick={() => localStorage.setItem('examId', exam.id_bai_thi)}
                                                                 className="btn btn-sm btn-outline-info"
                                                             >
                                                                 <i className="fas fa-eye"></i>

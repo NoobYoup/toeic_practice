@@ -121,19 +121,20 @@ function History() {
                                                     </span>
                                                     <div className="mt-2">
                                                         <span className={cx('time-badge')}>
-                                                            <i className="fas fa-clock me-1"></i>120 phút
+                                                            <i className="fas fa-clock me-1"></i>
+                                                            {exam.bai_thi_nguoi_dung.thoi_gian_bai_thi}
                                                         </span>
                                                     </div>
                                                 </div>
                                                 <div className="col-md-4">
                                                     <div className={cx('skill-breakdown')}>
                                                         <div className="d-flex align-items-center">
-                                                            <small className="text-muted me-2">Listening:</small>
+                                                            <small className="text-muted me-2 fs-6">Listening:</small>
                                                             <strong>{exam.diem_nghe}</strong>
                                                         </div>
 
                                                         <div className="d-flex align-items-center">
-                                                            <small className="text-muted me-2">Reading:</small>
+                                                            <small className="text-muted me-2 fs-6">Reading:</small>
                                                             <strong>{exam.diem_doc}</strong>
                                                         </div>
                                                     </div>

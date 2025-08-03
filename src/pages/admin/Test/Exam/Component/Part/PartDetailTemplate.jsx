@@ -58,12 +58,7 @@ function PartDetailTemplate({ partId }) {
                         )}
 
                         {/* Nội dung câu hỏi */}
-                        {q.noi_dung && (
-                            <p
-                                className="fw-semibold"
-                                dangerouslySetInnerHTML={{ __html: q.noi_dung }}
-                            ></p>
-                        )}
+                        {q.noi_dung && <p className="fw-semibold" dangerouslySetInnerHTML={{ __html: q.noi_dung }}></p>}
 
                         {/* Danh sách đáp án */}
                         <ul className="list-group">
@@ -93,4 +88,4 @@ function PartDetailTemplate({ partId }) {
     );
 }
 
-export default PartDetailTemplate; 
+export default PartDetailTemplate;

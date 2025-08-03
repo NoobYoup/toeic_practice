@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import ReactPaginate from 'react-paginate';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
-import { toast } from 'react-toastify';
 import { jwtDecode } from 'jwt-decode';
 
 import { getAllResultExam } from '@/services/resultService.jsx';
@@ -11,9 +10,7 @@ import { getAllResultExam } from '@/services/resultService.jsx';
 function Result() {
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
 
-    // Client-side pagination
     const [currentPage, setCurrentPage] = useState(1);
     const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0 });
 
@@ -29,8 +26,6 @@ function Result() {
             setPagination((prev) => ({ ...prev, total: res.data?.data?.length || 0 }));
         } catch (err) {
             console.error(err);
-            setError(err);
-            // toast.error(err.response?.data?.message || 'Không thể tải dữ liệu');
         }
         setLoading(false);
     };
@@ -43,7 +38,6 @@ function Result() {
         setCurrentPage(data.selected + 1);
     };
 
-    // Slice data for current page
     const startIdx = (currentPage - 1) * pagination.limit;
     const currentData = results.slice(startIdx, startIdx + pagination.limit);
 
@@ -117,7 +111,6 @@ function Result() {
                                                         {user.permissions.includes('RESULT_DETAIL') ? (
                                                             <Link
                                                                 to={`detail-result/${item.id_bai_lam_nguoi_dung}`}
-                                                                // onClick={() => localStorage.setItem('examId', exam.id_bai_thi)}
                                                                 className="btn btn-sm btn-outline-info"
                                                             >
                                                                 <i className="fas fa-eye"></i>

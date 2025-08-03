@@ -17,7 +17,7 @@ function VerifyOTP({ isOpen, onSwitch, onClose, email }) {
         try {
             const res = await verifyOTP({ email, otp_code });
             setMessage(res.message || 'Xác minh thành công.');
-            onSwitch('reset'); // Switch to ResetPassword modal on success
+            onSwitch('reset');
         } catch (err) {
             const msg = err.response?.data?.message || 'Xác minh thất bại. Vui lòng kiểm tra lại mã OTP.';
             setError(msg);

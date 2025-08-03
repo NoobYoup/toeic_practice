@@ -8,18 +8,14 @@ function PracticeSection() {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
 
-    // Hiện tại chưa cần bộ lọc nên bỏ qua
-
     useEffect(() => {
         const fetchExams = async () => {
             setLoading(true);
             try {
                 const response = await getAllExamPublic(page);
 
-                // Gán danh sách đề thi
                 setExams(response.data.data);
 
-                // Tính tổng số trang từ API (tùy thuộc vào cấu trúc response)
                 const pagination = response.data.pagination;
                 if (pagination) {
                     const { total = 1, limit = 1 } = pagination;
@@ -42,14 +38,12 @@ function PracticeSection() {
                     <h2 className="fw-bold">Đề thi luyện tập</h2>
                 </div>
 
-                {/* Hiển thị loading */}
                 {loading && (
                     <div className="text-center py-5">
                         <i className="fas fa-spinner fa-spin fa-2x"></i>
                     </div>
                 )}
 
-                {/* Hiển thị danh sách đề thi */}
                 {!loading && (
                     <>
                         {exams.length === 0 ? (
@@ -152,7 +146,6 @@ function PracticeSection() {
                                                                       {exam.thoi_gian_bai_thi} phút
                                                                   </span>
                                                               </div>
-                                                              {/* Tạm thời hiển thị điểm tối đa ở đây */}
                                                               <div className="col-6 d-flex align-items-center">
                                                                   <i className="far fa-list-alt text-muted me-2"></i>
                                                                   <span className="text-muted">
@@ -196,7 +189,6 @@ function PracticeSection() {
                             </div>
                         )}
 
-                        {/* Phân trang đơn giản */}
                         {totalPages > 1 && (
                             <div className="d-flex justify-content-center mt-4">
                                 <button

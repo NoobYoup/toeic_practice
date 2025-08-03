@@ -176,8 +176,6 @@ function ResultTest() {
         };
     }, [result, questionIndexMap, parts]);
 
-    // lấy phần mặc định
-
     // lấy danh sách phần
     useEffect(() => {
         const loadParts = async () => {

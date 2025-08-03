@@ -20,7 +20,7 @@ function ResetPassword({ isOpen, onSwitch, onClose, email }) {
         try {
             const res = await resetPassword({ email, mat_khau_moi });
             setMessage(res.message || 'Đổi mật khẩu thành công!');
-            onSwitch('login'); // Switch to Login modal on success
+            onSwitch('login');
         } catch (err) {
             setError(err.response?.data?.message || 'Đổi mật khẩu thất bại.');
         }

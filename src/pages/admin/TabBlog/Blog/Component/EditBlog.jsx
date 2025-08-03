@@ -14,7 +14,7 @@ const cx = classNames.bind(styles);
 
 function EditBlog() {
     const { id } = useParams();
-    // State for form fields
+
     const [tieu_de, setTieuDe] = useState('');
     const [noi_dung, setNoiDung] = useState('');
     const [id_danh_muc, setIdDanhMuc] = useState(null);
@@ -25,7 +25,6 @@ function EditBlog() {
 
     const fileInputRef = useRef(null);
 
-    // Fetch blog detail
     const fetchBlog = async () => {
         setLoading(true);
         try {
@@ -42,7 +41,6 @@ function EditBlog() {
         setLoading(false);
     };
 
-    // Fetch categories and convert to react-select options
     const fetchCategories = async () => {
         setLoading(true);
         try {
@@ -62,10 +60,8 @@ function EditBlog() {
     useEffect(() => {
         fetchBlog();
         fetchCategories();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
-    // Handle new image selection
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -97,7 +93,6 @@ function EditBlog() {
             <>
                 <h3 className="mb-4">Chỉnh sửa bài viết</h3>
 
-                {/* Image section */}
                 <div className={`${cx('edit-section')} shadow`}>
                     <h4 className="section-title mb-4">Ảnh bài viết</h4>
                     <div className="row align-items-center">
@@ -134,7 +129,6 @@ function EditBlog() {
                     </div>
                 </div>
 
-                {/* Basic info section */}
                 <div className={`${cx('edit-section')} shadow`}>
                     <h4 className="section-title mb-4">Thông tin cơ bản</h4>
                     <form onSubmit={handleSubmit}>

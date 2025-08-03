@@ -92,9 +92,6 @@ function Blog() {
                         <div className="row">
                             <div className="col-md-12">
                                 <div className="d-flex flex-wrap justify-content-between align-items-center mb-4">
-                                    {/* <div className="mb-3 mb-md-0">
-                                        <span className="me-2">Hiển thị 1-9 của 42 bài viết</span>
-                                    </div> */}
                                     <div className="d-flex w-50 w-md-25">
                                         <div className="me-3">
                                             <Select
@@ -167,49 +164,6 @@ function Blog() {
                                     )}
                                 </div>
                             </div>
-                            {/* <div className="col-md-4">
-                                <div className={cx('blog-sidebar')}>
-                                    <div className="card mb-4">
-                                        <div className="card-body">
-                                            <form className={cx('search-form')}>
-                                                <div className="input-group">
-                                                    <input
-                                                        type="text"
-                                                        className="form-control"
-                                                        placeholder="Tìm kiếm bài viết..."
-                                                    />
-                                                    <button type="submit" className="btn btn-primary px-3">
-                                                        <i className="fas fa-search"></i>
-                                                    </button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                    <h4 className="mb-3">Bài viết nổi bật</h4>
-                                    <div className={cx('featured-post')}>
-                                        <img src={DEFAULT_AVATAR} alt="Featured post" />
-                                        <div className={cx('featured-post-info')}>
-                                            <h6>
-                                                <a href="#" className="text-decoration-none text-dark">
-                                                    10 Chiến lược làm bài thi TOEIC hiệu quả cho người mới bắt đầu
-                                                </a>
-                                            </h6>
-                                            <small>05/05/2025</small>
-                                        </div>
-                                    </div>
-                                    <div className={cx('featured-post')}>
-                                        <img src={DEFAULT_AVATAR} alt="Featured post" />
-                                        <div className={cx('featured-post-info')}>
-                                            <h6>
-                                                <a href="#" className="text-decoration-none text-dark">
-                                                    10 Chiến lược làm bài thi TOEIC hiệu quả cho người mới bắt đầu
-                                                </a>
-                                            </h6>
-                                            <small>05/05/2025</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> */}
                         </div>
 
                         <div className="mt-3">

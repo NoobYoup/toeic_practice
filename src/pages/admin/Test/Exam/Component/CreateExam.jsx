@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { jwtDecode } from 'jwt-decode';
 import ChooseQuestion from './Modal/ChooseQuestion';
-import { createExam, addQuestionToExam, approveExam } from '@/services/examService';
+import { createExam, approveExam } from '@/services/examService';
 
 function CreateExam() {
     const [tenBaiThi, setTenBaiThi] = useState('');
@@ -19,7 +19,6 @@ function CreateExam() {
     const [showChooseModal, setShowChooseModal] = useState(false);
     const [selectedQuestions, setSelectedQuestions] = useState([]);
     const [approving, setApproving] = useState(false);
-    const [addingQuestions, setAddingQuestions] = useState(false);
     const [loading, setLoading] = useState(false);
     const [examId, setExamId] = useState(null);
     const navigate = useNavigate();
@@ -27,7 +26,6 @@ function CreateExam() {
     const token = localStorage.getItem('admin_token');
     const user = jwtDecode(token);
 
-    // Danh sách loại bài thi
     const examTypeOptions = [
         { value: 'tu_do', label: 'Tự do' },
         { value: 'chuan', label: 'Chuẩn' },
@@ -36,10 +34,7 @@ function CreateExam() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        // if (!Array.isArray(user.permissions) || !user.permissions.includes('EXAM_CREATE')) {
-        //     toast.error('Bạn không có quyền tạo đề thi');
-        //     return;
-        // }
+
         try {
             const payload = {
                 ten_bai_thi: tenBaiThi,
@@ -50,28 +45,13 @@ function CreateExam() {
                 loai_bai_thi: loaiBaiThi,
             };
             const res = await createExam(payload);
-            setExamId(res.data.data.id_bai_thi); // Lưu ID bài thi vào state
+            setExamId(res.data.data.id_bai_thi);
             toast.success(res.data.message);
         } catch (err) {
             console.error(err);
             toast.error(err.response.data.message);
         }
         setLoading(false);
-    };
-
-    // Gọi khi thêm câu hỏi vào đề thi (nếu còn dùng ở nơi khác)
-    const handleAddQuestions = async () => {
-        if (!examId || selectedQuestions.length === 0) return;
-        const ids = selectedQuestions.map((q) => q.id_cau_hoi);
-        setAddingQuestions(true);
-        try {
-            const res = await addQuestionToExam(examId, ids);
-            toast.success(res.data.message || 'Đã thêm câu hỏi vào đề thi');
-        } catch (err) {
-            console.error(err);
-            toast.error(err.response?.data?.message || 'Thêm câu hỏi thất bại');
-        }
-        setAddingQuestions(false);
     };
 
     const handleApproveExam = async () => {
@@ -285,7 +265,6 @@ function CreateExam() {
                 </>
             )}
 
-            {/* Modal choose question */}
             <ChooseQuestion
                 isOpen={showChooseModal}
                 onClose={() => setShowChooseModal(false)}

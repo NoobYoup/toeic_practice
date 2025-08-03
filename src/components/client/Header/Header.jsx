@@ -17,13 +17,12 @@ function Header() {
     const { user, isAuthenticated, logout } = useAuth();
     const [email, setEmail] = useState('');
     const [currentModal, setCurrentModal] = useState(null);
-    // Refs for navbar collapse and toggler button
+
     const navRef = useRef(null);
     const togglerRef = useRef(null);
 
     const closeModal = () => setCurrentModal(null);
 
-    // Manage body overflow when any modal is open
     useEffect(() => {
         if (currentModal) {
             document.body.style.overflow = 'hidden';
@@ -35,14 +34,13 @@ function Header() {
         };
     }, [currentModal]);
 
-    // Close navbar collapse when clicking on a nav link (in mobile/tablet view)
     useEffect(() => {
         const navElement = navRef.current;
         if (!navElement) return;
 
         const handleNavLinkClick = (event) => {
             const link = event.target.closest('a');
-            // Only act when a link inside the collapse is clicked and the menu is open
+
             if (link && navElement.classList.contains('show') && togglerRef.current) {
                 togglerRef.current.click(); // trigger bootstrap collapse toggle
             }
@@ -52,13 +50,11 @@ function Header() {
         return () => navElement.removeEventListener('click', handleNavLinkClick);
     }, []);
 
-    // Close navbar collapse when clicking outside the menu (mobile/tablet view)
     useEffect(() => {
         const handleOutsideClick = (event) => {
             const navElement = navRef.current;
             if (!navElement || !togglerRef.current) return;
 
-            // If the menu is shown and the click target is outside both the menu and the toggler button
             if (
                 navElement.classList.contains('show') &&
                 !navElement.contains(event.target) &&
@@ -74,7 +70,6 @@ function Header() {
 
     return (
         <>
-            {/* Navbar */}
             <nav className="navbar navbar-expand-lg navbar-light bg-white sticky-top">
                 <div className="container">
                     <Link className="navbar-brand text-primary" to="/">

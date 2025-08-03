@@ -21,7 +21,7 @@ function Role() {
         try {
             const res = await getAllRole();
 
-            setRoles(res.data?.data || res.data); // tuỳ cấu trúc API
+            setRoles(res.data?.data || res.data);
         } catch (error) {
             console.error(error);
         }
@@ -32,7 +32,6 @@ function Role() {
         fetchAllRole();
     }, []);
 
-    // Pagination helpers
     const pageCount = Math.ceil(roles.length / itemsPerPage);
     const displayedRoles = roles.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 

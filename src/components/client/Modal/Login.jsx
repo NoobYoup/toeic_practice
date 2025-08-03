@@ -56,7 +56,6 @@ function Login({ onSwitch, onClose, isOpen }) {
         }
     };
 
-    // Clear error messages every time this modal is reopened
     useEffect(() => {
         if (isOpen) {
             setErrors({});

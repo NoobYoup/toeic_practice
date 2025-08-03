@@ -10,7 +10,7 @@ const cx = classNames.bind(styles);
 
 function RolePermission() {
     const [permissionTable, setPermissionTable] = useState([]);
-    const [initialPermissionTable, setInitialPermissionTable] = useState([]); // Lưu dữ liệu ban đầu
+    const [initialPermissionTable, setInitialPermissionTable] = useState([]);
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
 
@@ -141,14 +141,12 @@ function RolePermission() {
                                         <th>Quyền</th>
                                         {rolesList.map((role) => (
                                             <th key={role} className="text-center text-capitalize">
-                                                {/* {ROLE_LABEL[role] || role.replace(/_/g, ' ')} */}
                                                 {role}
                                             </th>
                                         ))}
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {/* group header + rows */}
                                     {Object.entries(
                                         permissionTable.reduce((acc, p) => {
                                             (acc[p.group] = acc[p.group] || []).push(p);

@@ -17,7 +17,6 @@ function User() {
     const [search, setSearch] = useState('');
     const [page, setPage] = useState(1);
     const [sortOrder, setSortOrder] = useState('asc');
-    const [idSortOrder, setIdSortOrder] = useState('asc');
     const [pagination, setPagination] = useState({ page: 1, limit: 3, total: 0 });
 
     const token = localStorage.getItem('admin_token');
@@ -72,18 +71,6 @@ function User() {
         });
         setUsers(sorted);
         setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-    };
-
-    const sortById = () => {
-        const sorted = [...users].sort((a, b) => {
-            if (idSortOrder === 'asc') {
-                return a.id_nguoi_dung - b.id_nguoi_dung;
-            } else {
-                return b.id_nguoi_dung - a.id_nguoi_dung;
-            }
-        });
-        setUsers(sorted);
-        setIdSortOrder(idSortOrder === 'asc' ? 'desc' : 'asc');
     };
 
     const handleChangeStatus = async (users) => {

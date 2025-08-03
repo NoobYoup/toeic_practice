@@ -81,13 +81,6 @@ function Sidebar() {
                             <i className="fas fa-shield-alt"></i> Nhóm quyền{' '}
                         </NavLink>
                     </li>
-
-                    {/* <li className="nav-item">
-                        <NavLink to="/admin/setting" className="nav-link">
-                            {' '}
-                            <i className="fas fa-cog"></i> Cài Đặt{' '}
-                        </NavLink>
-                    </li> */}
                 </ul>
                 <hr className="text-white-50" />
                 <div className="dropdown">

@@ -1,5 +1,4 @@
 import { useOutletContext } from 'react-router-dom';
-// import PartDetailTemplate from './PartDetailTemplate.jsx';
 
 function Part4Detail() {
     const { exam } = useOutletContext() || {};
@@ -11,9 +10,9 @@ function Part4Detail() {
             </div>
         );
     }
-    /* ------------------------------------------------------------ */
-    /* TÍNH SỐ THỨ TỰ BẮT ĐẦU CHO PART 4                            */
-    /* ------------------------------------------------------------ */
+
+    // TÍNH SỐ THỨ TỰ BẮT ĐẦU CHO PART 4
+
     let startNumber = 1;
     if (Array.isArray(exam.cau_hoi_cua_bai_thi)) {
         const countsBefore = {};

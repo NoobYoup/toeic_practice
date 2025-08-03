@@ -11,9 +11,8 @@ function Part6Detail() {
         );
     }
 
-    /* ------------------------------------------------------------ */
-    /* TÍNH SỐ THỨ TỰ BẮT ĐẦU CHO PART 6                            */
-    /* ------------------------------------------------------------ */
+    // TÍNH SỐ THỨ TỰ BẮT ĐẦU CHO PART 6
+
     let startNumber = 1;
     if (Array.isArray(exam.cau_hoi_cua_bai_thi)) {
         const countsBefore = {};

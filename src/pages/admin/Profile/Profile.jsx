@@ -36,7 +36,7 @@ function Profile() {
         };
 
         fetchUser();
-    }, [id]); // Re-run when ID changes
+    }, [id]);
 
     if (loading) {
         return (

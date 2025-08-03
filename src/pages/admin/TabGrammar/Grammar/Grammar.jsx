@@ -1,14 +1,11 @@
 import { useState, useEffect } from 'react';
 import { getAllGrammar, deleteGrammar } from '@/services/grammarService';
-import { getDetailUser } from '@/services/userService';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import ReactPaginate from 'react-paginate';
 
 function Grammar() {
-    const [creatorNames, setCreatorNames] = useState({});
-
     const [grammars, setGrammars] = useState([]);
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
@@ -25,28 +22,8 @@ function Grammar() {
         setLoading(true);
         try {
             const res = await getAllGrammar(page);
-            console.log(res.data.data);
+
             setGrammars(res.data.data);
-            // // Lấy danh sách id người tạo duy nhất
-            // const creatorIds = [...new Set(res.data.data.map((item) => item.nguoi_tao))];
-
-            // // Gọi API lấy tên cho từng id
-            // const nameResults = await Promise.all(
-            //     creatorIds.map((id) =>
-            //         getDetailUser(id).then((res) => ({
-            //             id,
-            //             name: res.data.data.user.nguoi_dung.ten_dang_nhap,
-            //         })),
-            //     ),
-            // );
-
-            // // Tạo map id → tên
-            // const nameMap = {};
-            // nameResults.forEach(({ id, name }) => {
-            //     nameMap[id] = name;
-            // });
-            // setCreatorNames(nameMap);
-
             setPagination((prev) => ({
                 ...prev,
                 limit: res.data.data.limit,

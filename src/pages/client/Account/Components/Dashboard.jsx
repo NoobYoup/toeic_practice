@@ -7,7 +7,7 @@ import styles from './Dashboard.module.scss';
 const cx = classNames.bind(styles);
 
 function Dashboard({ user }) {
-    const [examData, setExamData] = useState([]); // eslint-disable-line no-unused-vars
+    const [examData, setExamData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState({
         totalExams: 0,

@@ -2,7 +2,6 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 import { getDetailMyBlog, updateMyBlog, getAllCategory } from '@/services/blogService';
-import { jwtDecode } from 'jwt-decode';
 import Select from 'react-select';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
@@ -16,7 +15,6 @@ function EditMyBlog() {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    // State for form fields
     const [tieu_de, setTieuDe] = useState('');
     const [noi_dung, setNoiDung] = useState('');
     const [id_danh_muc, setIdDanhMuc] = useState(null);
@@ -28,10 +26,6 @@ function EditMyBlog() {
 
     const fileInputRef = useRef(null);
 
-    const token = localStorage.getItem('user_token');
-    const user = jwtDecode(token);
-
-    // Fetch blog detail
     const fetchBlog = async () => {
         setLoading(true);
         try {
@@ -48,7 +42,6 @@ function EditMyBlog() {
         setLoading(false);
     };
 
-    // Fetch categories and convert to react-select options
     const fetchCategories = async () => {
         setLoading(true);
         try {
@@ -72,7 +65,6 @@ function EditMyBlog() {
         }
     }, [id]);
 
-    // Handle new image selection
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -142,7 +134,6 @@ function EditMyBlog() {
                             </div>
                         </div>
 
-                        {/* Basic info section */}
                         <div className={`${cx('edit-section')} shadow`}>
                             <h4 className="section-title mb-4">Thông tin cơ bản</h4>
                             <form onSubmit={handleSubmit}>

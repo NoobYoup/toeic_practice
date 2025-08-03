@@ -11,7 +11,6 @@ function EditPermission() {
     const [maQuyen, setMaQuyen] = useState('');
     const [loading, setLoading] = useState(false);
 
-    // Fetch permission detail
     useEffect(() => {
         const fetchDetail = async () => {
             setLoading(true);

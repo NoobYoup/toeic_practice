@@ -52,11 +52,6 @@ function CongratulationModal({ isOpen, onClose, totalScore, readingScore, listen
                                 <p className="fs-5 text-muted text-center mb-4">Listening: {listeningScore}</p>
                             </div>
 
-                            {/* <div className="alert alert-info text-center mb-4" role="alert">
-                                Lưu ý: Bạn chỉ có thể làm bài 1 lần duy nhất. Hãy chắc chắn bạn đã sẵn sàng trước khi
-                                bắt đầu.
-                            </div> */}
-
                             <div className="d-grid gap-2 col-6 mx-auto">
                                 <Link to="/list-test" className="btn btn-primary btn-lg">
                                     Xem đề thi gợi ý
