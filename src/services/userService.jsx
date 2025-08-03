@@ -1,6 +1,4 @@
 import axios from 'axios';
-import dayjs from 'dayjs';
-// import axios from './customizeAxios';
 
 const API = import.meta.env.VITE_API_BASE_URL;
 
@@ -36,18 +34,15 @@ const editUser = (id, userData, file) => {
     const token = localStorage.getItem('admin_token');
     const formData = new FormData();
 
-    // Append user data fields
     Object.keys(userData).forEach((key) => {
         formData.append(key, userData[key]);
     });
 
-    // Append file if provided
     if (file) {
-        formData.append('url_hinh_dai_dien', file); // Changed from 'url_hinh_dai_dien' to 'avatar'
-        console.log('File appended:', file.name, file.type, file.size); // Debug file info
+        formData.append('hinh_dai_dien', file);
+        console.log('File appended:', file.name, file.type, file.size);
     }
 
-    // Log formData contents for debugging
     for (let [key, value] of formData.entries()) {
         console.log(`FormData: ${key} =`, value);
     }
@@ -70,7 +65,6 @@ const updateProfile = (userData, file, token) => {
     });
     if (file) {
         formData.append('hinh_dai_dien', file);
-        // console.log('File appended:', file.name, file.type, file.size);
     }
     return axios.patch(`${API}/users/update-profile`, formData, {
         headers: {
@@ -101,7 +95,6 @@ const getMe = () => {
 const updateUserRole = (userId, roleId) => {
     const token = localStorage.getItem('admin_token');
 
-    // Back-end nhận JSON: { id_vai_tro: <roleId> }
     return axios.patch(
         `${API}/users/set-role/${userId}`,
         { id_vai_tro: roleId },
@@ -125,24 +118,21 @@ const updateProfileAdmin = (id, userData, file) => {
     const token = localStorage.getItem('admin_token');
     const formData = new FormData();
 
-    // Append user data fields
     Object.keys(userData).forEach((key) => {
         formData.append(key, userData[key]);
     });
 
-    // Append file if provided
     if (file) {
-        formData.append('url_hinh_dai_dien', file); // Changed from 'url_hinh_dai_dien' to 'avatar'
-        console.log('File appended:', file.name, file.type, file.size); // Debug file info
+        formData.append('hinh_dai_dien', file);
+        console.log('File appended:', file.name, file.type, file.size);
     }
 
-    // Log formData contents for debugging
     for (let [key, value] of formData.entries()) {
         console.log(`FormData: ${key} =`, value);
     }
 
     return axios.patch(`${API}/users/edit-admin/${id}`, formData, {
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' },
+        headers: { Authorization: `Bearer ${token}` },
     });
 };
 

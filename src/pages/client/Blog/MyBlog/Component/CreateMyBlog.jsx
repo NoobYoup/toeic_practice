@@ -81,7 +81,6 @@ function CreateMyBlog() {
         <div className="container py-4 min-vh-100">
             <>
                 <h3 className="mb-4">Thêm bài viết</h3>
-                <img src={user?.ho_so?.url_hinh_dai_dien} alt="img" />
 
                 <div className={`${cx('edit-section')} shadow`}>
                     <h4 className="section-title mb-4">Ảnh bài viết</h4>

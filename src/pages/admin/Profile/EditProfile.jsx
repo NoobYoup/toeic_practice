@@ -34,6 +34,40 @@ function EditProfile() {
     const [error, setError] = useState(null);
     const [listStatus, setListStatus] = useState([]);
 
+    const fetchUser = async () => {
+        setLoading(true);
+        try {
+            const res = await getDetailProfileAdmin(id);
+
+            const userData = res.data.data.user;
+
+            setUser({ ...userData, vai_tro: userData.nguoi_dung?.id_vai_tro });
+
+            setFormData({
+                ten_dang_nhap: userData.nguoi_dung.ten_dang_nhap || '',
+                email: userData.nguoi_dung.email || '',
+                trang_thai: userData.nguoi_dung.trang_thai || '',
+                ho_ten: userData.ho_ten || '',
+                dia_chi: userData.dia_chi || '',
+                vai_tro: String(userData.nguoi_dung?.id_vai_tro || ''),
+                ngay_sinh: userData.ngay_sinh || '',
+                so_dien_thoai: userData.so_dien_thoai || '',
+                gioi_thieu: userData.gioi_thieu || '',
+            });
+
+            setPreviewUrl(userData.url_hinh_dai_dien || '');
+            setListStatus(res.data.data.listStatus);
+        } catch (err) {
+            console.error('Error updating user:', err);
+            if (err.response?.status === 401) {
+                setError('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
+            } else {
+                setError('Không thể cập nhật thông tin người dùng');
+            }
+        }
+        setLoading(false);
+    };
+
     const fetchRoles = useCallback(async () => {
         try {
             const res = await getAllRolePermission();
@@ -62,40 +96,6 @@ function EditProfile() {
     }, [roleOptions, formData.vai_tro]);
 
     useEffect(() => {
-        const fetchUser = async () => {
-            setLoading(true);
-            try {
-                const res = await getDetailProfileAdmin(id);
-
-                const userData = res.data.data.user;
-
-                setUser({ ...userData, vai_tro: userData.nguoi_dung?.id_vai_tro });
-
-                setFormData({
-                    ten_dang_nhap: userData.nguoi_dung.ten_dang_nhap || '',
-                    email: userData.nguoi_dung.email || '',
-                    trang_thai: userData.nguoi_dung.trang_thai || '',
-                    ho_ten: userData.ho_ten || '',
-                    dia_chi: userData.dia_chi || '',
-                    vai_tro: String(userData.nguoi_dung?.id_vai_tro || ''),
-                    ngay_sinh: userData.ngay_sinh || '',
-                    so_dien_thoai: userData.so_dien_thoai || '',
-                    gioi_thieu: userData.gioi_thieu || '',
-                });
-
-                setPreviewUrl(userData.url_hinh_dai_dien || '');
-                setListStatus(res.data.data.listStatus);
-            } catch (err) {
-                console.error('Error updating user:', err);
-                if (err.response?.status === 401) {
-                    setError('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
-                } else {
-                    setError('Không thể cập nhật thông tin người dùng');
-                }
-            }
-            setLoading(false);
-        };
-
         fetchUser();
     }, [id]);
 
@@ -111,7 +111,6 @@ function EditProfile() {
         setLoading(true);
 
         try {
-            // Không gửi vai_tro cùng với editUser
             const { ...otherFields } = formData;
             const res = await updateProfileAdmin(id, otherFields, selectedFile);
 
