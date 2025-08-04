@@ -486,6 +486,10 @@ function CreateQuestionBank() {
                         onChangeQuestion={handlePart7Change}
                         onAddQuestion={addPart7Question}
                         onRemoveQuestion={removePart7Question}
+                        handleImageChange={handleImageChange}
+                        imagePreview={imagePreview}
+                        removeImage={removeImage}
+                        formatFileSize={formatFileSize}
                     />
                 );
             // Thêm case cho Part 3, 4, 5 nếu cần
@@ -530,23 +534,42 @@ function CreateQuestionBank() {
 
     const handlePart7Change = (index, field, value) => {
         setAllPartsData((prev) => {
-            const newQuestions = prev[7].questions.map((q, i) => (i === index ? { ...q, [field]: value } : q));
-            return { ...prev, 7: { ...prev[7], questions: newQuestions } };
+            const prevPart7 = prev[7];
+            const questionsArr = Array.isArray(prevPart7) ? prevPart7 : prevPart7.questions || [];
+            const newQuestions = questionsArr.map((q, i) => (i === index ? { ...q, [field]: value } : q));
+            return {
+                ...prev,
+                7: { ...(Array.isArray(prevPart7) ? { id_doan_van: '' } : prevPart7), questions: newQuestions },
+            };
         });
     };
 
     const addPart7Question = (template) => {
-        setAllPartsData((prev) => ({
-            ...prev,
-            7: { ...prev[7], questions: [...prev[7].questions, template] },
-        }));
+        setAllPartsData((prev) => {
+            const prevPart7 = prev[7];
+            const questionsArr = Array.isArray(prevPart7) ? prevPart7 : prevPart7.questions || [];
+            return {
+                ...prev,
+                7: {
+                    ...(Array.isArray(prevPart7) ? { id_doan_van: '' } : prevPart7),
+                    questions: [...questionsArr, template],
+                },
+            };
+        });
     };
 
     const removePart7Question = (idx) => {
-        setAllPartsData((prev) => ({
-            ...prev,
-            7: { ...prev[7], questions: prev[7].questions.filter((_, i) => i !== idx) },
-        }));
+        setAllPartsData((prev) => {
+            const prevPart7 = prev[7];
+            const questionsArr = Array.isArray(prevPart7) ? prevPart7 : prevPart7.questions || [];
+            return {
+                ...prev,
+                7: {
+                    ...(Array.isArray(prevPart7) ? { id_doan_van: '' } : prevPart7),
+                    questions: questionsArr.filter((_, i) => i !== idx),
+                },
+            };
+        });
     };
 
     const handleSubmit = async (e) => {
@@ -647,6 +670,9 @@ function CreateQuestionBank() {
             } else {
                 dataToSend = { id_phan: currentPart, ...formData };
             }
+            console.log('dataToSend', dataToSend);
+            console.log('hinh_anh', hinh_anh);
+            console.log('am_thanh', am_thanh);
             await createQuestion({ hinh_anh, am_thanh, data: dataToSend });
             // navigate('/admin/test/question');
             toast.success('Câu hỏi đã được tạo thành công!');

@@ -67,7 +67,6 @@ function Part1QuestionForm({
         formState: { errors },
     } = useForm({ defaultValues });
 
-
     // CHỈ reset khi ở edit mode
     useEffect(() => {
         if (mode === 'edit') {
