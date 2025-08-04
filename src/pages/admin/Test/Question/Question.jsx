@@ -153,50 +153,6 @@ function Question() {
             </div>
 
             <div className="row mb-4">
-                {/* <div className="col-md-4">
-                    <div className={`${cx('card')} card text-white bg-primary`}>
-                        <div className="card-body">
-                            <div className="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h6 className="card-title">Tổng số câu hỏi</h6>
-                                    <h2 className="mb-0">{questions.length}</h2>
-                                </div>
-                                <i className="fas fa-question-circle fa-3x opacity-50"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="col-md-4">
-                    <div className={`${cx('card')} card text-white bg-info`}>
-                        <div className="card-body">
-                            <div className="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h6 className="card-title">Câu hỏi Listening</h6>
-                                    <h2 className="mb-0">
-                                        {questions.filter((question) => question.phan.loai_phan === 'listening').length}
-                                    </h2>
-                                </div>
-                                <i className="fas fa-headphones fa-3x opacity-50"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="col-md-4">
-                    <div className={`${cx('card')} card text-white bg-warning`}>
-                        <div className="card-body">
-                            <div className="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h6 className="card-title">Câu hỏi Reading</h6>
-                                    <h2 className="mb-0">
-                                        {questions.filter((question) => question.phan.loai_phan === 'reading').length}
-                                    </h2>
-                                </div>
-                                <i className="fas fa-book-open fa-3x opacity-50"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div> */}
-
                 <div className="row g-3 mb-3">
                     <div className="col-md-3">
                         <Select

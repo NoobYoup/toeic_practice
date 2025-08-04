@@ -12,7 +12,7 @@ function DetailQuesionBank() {
         setLoading(true);
         try {
             const res = await getDetailQuestion(id);
-
+            console.log(res.data.data);
             setQuestionData(res.data.data);
         } catch (error) {
             console.error('Error fetching question detail:', error);

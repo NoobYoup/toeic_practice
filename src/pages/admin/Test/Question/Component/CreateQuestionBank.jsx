@@ -329,6 +329,11 @@ function CreateQuestionBank() {
                 ...prev,
                 3: prev[3].map((q, idx) => (idx === 0 ? { ...q, image: file } : q)),
             }));
+        } else if (currentPart === 7) {
+            setAllPartsData((prev) => ({
+                ...prev,
+                [currentPart]: { ...prev[currentPart], hinh_anh: file },
+            }));
         } else {
             setFormData({ ...formData, image: file });
         }
@@ -651,7 +656,8 @@ function CreateQuestionBank() {
                 };
             } else if (currentPart === 7) {
                 const part7 = allPartsData[7];
-                const { id_doan_van, questions } = part7;
+                const { id_doan_van, questions, hinh_anh: part7_hinh_anh } = part7;
+                if (part7_hinh_anh) hinh_anh = part7_hinh_anh;
                 const noi_dung = questions.map((q) => q.noi_dung);
                 const dap_an_dung = questions.map((q) => q.dap_an_dung);
                 const giai_thich = questions.map((q) => q.giai_thich);
@@ -670,9 +676,11 @@ function CreateQuestionBank() {
             } else {
                 dataToSend = { id_phan: currentPart, ...formData };
             }
-            console.log('dataToSend', dataToSend);
-            console.log('hinh_anh', hinh_anh);
-            console.log('am_thanh', am_thanh);
+            // console.log('dataToSend', dataToSend);
+            // console.log('hinh_anh', hinh_anh);
+            // console.log('am_thanh', am_thanh);
+            // console.log(JSON.stringify(dataToSend, null, 2));
+
             await createQuestion({ hinh_anh, am_thanh, data: dataToSend });
             // navigate('/admin/test/question');
             toast.success('Câu hỏi đã được tạo thành công!');
